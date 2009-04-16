@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 
-
-import connection.ConnectionListener;
 import database.Database;
 
 import no.ntnu.fp.net.co.Connection;
