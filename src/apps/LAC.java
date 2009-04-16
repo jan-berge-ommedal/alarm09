@@ -34,15 +34,14 @@ public class LAC implements PropertyChangeListener {
 	private static final int SERVERPORT = 666;
 	
 	public LAC() {
-		connect();
 		try {
+			connect();
 			int modelID = LACProtocol.receiveNextModelID(connection);
 			Model m = new Model();
 			m.setID(modelID);
 			
 			gui = new LACgui();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 			
@@ -51,28 +50,20 @@ public class LAC implements PropertyChangeListener {
 	}
 	
 	public LAC(int id) {
-		connect();
+		
 		try {
+			connect();
 			setModel(LACProtocol.receiveCompleteModel(connection, id));
 			gui = new LACgui();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 	}
 	
-	private void connect(){
-		try {
+	private void connect() throws SocketTimeoutException, UnknownHostException, IOException{
 			connection = new TCPConnection(SERVERPORT+connectionint++);
 			connection.connect(InetAddress.getByName("localhost"), SERVERPORT);
-		}catch (SocketTimeoutException e) {
-		
-		} catch (UnknownHostException e) {
-		
-		} catch (IOException e) {
-	
-		}
 	}
 	
 	public Model getModel() {
