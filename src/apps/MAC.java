@@ -110,6 +110,8 @@ public class MAC {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			this.stop();
+			adapters.remove(this);
 		}
 
 		public MAC getMAC() {
