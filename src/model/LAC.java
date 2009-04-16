@@ -2,7 +2,6 @@ package model;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -15,18 +14,14 @@ import no.ntnu.fp.net.co.Connection;
 import no.ntnu.fp.net.co.ConnectionImpl;
 
 
-import com.sun.xml.internal.bind.v2.runtime.XMLSerializer;
-import com.sun.xml.internal.txw2.Document;
-
 public class LAC {
  
 	private int id;
 	private String adresse;
 	private ArrayList<Sensor> sensorer;
-	private MAC mac;
-	
 	private Connection connection;
 	
+	//private LACGui gui;
 	
 	public LAC() {
 		adresse = "<adresse>";
@@ -43,7 +38,8 @@ public class LAC {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//id = Protocol.recieveData(connection,Protol.MessageType.GETNEXTLEACID).getID();		
+		//id = Protocol.recieveData(connection,Protol.MessageType.GETNEXTLEACID).getID();
+		//gui = new LACGui();
 	}
 	
 	public LAC(int id) {
@@ -61,6 +57,7 @@ public class LAC {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}			
+		//gui = new LACGui();
 	}
 	
 		 
@@ -104,18 +101,6 @@ public class LAC {
 
 	public ArrayList<Sensor> getSensorer() {
 		return sensorer;
-	}
-
-	public void setSensorer(ArrayList<Sensor> sensorer) {
-		this.sensorer = sensorer;
-	}
-
-	public MAC getMac() {
-		return mac;
-	}
-
-	public void setMac(MAC mac) {
-		this.mac = mac;
 	}
 
 

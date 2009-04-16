@@ -13,13 +13,15 @@ public class MAC {
 	private Connection macConnection;
 	private ArrayList<LACAdaper> adapters = new ArrayList<LACAdaper>();	
 	private Database database;
+	//private MACGui gui;
 	
 	public MAC() {
 		database = new Database();
 		macConnection = new ConnectionImpl(501);
+		//gui = new MACGui(this);
 	}
 	
-	public void createNewLACAdaper(){
+	private void createNewLACAdaper(){
 		adapters.add(new LACAdaper(this));
 	}
 	 
@@ -45,6 +47,7 @@ public class MAC {
 		public void run(){
 			try {
 				connection = mac.getMainConnection().accept();
+				mac.createNewLACAdaper();
 				while(running){
 					String msg = connection.receive();
 				}
