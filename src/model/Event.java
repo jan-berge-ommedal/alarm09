@@ -3,7 +3,10 @@ package model;
 import java.sql.Timestamp;
 
 /**
- * This is a standard JAVA-Bean that holds info about a Sensor-event. It cannot be modified once created 
+ * Data-model of an Sensor-Event 
+ * <br><br>
+ * It is a standard JAVA-Bean, which cannot be modified once created. 
+ * 
  * @author Jan Berge Ommedal
  */
 

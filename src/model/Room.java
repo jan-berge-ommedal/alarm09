@@ -4,6 +4,13 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 
+/**
+ * This is a JAVA-Bean that represents a room. It supports PropertyChange-listening. 
+ * 
+ * @author Jan Berge Ommedal
+ *
+ */
+
 public class Room {
  
 	private int id;
@@ -21,6 +28,8 @@ public class Room {
 		this.romType = romType;
 		this.romInfo = romInfo;
 	}
+	
+	/* SECTION OF SIMPLE GET & SET */
 
 	public int getID() {
 		return id;
@@ -61,12 +70,23 @@ public class Room {
 	public ArrayList<Sensor> getSensorer() {
 		return sensorer;
 	}
-
+	/* END SECTION OF SIMPLE GET & SET */
+	
+	
+	/**
+	 * Adds the given sensor
+	 * @param sensor
+	 */
 	public void addSensor(Sensor sensor) {
 		int oldValue = this.sensorer.size();
 		this.sensorer.add(sensor);
 		pcs.firePropertyChange("SENSORS", oldValue, sensorer.size());
 	}
+	
+	/**
+	 * Removes the given sensor
+	 * @param sensor
+	 */
 	
 	public void removeSensor(Sensor sensor) {
 		int oldValue = this.sensorer.size();

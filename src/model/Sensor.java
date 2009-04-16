@@ -9,8 +9,9 @@ import java.util.Date;
 import apps.LAC;
 
 /**
- * A Sensor
- * 
+ * The data-model of a Sensor. Currently it also features a Thread that reduces remaining battery over time.
+ * <br><br>
+ * This is a JAVA-Bean, that supports PropertyChange-listening. 
  * 
  * @author Jan Berge Ommedal
  *
@@ -33,8 +34,8 @@ public class Sensor {
 	
 	/**
 	 * 
-	 * <strong>This constructor is used to load predefined sensor, which has a set ID</strong>
-	 * (Remember to add Events aftes using the constructor)
+	 * <strong>This constructor is used to load a predefined sensor(allready exists in storage)</strong>
+	 * <br>(Remember to add belonging Events after using this constructor)
 	 * 
 	 * @param id a predefined id
 	 * @param lac The sensors' LAC
@@ -80,11 +81,14 @@ public class Sensor {
 		this.events = events;
 		addEvent(new Event(computeNextEventID(), Event.EventType.STARTUP,LAC.getTime(),this));
 		
-		//THIS THREAD DECREASES BATTERY OVER TIME
+	
 		Thread t = new Thread(){
+			/**
+	 		* A thread that decreases the remaining batterytime
+			*/
 			public void run(){
 				while(true){
-					if(battery>0)battery--;
+					if(getBattery()>0)setBattery(getBattery()-1);
 					try {
 						Thread.currentThread().sleep(10000);
 					} catch (InterruptedException e) {
@@ -159,7 +163,7 @@ public class Sensor {
 	}
 	
 	/**
-	 * Sets the roomfield of the sensor. It also clears the relation with the old room and notifies PropertyChangeListeners.
+	 * Sets the room-field of the sensor. It also clears the relation with the old room and notifies PropertyChangeListeners.
 	 * 
 	 * @param room
 	 */
@@ -198,10 +202,21 @@ public class Sensor {
 	
 	/**
 	 * 
-	 * @return an int representing the percentage remaining battterytime 
+	 * @return an int representing the percentage remaining batterytime 
 	 */
-	public int checkBattery() {
+	public int getBattery() {
 		return battery;
+	}
+	
+	
+	/**
+	 * 
+	 * @param batteryRemaining remaining battery - and int between 0 and 100
+	 */
+	public void setBattery(int batteryRemaining) {
+		int oldValue = this.battery;
+		this.battery=batteryRemaining;
+		pcs.firePropertyChange("SENSORS", oldValue, batteryRemaining);
 	}
 	
 	
@@ -234,7 +249,7 @@ public class Sensor {
 	 * @return a boolean that is true if battery is good and no alarm
 	 */
 	public boolean testSensor() {
-		return checkBattery()>10 && isAlarmState();
+		return getBattery()>10 && isAlarmState();
 	}
 	
 	/**

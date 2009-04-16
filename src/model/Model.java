@@ -5,9 +5,12 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
+import apps.LAC;
+
 /**
  * The data-model of a LAC. 
- * 
+ * <br><br>
+ * This is a JAVA-Bean, that supports PropertyChange-listening. 
  * @author Jan Berge Ommedal
  *
  */
@@ -19,6 +22,8 @@ public class Model implements PropertyChangeListener {
 	private ArrayList<Sensor> sensorer = new ArrayList<Sensor>();
 	private ArrayList<PropertyChangeListener> listeners = new ArrayList<PropertyChangeListener>();
 
+	
+	/* SECTION OF SIMPLE GET & SET */
 	
 	public int getID() {
 		return id;
@@ -51,6 +56,9 @@ public class Model implements PropertyChangeListener {
 		return sensorer;
 	}
 	
+	/* END SECTION OF SIMPLE GET & SET */
+	
+	
 	
 	/**
 	 * Adds the specified PropertyChangeListener listener to receive change-events from this model.
@@ -60,6 +68,16 @@ public class Model implements PropertyChangeListener {
 	public void addPropertyChangeListener(PropertyChangeListener listener){
 		listeners.add(listener);
 	}
+	
+	/**
+	 * Stops the given PropertyChangeListener from listening to this model.
+	 *  
+	 * @param listener the listener
+	 */
+	public void removePropertyChangeListener(Object object) {
+		listeners.remove(object);
+		
+	}
 
 	@Override
 	public void propertyChange(PropertyChangeEvent e) {
@@ -68,6 +86,8 @@ public class Model implements PropertyChangeListener {
 		}
 		
 	}
+
+
 
 	
 	

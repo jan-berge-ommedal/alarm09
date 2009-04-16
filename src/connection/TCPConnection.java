@@ -13,6 +13,13 @@ import java.net.SocketTimeoutException;
 
 import no.ntnu.fp.net.co.Connection;
 
+/**
+ * This is a simple implement of {@link no.ntnu.fp.net.co.Connection Connection} using the TCP-protocol
+ * 
+ * @author Jan Berge Ommedal
+ *
+ */
+
 public class TCPConnection implements Connection{
 	private ServerSocket server;
 	private Socket socket;
