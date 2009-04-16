@@ -2,6 +2,7 @@ package apps;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import connection.MACProtocol;
@@ -9,6 +10,7 @@ import connection.TCPConnection;
 
 import database.Database;
 
+import model.Model;
 import no.ntnu.fp.net.co.Connection;
 import no.ntnu.fp.net.co.ConnectionImpl;
 
@@ -16,15 +18,30 @@ public class MAC {
 	private Connection macConnection;
 	private ArrayList<LACAdaper> adapters = new ArrayList<LACAdaper>();	
 	private Database database;
-	//private MACGui gui;
+	private MACgui gui;
 	
 	private static int i = 0;
 	
 	public MAC() {
-		database = new Database();
-		macConnection = new TCPConnection(666);
-		createNewLACAdaper();
-		//gui = new MACGui(this);
+		try {
+			database = new Database("mysql.stud.ntnu.no","janberge_admin","1234","janberge_db");
+			macConnection = new TCPConnection(666);
+			createNewLACAdaper();
+			gui = new MACgui();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	private void createNewLACAdaper(){
@@ -50,6 +67,7 @@ public class MAC {
 	public class LACAdaper extends Thread{
 		private Connection connection;
 		private MAC mac;
+		private Model model;
 		private boolean running;
 		
 		
@@ -59,6 +77,10 @@ public class MAC {
 			running = true;
 			this.setName("Connection-"+(i++));
 			start();
+		}
+		
+		public void setModel(Model model){
+			this.model=model;
 		}
 		
 		public void run(){
@@ -92,6 +114,14 @@ public class MAC {
 
 		public MAC getMAC() {
 			return mac;
+		}
+
+		public boolean hasModel() {
+			return model!=null;
+		}
+
+		public Model getModel() {
+			return model;
 		}
 
 	}

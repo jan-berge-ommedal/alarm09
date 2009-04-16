@@ -1,9 +1,12 @@
 package apps;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.BindException;
 import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.SocketTimeoutException;
@@ -15,25 +18,29 @@ import connection.LACProtocol;
 import connection.TCPConnection;
 
 import model.Model;
+import model.Room;
 import model.Sensor;
 import no.ntnu.fp.net.co.Connection;
 import no.ntnu.fp.net.co.ConnectionImpl;
 
 
-public class LAC {
+public class LAC implements PropertyChangeListener {
 	private Model model;
 	private Connection connection;
 	
-	//private LACGui gui;
+	private LACgui gui;
+	
 	private static int connectionint = 1;
+	private static final int SERVERPORT = 666;
 	
 	public LAC() {
+		connect();
 		try {
-			connection = new TCPConnection(666+connectionint);
-			connection.connect(InetAddress.getByName("localhost"), 666);
 			int modelID = LACProtocol.receiveNextModelID(connection);
-			model = new Model();
-			model.setID(modelID);
+			Model m = new Model();
+			m.setID(modelID);
+			
+			gui = new LACgui();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -44,17 +51,39 @@ public class LAC {
 	}
 	
 	public LAC(int id) {
+		connect();
 		try {
-			connection = new TCPConnection(500);
-			connection.connect(InetAddress.getByName("192.168.0.5"), 501);
-			model = LACProtocol.receiveCompleteModel(connection, id);
-			//gui = new LACGui();
+			setModel(LACProtocol.receiveCompleteModel(connection, id));
+			gui = new LACgui();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 	}
+	
+	private void connect(){
+		try {
+			connection = new TCPConnection(SERVERPORT+connectionint++);
+			connection.connect(InetAddress.getByName("localhost"), SERVERPORT);
+		}catch (SocketTimeoutException e) {
+		
+		} catch (UnknownHostException e) {
+		
+		} catch (IOException e) {
+	
+		}
+	}
+	
+	public Model getModel() {
+		return model;
+	}
+	
+	private void setModel(Model m){
+		model = m;
+		m.addPropertyChangeListener(this);
+	}
+	
 	
 		 
 	public boolean checkAlarm() {
@@ -64,10 +93,22 @@ public class LAC {
 		return false;
 	}
 	
-	public void installSensor(Sensor s){
-		s.setInstallationDate(new Timestamp(System.currentTimeMillis()));
-		model.addSensor(s);
+
+
+	public static Timestamp getTime() {
+		return new Timestamp(System.currentTimeMillis());
 	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent e) {
+		if(e.getSource() instanceof Sensor)
+			LACProtocol.updateMAC(connection,this,((Sensor)e.getSource()));
+		else if(e.getSource() instanceof Room){
+			LACProtocol.updateMAC(connection,this,((Room)e.getSource()));
+		}
+		
+	}
+	
 	
 	private static LAC parse(File f) throws NumberFormatException, IOException {
 		BufferedReader reader = new BufferedReader(new FileReader(f));
@@ -76,7 +117,12 @@ public class LAC {
 	}
 
 	public static void main(String[] args) {
-		if(args.length > 0){
+		new LAC();
+		new LAC(1);
+		
+		/*
+		 if(args.length > 0){
+		 
 			for(String s : args){
 				File f = new File(s);
 				if(f.isFile()){
@@ -97,15 +143,10 @@ public class LAC {
 			}
 		}else
 			new LAC();
+		*/
 	}
 
-	public Model getModel() {
-		return model;
-	}
-
-	public Timestamp getTime() {
-		return new Timestamp(System.currentTimeMillis());
-	}
+	
 
 	
 	

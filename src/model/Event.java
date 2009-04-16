@@ -40,8 +40,8 @@ public class Event {
 	}
 
 
-	enum EventType{
-		FALSEALARM, ALARM, STARTUP
+	public enum EventType{
+		FALSEALARM, ALARM, STARTUP, BATTERYREPLACEMENT
 	}
 }
  

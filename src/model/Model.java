@@ -41,6 +41,10 @@ public class Model implements PropertyChangeListener {
 		s.addPropertyChangeListener(this);
 		sensorer.add(s);
 	}
+	
+	public void removeSensor(Sensor s){
+		sensorer.remove(this);
+	}
 
 
 	public ArrayList<Sensor> getSensors() {

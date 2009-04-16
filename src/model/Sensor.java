@@ -19,20 +19,22 @@ import apps.LAC;
 public class Sensor {
 	private int id;
 	
-	private LAC lac;
 	private boolean alarmState;
 	private Room room;
 	private Timestamp installationDate;
 	private ArrayList<Event> events = new ArrayList<Event>();
 	
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+
+	private int battery = 100;
 	
 	private static int nextID = 0; 
 	
 	
 	/**
 	 * 
-	 * <strong>This constructor is used to load predefined sensor, which has a set ID</strong>  
+	 * <strong>This constructor is used to load predefined sensor, which has a set ID</strong>
+	 * (Remember to add Events aftes using the constructor)
 	 * 
 	 * @param id a predefined id
 	 * @param lac The sensors' LAC
@@ -41,10 +43,10 @@ public class Sensor {
 	 * @param installationDate Installation-date of the sensor
 	 */
 	
-	public Sensor(int id, LAC lac,ArrayList<Event> events,Room room, Timestamp installationDate){
+	public Sensor(int id, Room room, Timestamp installationDate){
 		this.id=id;
 		if(id>=nextID)nextID=id+1;
-		setup(lac, events, room, installationDate);
+		setup(room, installationDate);
 		
 	}
 	
@@ -57,27 +59,41 @@ public class Sensor {
 	 * @param installationDate Installation-date of the sensor
 	 */
 	
-	public Sensor(LAC lac,ArrayList<Event> events,Room room, Timestamp installationDate){
+	public Sensor(Room room){
 		this.id = nextID++;	
-		setup(lac, events, room, installationDate);
+		setup(room,LAC.getTime());
 	}
 	
 	
 	/**
-	 * A shared subroutine for constructors. It sets fields containing LAC, alarm state, room, installationdate and events. It also creates a new startup-event
+	 * A shared subroutine for constructors. It sets fields containing alarm-state, room and installationdate.  It also creates a new startup-event
 	 * 
 	 * @param lac
 	 * @param events
 	 * @param rom
 	 * @param installationDate
 	 */
-	private void setup(LAC lac, ArrayList<Event> events, Room rom, Timestamp installationDate) {
-		this.lac=lac;		
+	private void setup(Room rom, Timestamp installationDate) {	
 		alarmState=false;
 		setRoom(rom);
 		setInstallationDate(installationDate);
 		this.events = events;
-		addEvent(new Event(computeNextEventID(), Event.EventType.STARTUP,lac.getTime(),this));
+		addEvent(new Event(computeNextEventID(), Event.EventType.STARTUP,LAC.getTime(),this));
+		
+		//THIS THREAD DECREASES BATTERY OVER TIME
+		Thread t = new Thread(){
+			public void run(){
+				while(true){
+					if(battery>0)battery--;
+					try {
+						Thread.currentThread().sleep(10000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		};
+		t.start();
 	}
 	
 	/**
@@ -185,7 +201,7 @@ public class Sensor {
 	 * @return an int representing the percentage remaining battterytime 
 	 */
 	public int checkBattery() {
-		return 47;
+		return battery;
 	}
 	
 	
