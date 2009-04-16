@@ -2,22 +2,19 @@ package model;
 
 import java.sql.Timestamp;
 
+/**
+ * This is a standard JAVA-Bean that holds info about a Sensor-event. It cannot be modified once created 
+ * @author Jan Berge Ommedal
+ */
+
 public class Event {
  
-	private int id;
-	private EventType eventType;
-	private Timestamp time; 
-	private Sensor lac;
+	private final int id;
+	private final EventType eventType;
+	private final Timestamp time; 
+	private final Sensor lac;
 	
-	private static int nextID;
-	
-	public Event(EventType eventType, Timestamp time, Sensor lac) {
-		this.eventType = eventType;
-		this.time = time;
-		this.lac = lac;
-		id = nextID++;
-	}
-	
+
 	public Event(int id, EventType eventType, Timestamp time, Sensor lac) {
 		this.eventType = eventType;
 		this.time = time;
@@ -25,10 +22,7 @@ public class Event {
 		this.id = id;
 	}
 	
-	public static void setNextID(int id){
-		nextID=id;
-	}
-	
+
 	public int getID() {
 		return id;
 	}
@@ -47,8 +41,7 @@ public class Event {
 
 
 	enum EventType{
-		FALSEALARM, ALARM
-		
+		FALSEALARM, ALARM, STARTUP
 	}
 }
  
