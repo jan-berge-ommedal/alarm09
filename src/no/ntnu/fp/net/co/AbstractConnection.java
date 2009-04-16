@@ -91,7 +91,7 @@ public abstract class AbstractConnection implements Connection {
     /** The sequence number used in disconnection. */
     protected int disconnectSeqNo;
      /** If a FIN has been received, it is stored in disconnectRequest. */
-     protected KtnDatagram disconnectRequest;
+    protected KtnDatagram disconnectRequest;
 
     /** Initialize variables to default values. */
     public AbstractConnection() {
