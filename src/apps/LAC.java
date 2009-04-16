@@ -4,11 +4,15 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+
+import connection.LACProtocol;
+import connection.TCPConnection;
 
 import model.Model;
 import model.Sensor;
@@ -21,42 +25,34 @@ public class LAC {
 	private Connection connection;
 	
 	//private LACGui gui;
+	private static int connectionint = 1;
 	
 	public LAC() {
-		
-		connection = new ConnectionImpl(500);
 		try {
-			connection.connect(InetAddress.getByName("192.168.0.5"), 501);
-		} catch (SocketTimeoutException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			connection = new TCPConnection(666+connectionint);
+			connection.connect(InetAddress.getByName("localhost"), 666);
+			int modelID = LACProtocol.receiveNextModelID(connection);
+			model = new Model();
+			model.setID(modelID);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//id = Protocol.recieveData(connection,Protol.MessageType.GETNEXTLEACID).getID();
-		model = new Model();
-		//gui = new LACGui();
+			
+
+		
 	}
 	
 	public LAC(int id) {
-		connection = new ConnectionImpl(500);
 		try {
+			connection = new TCPConnection(500);
 			connection.connect(InetAddress.getByName("192.168.0.5"), 501);
-		} catch (SocketTimeoutException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			model = LACProtocol.receiveCompleteModel(connection, id);
+			//gui = new LACGui();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}			
-		//gui = new LACGui();
+		}
 		
 	}
 	

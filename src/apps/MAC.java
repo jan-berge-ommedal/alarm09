@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 
+import connection.MACProtocol;
+import connection.TCPConnection;
+
 import database.Database;
 
 import no.ntnu.fp.net.co.Connection;
@@ -15,9 +18,12 @@ public class MAC {
 	private Database database;
 	//private MACGui gui;
 	
+	private static int i = 0;
+	
 	public MAC() {
 		database = new Database();
-		macConnection = new ConnectionImpl(501);
+		macConnection = new TCPConnection(666);
+		createNewLACAdaper();
 		//gui = new MACGui(this);
 	}
 	
@@ -32,15 +38,26 @@ public class MAC {
 	public Connection getMainConnection() {
 		return macConnection;
 	}
+	
+	public Database getDatabase() {
+		return database;
+	}
+	
+	public static void main(String[] args) {
+		new MAC();
+	}
 	 
-	class LACAdaper extends Thread{
+	public class LACAdaper extends Thread{
 		private Connection connection;
 		private MAC mac;
 		private boolean running;
 		
+		
+		
 		public LACAdaper(MAC mac) {
 			this.mac = mac;
 			running = true;
+			this.setName("Connection-"+(i++));
 			start();
 		}
 		
@@ -50,6 +67,8 @@ public class MAC {
 				mac.createNewLACAdaper();
 				while(running){
 					String msg = connection.receive();
+					MACProtocol.handleMSG(this,msg);
+					System.out.println("asdfsadf");
 				}
 			} catch (SocketTimeoutException e) {
 				e.printStackTrace();
@@ -70,7 +89,14 @@ public class MAC {
 				e.printStackTrace();
 			}
 		}
+
+		public MAC getMAC() {
+			return mac;
+		}
+
 	}
+
+
 
 	
 

@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class Model implements PropertyChangeListener {
  
 	private int id;
-	private String adresse;
+	private String adress = "<adress>";
 	private ArrayList<Sensor> sensorer = new ArrayList<Sensor>();
 	private ArrayList<PropertyChangeListener> listeners = new ArrayList<PropertyChangeListener>();
 
@@ -29,11 +29,11 @@ public class Model implements PropertyChangeListener {
 	}
 	
 	public String getAdresse() {
-		return adresse;
+		return adress;
 	}
 
 	public void setAdresse(String adresse) {
-		this.adresse = adresse;
+		this.adress = adresse;
 	}
 	
 	
