@@ -49,6 +49,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	public void setModel(Model model) {
 		this.model = model;
 		this.sensorList.setModel(model);
+		this.repaint();
 	}
 	
 	/**
@@ -101,11 +102,13 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		pane.add(checkSensors);
 		pane.add(sensors);
 		pane.add(returnMAC);
+		pane.add(adresse);
 		installSensor.setBounds(LEFT_SPACE, TOP_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		saveLog.setBounds(LEFT_SPACE + BUTTON_WIDTH + DEFAULT_SPACE, TOP_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		sensors.setBounds(LEFT_SPACE, TOP_SPACE + BUTTON_HEIGHT + 2*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		checkSensors.setBounds(LEFT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT);
 		returnMAC.setBounds(LEFT_SPACE + BUTTON_WIDTH + DEFAULT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT);
+		//adresse.setBounds()
 		
 		/*
 		 * Initialiserer JListen
