@@ -12,7 +12,9 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.Iterator;
 
+import model.Event;
 import model.Model;
+import model.Room;
 import model.Sensor;
 import nu.xom.Builder;
 import nu.xom.Document;
@@ -42,29 +44,25 @@ public class XmlSerializer {
 		adress.appendChild(aModel.getAdresse());
 		root.appendChild(adress);
 		
-		Iterator it = aModel.iterator();
-		
-		while (it.hasNext()) {	
-			Sensor aSensor = (Sensor)it.next();
-			Element element = sensorToXml(aSensor);
+		for (Room r : aModel.getRooms()) {
+			Element element = sensorToXml(r);
 			root.appendChild(element);
 		}
 		
-		return new Document(root).toString();
+		return root.toXML();
 	}
 	
-//	public Model toModel(String xmlDocument) throws ParseException {
-//		Model aModle = new Model();
-//		Element groupElement = xmlDocument.getRootElement();
-//		Elements personElements = groupElement.getChildElements("person");
-//		
-//		for (int i = 0; i < personElements.size(); i++) {
-//			Element childElement = personElements.get(i);
-//			aProject.addPerson(assemblePerson(childElement));
-//		}
-//		
-//		return aProject;
-//	}
+	public Model toModel(String xml) throws ParseException {
+		Model aModel = new Model();
+		String[] xmls = xml.split("<");
+		Element groupElement = new Element("xml");
+		aModel.setID(Integer.parseInt(xmls[1].substring(5)));
+		aModel.setAdresse(xmls[3].substring(9));
+		
+		
+		
+		return aModel;
+	}
 
 //    public Person toPerson(String xml) throws java.io.IOException, java.text.ParseException, nu.xom.ParsingException {
 //		nu.xom.Builder parser = new nu.xom.Builder(false);
@@ -72,40 +70,61 @@ public class XmlSerializer {
 //		return assemblePerson(doc.getRootElement());
 //    }
 	
-	private static Element sensorToXml(Sensor aSensor) {
-		Element element = new Element("sensor");
-		Element id = new Element("id");
-		id.appendChild(Integer.toString(aSensor.getId()));
-		Element alarmState = new Element("alarmState");
-		if(aSensor.isAlarmState())alarmState.appendChild("true");
-		else alarmState.appendChild("false");
+	private static Element sensorToXml(Room aRoom) {
+		Element element = new Element("room");
 		
-		Element room = new Element("Room");
 		Element roomid = new Element("id");
-		roomid.appendChild(Integer.toString(aSensor.getRoom().getID()));
+		roomid.appendChild(Integer.toString(aRoom.getID()));
 		Element romNR = new Element("romNR");
-		romNR.appendChild(Integer.toString(aSensor.getRoom().getRomNR()));
-		Element romType = new Element("rom type");
-		romType.appendChild(aSensor.getRoom().getRomType());
-		Element romInfo = new Element("rom info");
-		romInfo.appendChild(aSensor.getRoom().getRomInfo());
+		romNR.appendChild(Integer.toString(aRoom.getRomNR()));
+		Element roomType = new Element("romtype");
+		roomType.appendChild(aRoom.getRomType());
+		Element roomInfo = new Element("rominfo");
+		roomInfo.appendChild(aRoom.getRomInfo());
 		
-		Iterator it = aSensor.getRoom().iterator();
+		element.appendChild(roomid);
+		element.appendChild(romNR);
+		element.appendChild(roomType);
+		element.appendChild(roomInfo);
 		
 		
-		room.appendChild(aSensor.getRoom().getRomType());
+		for (Sensor s : aRoom.getSensorer()) {
+			Element sensor = new Element("Sensors");
+			
+			Element id = new Element("id");
+			id.appendChild(Integer.toString(s.getId()));
+			Element alarmState = new Element("alarmState");
+			alarmState.appendChild((s.isAlarmState() ? "true" : "false"));
+			Element timeStamp = new Element ("timeStamp");
+			timeStamp.appendChild(s.getInstallationDate().toString());
+			Element battery = new Element("battery");
+			battery.appendChild(Integer.toString(s.getBattery()));
+			
+			sensor.appendChild(id);
+			sensor.appendChild(alarmState);
+			sensor.appendChild(timeStamp);
+			sensor.appendChild(battery);
+			
+			for (Event e : s.getEvents()) {
+				Element events = new Element("events");
+				
+				Element eventId = new Element("id");
+				eventId.appendChild(Integer.toString(e.getID()));
+				Element eventType = new Element("eventType");
+				eventType.appendChild(e.getEventType().toString());
+				Element time = new Element("time");
+				time.appendChild(e.getTime().toString());
+				
+				events.appendChild(eventId);
+				events.appendChild(eventType);
+				events.appendChild(time);
+				
+				sensor.appendChild(events);
+			} 
+			
+			element.appendChild(sensor);
+		}
 		
-		
-		Element installationDate = new Element("installationDate");
-		installationDate.appendChild(aSensor.getInstallationDate().toString());
-		Element battery = new Element("battery");
-		battery.appendChild(Integer.toString(aSensor.getBattery()));
-		
-		element.appendChild(id);
-		element.appendChild(alarmState);
-		element.appendChild(room);
-		element.appendChild(installationDate);
-		element.appendChild(battery);
 		return element;
 	}
 	
