@@ -1,5 +1,7 @@
 package apps;
 
+import gui.MACgui;
+
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.sql.SQLException;
@@ -31,28 +33,14 @@ public class MAC {
 	private static int i = 0;
 	
 	public MAC() {
+		gui = new MACgui();
 		try {
 			database = new Database("mysql.stud.ntnu.no","janberge_admin","1234","janberge_db");
 			macConnection = new TCPConnection(666);
 			createNewLACAdaper();
-			gui = new MACgui();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception e) {
+			System.err.println("Could not connect to database");
 		}
-		
 	}
 	
 	/**

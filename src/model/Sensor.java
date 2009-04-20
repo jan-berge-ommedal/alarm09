@@ -92,7 +92,7 @@ public class Sensor {
 				while(true){
 					if(getBattery()>0)setBattery(getBattery()-1);
 					try {
-						Thread.currentThread().sleep(10000);
+						Thread.currentThread().sleep(1000);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}

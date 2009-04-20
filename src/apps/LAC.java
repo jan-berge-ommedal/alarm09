@@ -1,5 +1,7 @@
 package apps;
 
+import gui.LACgui;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
@@ -52,11 +54,14 @@ public class LAC implements PropertyChangeListener {
 			System.err.println(e.getMessage());
 		}
 		Model m = new Model();
-		m.setAdresse("Adressenadsfkjbhsadfkh");
-		Room r = new Room(0,54,"BAD","asfnjadsfj");
+		m.setAdresse("Lidarende 1");
+		Room r = new Room(0,54,"BAD","Et fint bad");
 		r.addSensor(new Sensor(0,false,70,LAC.getTime(),r));
-		r.addSensor(new Sensor(0,true,20,LAC.getTime(),r));
+		r.addSensor(new Sensor(1,true,20,LAC.getTime(),r));
+		Room r2 = new Room(0,2,"Kjøkken","Storkjøkkenet i huset");
+		r2.addSensor(new Sensor(2,false,100,LAC.getTime(),r2));
 		m.addRoom(r);
+		m.addRoom(r2);
 		m.setID(1);
 		setModel(m);
 			
@@ -92,7 +97,7 @@ public class LAC implements PropertyChangeListener {
 			} catch(BindException e){
 				throw new IOException("Port in use");
 			}catch (IOException e) {
-				System.err.println("Reattempting to connect");
+				System.err.println("Reattempting to connect ("+i+" retries left)");
 			}finally{
 				i--;
 			}

@@ -1,4 +1,4 @@
-package apps;
+package gui;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -20,13 +20,18 @@ import model.Sensor;
  *
  */
 public class LACrenderer extends DefaultListCellRenderer implements ListCellRenderer, Values {
+	private static final int CELLHEIGHT = 25;
+	private static final int roomTYPESIZE = 100;
 	private static final int roomNRSIZE = 50;
-	private static final int roomNAMESIZE = 150;
+	private static final int roomNAMESIZE = 100;
 	private static final int batterySIZE = 50;
 	private static final int sensorStatusSIZE = 50;
+	private static final int timeStampSIZE = 150;
 	
 	private static final Color colorOn = Color.RED;
-	private static final Color colorOff = Color.BLACK; 
+	private static final Color colorOff = new Color(255,150,150);
+	private static final Color colorSelected = new Color(0,170,255);
+	
 
 	@Override
 	public Component getListCellRendererComponent(JList list, Object object, int index, boolean selected, boolean hasCellFocus) {
@@ -34,6 +39,7 @@ public class LACrenderer extends DefaultListCellRenderer implements ListCellRend
 		
 		JPanel comp = new JPanel();
 		comp.setLayout(null);
+		if(selected)comp.setBackground(colorSelected);
 		
 		/*
 		 * Initialiserer komponenten som skal returneres som et panel med riktige mål
@@ -48,11 +54,14 @@ public class LACrenderer extends DefaultListCellRenderer implements ListCellRend
 		/*
 		 * Initialiserer og legger til de JLabelene som skal være i JPanelet
 		 */
-		JLabel ROOMno = new JLabel(s.getRoom().getRomInfo());
-		ROOMno.setBounds(0, 0, roomNRSIZE, 20);
-		JLabel ROOMty = new JLabel(s.getRoom().getRomType());
-		JLabel ROOMna = new JLabel(""+s.getRoom().getRomNR());
-		ROOMna.setBounds(roomNRSIZE, 0, roomNAMESIZE, 20);
+
+		JLabel sensorNameLabel = new JLabel("Sensor "+(index+1));
+		sensorNameLabel.setBounds(0, 0, roomNAMESIZE, CELLHEIGHT);
+		
+		JLabel roomTypeLabel = new JLabel(s.getRoom().getRomType());
+		roomTypeLabel.setBounds(roomNAMESIZE, 0, roomTYPESIZE, CELLHEIGHT);
+		JLabel roomNrLAbel = new JLabel(""+s.getRoom().getRomNR());
+		roomNrLAbel.setBounds(roomNAMESIZE+roomTYPESIZE, 0, roomNRSIZE, CELLHEIGHT);
 		JPanel SensorStatus = new JPanel();
 		
 		if(s.isAlarmState())
@@ -60,17 +69,21 @@ public class LACrenderer extends DefaultListCellRenderer implements ListCellRend
 		else
 			SensorStatus.setBackground(Color.GREEN);
 		
-		SensorStatus.setBounds(roomNRSIZE+roomNAMESIZE, 0, sensorStatusSIZE, 20);
+		SensorStatus.setBounds(roomNAMESIZE+roomNRSIZE+roomTYPESIZE, 0, sensorStatusSIZE, CELLHEIGHT);
 		//JLabel BatteryStatus = new JLabel(""+s.getBattery());
 		BatteryIndicator BatteryStatus = new BatteryIndicator(s.getBattery());
-		BatteryStatus.setBounds(roomNRSIZE+roomNAMESIZE+sensorStatusSIZE, 0, batterySIZE, 20);
+		BatteryStatus.setBounds(roomNAMESIZE+roomNRSIZE+roomTYPESIZE+sensorStatusSIZE+15, 0, batterySIZE, CELLHEIGHT);
 		
-		comp.add(ROOMno);
-		//comp.add(ROOMty);
-		comp.add(ROOMna);
+		JLabel timestampLabel = new JLabel(s.getInstallationDate().toString());
+		timestampLabel.setBounds(roomNAMESIZE+roomNRSIZE+roomTYPESIZE+sensorStatusSIZE+batterySIZE+25, 0, timeStampSIZE, CELLHEIGHT);
+		
+		
+		comp.add(sensorNameLabel);
+		comp.add(roomTypeLabel);
+		comp.add(roomNrLAbel);
 		comp.add(SensorStatus);
 		comp.add(BatteryStatus);
-		
+		comp.add(timestampLabel);
 		return comp;
 		
 	}
@@ -89,7 +102,7 @@ public class LACrenderer extends DefaultListCellRenderer implements ListCellRend
 			g.setColor(Color.BLACK);
 			g.drawRect(0, 0, this.getWidth()-1, this.getHeight()-1);
 			g.setColor((batteryLevel/100.0>0.20 ? Color.GREEN : Color.RED));
-			g.fillRect(1, 1, (this.getWidth()-3)*batteryLevel/100, this.getHeight()-3);
+			g.fillRect(1, 1, (this.getWidth()-2)*batteryLevel/100, this.getHeight()-2);
 		}
 		
 		
