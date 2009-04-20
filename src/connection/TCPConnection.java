@@ -27,11 +27,8 @@ public class TCPConnection implements Connection{
 	private DataOutputStream out;
 	private BufferedReader in;
 	
-	public TCPConnection(int port){
-		try {
-			server = new ServerSocket(port);
-		} catch (IOException e) {
-			e.printStackTrace();}
+	public TCPConnection(int port) throws IOException{
+		server = new ServerSocket(port);
 	}
 	
 	public TCPConnection(Socket socket) throws IOException{

@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.BindException;
 import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
@@ -43,16 +44,25 @@ public class LAC implements PropertyChangeListener {
 	 * 
 	 */
 	public LAC() {
+		gui = new LACgui();
 		try {
-			connect();
+			connect(5);
 			int modelID = LACProtocol.receiveNextModelID(connection);
-			Model m = new Model();
-			m.setID(modelID);
-			
-			gui = new LACgui();
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.err.println(e.getMessage());
 		}
+		Model m = new Model();
+		m.setAdresse("Adressenadsfkjbhsadfkh");
+		Room r = new Room(0,54,"BAD","asfnjadsfj");
+		r.addSensor(new Sensor(0,false,70,LAC.getTime(),r));
+		r.addSensor(new Sensor(0,true,20,LAC.getTime(),r));
+		m.addRoom(r);
+		m.setID(1);
+		setModel(m);
+			
+			
+			
+		
 			
 
 		
@@ -62,17 +72,32 @@ public class LAC implements PropertyChangeListener {
 	 * This constructor is used when loading a LAC for storage
 	 * @param id an int, the stored id of the LAC
 	 */
-	
+	/*
 	public LAC(int id) {
-		
+		gui = new LACgui();
 		try {
 			connect();
 			setModel(LACProtocol.receiveCompleteModel(connection, id));
-			gui = new LACgui();
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.err.println("Reattempting to connect");
 		}
 		
+	}*/
+	
+	private void connect(int i) throws IOException {
+		while(i>0){
+			try {
+				connect();
+				return;
+			} catch(BindException e){
+				throw new IOException("Port in use");
+			}catch (IOException e) {
+				System.err.println("Reattempting to connect");
+			}finally{
+				i--;
+			}
+		}
+		throw new IOException("Could not connect to the MAC");
 	}
 	
 	private void connect() throws SocketTimeoutException, UnknownHostException, IOException{
@@ -95,6 +120,7 @@ public class LAC implements PropertyChangeListener {
 	private void setModel(Model model){
 		if(this.model!=null)this.model.removePropertyChangeListener(this);
 		this.model = model;
+		gui.setModel(model);
 		if(model!=null)model.addPropertyChangeListener(this);
 	}
 	
@@ -149,16 +175,17 @@ public class LAC implements PropertyChangeListener {
 	 * @throws NumberFormatException
 	 * @throws IOException
 	 */
-	
+	/*
 	private static LAC parse(File f) throws NumberFormatException, IOException {
 		BufferedReader reader = new BufferedReader(new FileReader(f));
 		LAC lac = new LAC(Integer.parseInt(reader.readLine()));		
 		return lac;
 	}
+	*/
 
 	public static void main(String[] args) {
 		new LAC();
-		new LAC(1);
+		//new LAC(1);
 		
 		/*
 		 if(args.length > 0){

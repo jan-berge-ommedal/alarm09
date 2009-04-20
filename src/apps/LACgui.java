@@ -113,12 +113,12 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		/*
 		 * Initialiserer JListen
 		 */
-		if (!model) { //hvis initialize kalles med en model settes listen til å være med elementene, hvis ikke opprettes en liste med ett "lol" element
-			sensorList = new JList();
+		sensorList = new BlinkingList();
+		
+		if (model) { //hvis initialize kalles med en model settes listen til å være med elementene, hvis ikke opprettes en liste med ett "lol" element
+			sensorList.setModel(this.model);
 		}
-		else {
-			sensorList = new JList(this.model);
-		}
+		
 		sensorList.setCellRenderer(new LACrenderer());
 		sensorList.setVisibleRowCount(7); 
 		sensorList.setVisible(true);
