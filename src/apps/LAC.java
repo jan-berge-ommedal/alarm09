@@ -1,6 +1,7 @@
 package apps;
 
 import gui.LACgui;
+import help.AlarmHelp;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -53,17 +54,7 @@ public class LAC implements PropertyChangeListener {
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
 		}
-		Model m = new Model();
-		m.setAdresse("Lidarende 1");
-		Room r = new Room(0,54,"BAD","Et fint bad");
-		r.addSensor(new Sensor(0,false,70,LAC.getTime(),r));
-		r.addSensor(new Sensor(1,true,20,LAC.getTime(),r));
-		Room r2 = new Room(0,2,"Kjøkken","Storkjøkkenet i huset");
-		r2.addSensor(new Sensor(2,false,100,LAC.getTime(),r2));
-		m.addRoom(r);
-		m.addRoom(r2);
-		m.setID(1);
-		setModel(m);
+		setModel(AlarmHelp.getDefaultModel());
 			
 			
 			
@@ -122,7 +113,7 @@ public class LAC implements PropertyChangeListener {
 	 * Sets the given parameter as the datamodel of the LAC, and add
 	 * @param model the new model
 	 */
-	private void setModel(Model model){
+	public void setModel(Model model){
 		if(this.model!=null)this.model.removePropertyChangeListener(this);
 		this.model = model;
 		gui.setModel(model);
@@ -204,10 +195,8 @@ public class LAC implements PropertyChangeListener {
 						if(lac==null)
 							System.err.println("Invalid LAC Format");		
 					} catch (NumberFormatException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 							

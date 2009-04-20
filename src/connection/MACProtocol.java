@@ -20,10 +20,8 @@ public class MACProtocol {
 					adaper.getConnection().send(XmlSerializer.toXml(adaper.getModel()));
 				}
 			} catch (ConnectException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}else if(receive.equals("GETNEXTID")){

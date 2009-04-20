@@ -241,5 +241,15 @@ public class Sensor {
 	public Room getRoom() {
 		return room;
 	}
+	
+	public String toString(){
+		String s = "";
+		s+="Sensor: "+id+" - "+alarmState+" - "+battery+" - "+installationDate+"\n";
+		for(Event e : events){
+			s+="\t\t\t"+e.toString()+"\n";
+		}
+		
+		return s;
+	}
 }
  

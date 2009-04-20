@@ -3,6 +3,7 @@ package model;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -31,7 +32,12 @@ public class Model implements ListModel, PropertyChangeListener {
 	private ArrayList<Room> rooms = new ArrayList<Room>();
 	private ArrayList<Sensor> sensors = new ArrayList<Sensor>();
 	private ArrayList<PropertyChangeListener> listeners = new ArrayList<PropertyChangeListener>();
+	
+	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
+	public Model() {
+		pcs.addPropertyChangeListener(this);
+	}
 	
 	/* SECTION OF SIMPLE GET & SET */
 	
@@ -40,7 +46,9 @@ public class Model implements ListModel, PropertyChangeListener {
 	}
 
 	public void setID(int id) {
+		int oldValue = this.id;
 		this.id = id;
+		pcs.firePropertyChange("LACID", oldValue, id);
 	}
 	
 	public String getAdresse() {
@@ -48,7 +56,9 @@ public class Model implements ListModel, PropertyChangeListener {
 	}
 
 	public void setAdresse(String adresse) {
-		this.adress = adresse;
+		String oldValue = this.adress;
+		this.adress = adresse;		
+		pcs.firePropertyChange("LACID", oldValue, adresse);
 	}
 	
 	
@@ -131,6 +141,16 @@ public class Model implements ListModel, PropertyChangeListener {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	public String toString(){
+		String result = "Model\n---------------\n";
+		result+="ID: "+id+"\n";
+		result+="Adresse: "+adress+"\n";
+		for(Room r : rooms){
+			result+="\t"+r.toString()+"\n";
+		}
+		return result;
+	}
 
 
 
@@ -139,3 +159,4 @@ public class Model implements ListModel, PropertyChangeListener {
 	
 }
  
+

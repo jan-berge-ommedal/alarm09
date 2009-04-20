@@ -111,7 +111,16 @@ public class Room {
 	}
 
 	
-	
+	public String toString(){
+		String s = "";
+		s+="Room: "+romType+" "+id+" - "+romNR+" - "+romInfo+"\n";
+		for(Sensor sens : sensorer){
+			s+="\t\t"+sens.toString()+"\n";
+		}
+		
+		return s;
+		
+	}
 	
 	
 	 

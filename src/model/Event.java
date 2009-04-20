@@ -36,11 +36,18 @@ public class Event {
 	
 	public Timestamp getTime() {
 		return time;
+		
 	}
 
 
 	public enum EventType{
 		FALSEALARM, ALARM, STARTUP, BATTERYREPLACEMENT
+	}
+	
+	public String toString(){
+		String s = "";
+		s+="Event: "+id+" - "+eventType+" - "+time;
+		return s;
 	}
 }
  
