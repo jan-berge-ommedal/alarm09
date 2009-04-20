@@ -31,6 +31,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	private JLabel sensors;
 	private JList sensorList;
 	private Model model;
+	private JLabel adresse;
 	
 	public LACgui(Model model) {
 		this.initialize(true);
@@ -47,6 +48,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	
 	public void setModel(Model model) {
 		this.model = model;
+		this.sensorList.setModel(model);
 	}
 	
 	/**
@@ -100,7 +102,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		/*
 		 * Initialiserer JListen
 		 */
-		if (model) { //hvis initialize kalles med en model settes listen til å være med elementene, hvis ikke opprettes en liste med ett "lol" element
+		if (!model) { //hvis initialize kalles med en model settes listen til å være med elementene, hvis ikke opprettes en liste med ett "lol" element
 			sensorList = new JList(new String[]{"lol"});
 		}
 		else {
@@ -313,8 +315,8 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	public static void main(String[] args) {
 		//sensorAttributes(false);
 		//sensorsChecked();
-		MACgui window2 = new MACgui();
-		//LACgui window = new LACgui();
+		//MACgui window2 = new MACgui();
+		LACgui window = new LACgui();
 		//fireFightConfirm();
 		//fireFightConfirmed();
 		//logSaved();
