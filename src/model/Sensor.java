@@ -18,19 +18,18 @@ import apps.LAC;
  */
 
 public class Sensor {
+	
+	/* START DATAFIELDS */
 	private int id;
-	
 	private boolean alarmState;
-	private Room room;
 	private Timestamp installationDate;
-	private ArrayList<Event> events = new ArrayList<Event>();
+	private int battery = 100;
+	/* END DATAFIELDS */
 	
+	private ArrayList<Event> events = new ArrayList<Event>();
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
-	private int battery = 100;
-	
-	private static int nextID = 0; 
-	
+	private int nextID = 0;
 	
 	/**
 	 * 
@@ -44,10 +43,13 @@ public class Sensor {
 	 * @param installationDate Installation-date of the sensor
 	 */
 	
-	public Sensor(int id, Room room, Timestamp installationDate){
+	public Sensor(int id, boolean alarm, int battery, Timestamp installationDate){
 		this.id=id;
 		if(id>=nextID)nextID=id+1;
-		setup(room, installationDate);
+		this.alarmState=alarm;
+		this.battery=battery;
+		this.installationDate=installationDate;
+		startup();
 		
 	}
 	
@@ -61,27 +63,24 @@ public class Sensor {
 	 */
 	
 	public Sensor(Room room){
-		this.id = nextID++;	
-		setup(room,LAC.getTime());
+		this.id = nextID++;
+		alarmState=false;
+		battery=100;
+		installationDate = LAC.getTime();
+		startup();
 	}
 	
 	
 	/**
-	 * A shared subroutine for constructors. It sets fields containing alarm-state, room and installationdate.  It also creates a new startup-event
+	 * A shared subroutine for constructors. It adds a startup-event.
 	 * 
 	 * @param lac
 	 * @param events
 	 * @param rom
 	 * @param installationDate
 	 */
-	private void setup(Room rom, Timestamp installationDate) {	
-		alarmState=false;
-		setRoom(rom);
-		setInstallationDate(installationDate);
-		this.events = events;
-		addEvent(new Event(computeNextEventID(), Event.EventType.STARTUP,LAC.getTime(),this));
-		
-	
+	private void startup() {	
+		addEvent(new Event(computeNextEventID(), Event.EventType.STARTUP,LAC.getTime(),this));	
 		Thread t = new Thread(){
 			/**
 	 		* A thread that decreases the remaining batterytime
@@ -154,32 +153,7 @@ public class Sensor {
 			pcs.firePropertyChange("INSTALLATIONDATE", oldValue, alarmState);
 		}
 	}
-	/**
-	 * 
-	 * @return the room containing the sensor
-	 */
-	public Room getRoom() {
-		return room;
-	}
-	
-	/**
-	 * Sets the room-field of the sensor. It also clears the relation with the old room and notifies PropertyChangeListeners.
-	 * 
-	 * @param room
-	 */
-	public void setRoom(Room room) {
-		if(this.room!=null)this.room.removeSensor(this);
-		Room oldValue = this.room;
-		room.addSensor(this);
-		this.room = room;
-		pcs.firePropertyChange("INSTALLATIONDATE", oldValue, room);
-		if(this.room!=null){
-		for(PropertyChangeListener pcl : pcs.getPropertyChangeListeners())
-			room.addPropertyChangeListener(pcl);
-		}
-		
-	}
-	
+
 	/**
 	 * 
 	 * @return ArrayList of this sensors' events 

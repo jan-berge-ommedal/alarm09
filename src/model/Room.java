@@ -13,13 +13,15 @@ import java.util.Iterator;
  */
 
 public class Room {
- 
+	
+	/* START DATAFIELDS */
 	private int id;
 	private int romNR;
 	private String romType;
-	private String romInfo;	 
-	private ArrayList<Sensor> sensorer = new ArrayList<Sensor>();
+	private String romInfo;
+	/* END DATAFIELDS */
 	
+	private ArrayList<Sensor> sensorer = new ArrayList<Sensor>();
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	
 

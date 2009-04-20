@@ -18,9 +18,13 @@ import apps.LAC;
 
 public class Model implements PropertyChangeListener {
  
+	/* START DATAFIELDS */
 	private int id;
 	private String adress = "<adress>";
-	private ArrayList<Sensor> sensorer = new ArrayList<Sensor>();
+	/* END DATAFIELDS */
+	
+	
+	private ArrayList<Room> rooms = new ArrayList<Room>();
 	private ArrayList<PropertyChangeListener> listeners = new ArrayList<PropertyChangeListener>();
 
 	
@@ -43,18 +47,18 @@ public class Model implements PropertyChangeListener {
 	}
 	
 	
-	public void addSensor(Sensor s){
-		s.addPropertyChangeListener(this);
-		sensorer.add(s);
+	public void addRoom(Room r){
+		r.addPropertyChangeListener(this);
+		rooms.add(r);
 	}
 	
-	public void removeSensor(Sensor s){
-		sensorer.remove(this);
+	public void removeRoom(Room r){
+		rooms.remove(this);
 	}
 
 
-	public ArrayList<Sensor> getSensors() {
-		return sensorer;
+	public ArrayList<Room> getRooms() {
+		return rooms;
 	}
 	
 	/* END SECTION OF SIMPLE GET & SET */
@@ -88,9 +92,6 @@ public class Model implements PropertyChangeListener {
 		
 	}
 
-	public Iterator iterator() {
-		return sensorer.iterator();
-	}
 
 
 
