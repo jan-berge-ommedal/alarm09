@@ -172,7 +172,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	 * (da vinduet er veldig lite er dette neppe nødvendig) 
 	 */
 	public static void fireFightConfirm() {
-		JFrame frame = new JFrame("Confirmation needed");
+		final JFrame frame = new JFrame("Confirmation needed");
 		JPanel panel  = new JPanel();
 		
 		//pakker frame etc
@@ -183,7 +183,20 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		
 		JLabel info = new JLabel("Are you sure you want to initiate the automatic fire-fighting system?");
 		JButton y = new JButton("Yes");
+		y.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.setVisible(false);
+				fireFightConfirmed();
+			}
+		}
+		);
 		JButton n = new JButton("No");
+		n.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.setVisible(false);
+			}
+		}
+		);
 		panel.add(info);
 		panel.add(y);
 		panel.add(n);
@@ -194,7 +207,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	 * I likhet med fireFightConfirm bruker den ikke verdier fra Values
 	 */
 	public static void fireFightConfirmed() {
-		JFrame frame = new JFrame();
+		final JFrame frame = new JFrame();
 		JPanel panel  = new JPanel();
 		
 		//pakker frame etc
@@ -205,6 +218,12 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		
 		JLabel info = new JLabel("You have initiated the automatic fire-fighting system!");
 		JButton y = new JButton("OK");
+		y.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.setVisible(false);
+			}
+		}
+		);
 		panel.add(info);
 		panel.add(y);
 	}
@@ -213,7 +232,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	 * Slenger opp en infoboks som bekrefter at resultatet er lagret i loggen. Bruker ikke values
 	 */
 	public static void logSaved() {
-		JFrame frame = new JFrame("Congratulations");
+		final JFrame frame = new JFrame("Congratulations");
 		JPanel panel  = new JPanel();
 		
 		//pakker frame etc
@@ -224,6 +243,38 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		
 		JLabel info = new JLabel("The result has been written to the local log file!");
 		JButton y = new JButton("OK");
+		y.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.setVisible(false);
+			}
+		}
+		);
+		panel.add(info);
+		panel.add(y);
+	}
+	
+	/**
+	 * Slenger opp en infoboks som bekrefter at sensorene er i orden
+	 * Burde denne metoden tatt inn en boolean parameter i tilfellet sensorene ikke er i orden?
+	 */
+	public static void sensorsChecked() {
+		final JFrame frame = new JFrame();
+		JPanel panel  = new JPanel();
+		
+		//pakker frame etc
+		frame.setSize(100, 110);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setContentPane(panel);
+		frame.setVisible(true);
+		
+		JLabel info = new JLabel("Sensors OK!");
+		JButton y = new JButton("OK");
+		y.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.setVisible(false);
+			}
+		}
+		);
 		panel.add(info);
 		panel.add(y);
 	}
@@ -233,9 +284,10 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		sensorAttributes(false); 
+		//sensorAttributes(false);
+		//sensorsChecked();
 		//MACgui window2 = new MACgui();
-		//LACgui window = new LACgui();
+		LACgui window = new LACgui();
 		//fireFightConfirm();
 		//fireFightConfirmed();
 		//logSaved();
@@ -250,7 +302,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 			sensorAttributes(false);
 		}
 		else if (evt.getSource() == checkSensors) {
-			//gi tilbakemelding på sensorstatus
+			sensorsChecked();
 		}
 		else if (evt.getSource() == returnMAC) {
 			//returner til macen
