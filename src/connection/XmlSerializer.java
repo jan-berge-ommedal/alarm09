@@ -12,6 +12,8 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.Iterator;
 
+import com.sun.jmx.snmp.Timestamp;
+
 import model.Event;
 import model.Model;
 import model.Room;
@@ -59,9 +61,55 @@ public class XmlSerializer {
 		aModel.setID(Integer.parseInt(xmls[1].substring(5)));
 		aModel.setAdresse(xmls[3].substring(9));
 		
+		int roomteller = 100;
+		int sensorteller = 100;
+		int eventteller = 100;
+		roomteller++;
+		int roomid = 0;
+		int roomnr = 0;
+		String roomtype = "";
+		String roominfo = ""; 
+		int sensorid = 0;
+		boolean sensoralarm = false;
+		Timestamp sensortime = new Timestamp();
+		
+		for (int i = 0; i < xmls.length; i++) {
+			// Checks for room
+			if(xmls[i] == "<room>"){
+				roomteller = 0;
+			}
+			// Gets the right roomattributes
+			if(roomteller == 1){roomid = Integer.parseInt(xmls[i].substring(5));}
+			else if(roomteller == 3){roomnr = Integer.parseInt(xmls[i].substring(8));}
+			else if(roomteller == 5){roomtype = xmls[i].substring(10);}
+			else if(roomteller == 7){roominfo = xmls[i].substring(10);}
+			else if(roomteller == 9){
+				Room r = new Room(roomid, roomnr, roomtype, roominfo);
+				aModel.addRoom(r);
+			}
+			// Checks for sensors
+			if(xmls[i] == "<Sensors>"){
+				sensorteller = 0;
+			}
+			// Gets the right sensorattributes
+			if(sensorteller == 1){sensorid = Integer.parseInt(xmls[i].substring(5));}
+			else if(sensorteller == 3){sensoralarm = true ? xmls[i].substring(13) == "true" : false;}
+			else if(sensorteller == 5){sensortime = makeTimestamp();}
+			else if(sensorteller == 7){roominfo = xmls[i].substring(10);}
+			else if(sensorteller == 9){
+				Room r = new Room(roomid, roomnr, roomtype, roominfo);
+				aModel.addRoom(r);
+			}
+		
+		}
 		
 		
 		return aModel;
+	}
+
+private Timestamp makeTimestamp() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 //    public Person toPerson(String xml) throws java.io.IOException, java.text.ParseException, nu.xom.ParsingException {
