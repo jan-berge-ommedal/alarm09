@@ -2,6 +2,8 @@ package apps;
 
 import java.awt.Font;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -14,10 +16,11 @@ import javax.swing.JTextField;
  * 
  * @author Olannon
  * 
- * denne klassen håndterer vinduet som presenteres fra en LAC maskin 
+ * denne klassen håndterer vinduet som presenteres fra en LAC maskin og
+ * inneholder mainmetoden som skal brukes for å teste guienhetene
  *
  */
-public class LACgui extends JPanel implements Values {
+public class LACgui extends JPanel implements Values, ActionListener {
 	
 	private boolean fromMac;
 	private JButton installSensor;
@@ -36,15 +39,25 @@ public class LACgui extends JPanel implements Values {
 		frame.setContentPane(pane);
 		frame.setVisible(true);
 		
+		/*
+		 * Buttons
+		 */
 		installSensor = new JButton("Install Sensor");
+		installSensor.addActionListener(this);
 		installSensor.setMargin(asdf);
 		saveLog = new JButton("Save Log");
+		saveLog.addActionListener(this);
 		saveLog.setMargin(asdf);
 		checkSensors = new JButton("Check Sensors");
+		checkSensors.addActionListener(this);
 		checkSensors.setMargin(asdf);
+		//Merk at returnMAC må håndteres dynamisk for å unngå at den vises når LACvinduet
+		//ikke er aksessert fra MAC
 		returnMAC = new JButton("Return to MAC");
+		returnMAC.addActionListener(this);
 		returnMAC.setMargin(asdf);
 		//returnMAC.setVisible(false);
+		
 		sensors = new JLabel("Sensors");
 		Font f = new Font("Dialog", Font.PLAIN, 20);
 		sensors.setFont(f);
@@ -124,7 +137,19 @@ public class LACgui extends JPanel implements Values {
 		
 		//knappene
 		JButton save = new JButton("Save");
+		save.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//oppdater modellen
+			}
+		}
+		);
 		JButton cancel = new JButton("Return");
+		cancel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//steng vinduet og åpne LACvinduet
+			}
+		}
+		);
 		save.setBounds(LEFT_SPACE, SMALL_WINDOW_HEIGHT-TOP_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		cancel.setBounds(LEFT_SPACE + DEFAULT_SPACE + BUTTON_WIDTH, SMALL_WINDOW_HEIGHT-TOP_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		
@@ -204,16 +229,33 @@ public class LACgui extends JPanel implements Values {
 	}
 	
 	/**
-	 * main for testmetoder
+	 * main for GUI testmetoder
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		sensorAttributes(false); //blir lol hvis den kalles med true som parameter wtf
-		MACgui window2 = new MACgui();
-		LACgui window = new LACgui();
-		fireFightConfirm();
-		fireFightConfirmed();
-		logSaved();
+		sensorAttributes(false); 
+		//MACgui window2 = new MACgui();
+		//LACgui window = new LACgui();
+		//fireFightConfirm();
+		//fireFightConfirmed();
+		//logSaved();
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent evt) {
+		if (evt.getSource() == saveLog) {
+			logSaved(); //skulle vi lagt inn mulighet for feilmelding dersom loggen ikke lagres?
+		}
+		else if (evt.getSource() == installSensor) {
+			sensorAttributes(false);
+		}
+		else if (evt.getSource() == checkSensors) {
+			//gi tilbakemelding på sensorstatus
+		}
+		else if (evt.getSource() == returnMAC) {
+			//returner til macen
+		}
+		
 	}
 
 }
