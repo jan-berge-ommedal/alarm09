@@ -12,16 +12,16 @@ import java.sql.Timestamp;
 
 public class Event {
  
+	/* START DATAFELTER */
 	private final int id;
 	private final EventType eventType;
 	private final Timestamp time; 
-	private final Sensor lac;
+	/* SLUTT DATAFELTER */
 	
 
-	public Event(int id, EventType eventType, Timestamp time, Sensor lac) {
+	public Event(int id, EventType eventType, Timestamp time) {
 		this.eventType = eventType;
 		this.time = time;
-		this.lac = lac;
 		this.id = id;
 	}
 	
@@ -36,10 +36,6 @@ public class Event {
 	
 	public Timestamp getTime() {
 		return time;
-	}
-
-	public Sensor getLac() {
-		return lac;
 	}
 
 
