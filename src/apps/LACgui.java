@@ -83,8 +83,16 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		//returnMAC.setVisible(false);
 		
 		sensors = new JLabel("Sensors");
+		if (model) { //hvis model = null har ikke lacen adresse
+			adresse = new JLabel(this.model.getAdresse());
+		}
+		else {
+			adresse = new JLabel("Ikke valgt");
+		}
 		Font f = new Font("Dialog", Font.PLAIN, 20);
 		sensors.setFont(f);
+		adresse.setFont(f);
+		adresse.setVisible(true);
 		sensors.setVisible(true);
 	
 		pane.setLayout(null);
@@ -103,7 +111,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		 * Initialiserer JListen
 		 */
 		if (!model) { //hvis initialize kalles med en model settes listen til å være med elementene, hvis ikke opprettes en liste med ett "lol" element
-			sensorList = new JList(new String[]{"lol"});
+			sensorList = new JList();
 		}
 		else {
 			sensorList = new JList(this.model);
