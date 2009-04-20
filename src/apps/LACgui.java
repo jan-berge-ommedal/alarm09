@@ -4,6 +4,7 @@ import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import model.Model;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -29,8 +30,29 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	private JButton returnMAC;
 	private JLabel sensors;
 	private JList sensorList;
+	private Model model;
+	
+	public LACgui(Model model) {
+		this.initialize(true);
+		this.model = model;
+	}
 	
 	public LACgui() {
+		this.initialize(false);
+	}
+	
+	public Model getModel() {
+		return this.model;
+	}
+	
+	public void setModel(Model model) {
+		this.model = model;
+	}
+	
+	/**
+	 * felles initialisering for konstruktørene
+	 */
+	private void initialize(boolean model) {
 		Insets asdf = new Insets(0,0,0,0);
 		JPanel pane = new JPanel();
 		JFrame frame = new JFrame("LAC");
@@ -78,7 +100,12 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		/*
 		 * Initialiserer JListen
 		 */
-		sensorList = new JList(new String[]{"lol"});
+		if (model) { //hvis initialize kalles med en model settes listen til å være med elementene, hvis ikke opprettes en liste med ett "lol" element
+			sensorList = new JList(new String[]{"lol"});
+		}
+		else {
+			sensorList = new JList(this.model);
+		}
 		sensorList.setCellRenderer(new LACrenderer());
 		sensorList.setVisibleRowCount(7); 
 		sensorList.setVisible(true);
