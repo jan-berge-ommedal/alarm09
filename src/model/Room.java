@@ -3,6 +3,7 @@ package model;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * This is a JAVA-Bean that represents a room. It supports PropertyChange-listening. 
@@ -101,6 +102,10 @@ public class Room {
 	 */
 	public void addPropertyChangeListener(PropertyChangeListener listener){
 		pcs.addPropertyChangeListener(listener);
+	}
+
+	public Iterator iterator() {
+		return sensorer.iterator();
 	}
 
 	
