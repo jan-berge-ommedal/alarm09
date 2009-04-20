@@ -60,10 +60,58 @@ public class Database {
 		
 	}
 	
-	public Model getLACModel(int id){
+	public Model getLACModel(int id) {
 		Model m = new Model();
 		m.setID(id);
-		m.setAdresse("Adressen!");
+		
+		
+		try {
+			String query = "SELECT adress FROM LAC WHERE ID="+id;
+			ResultSet rs = executeQuery(query);
+			rs.next();
+			m.setAdresse(rs.getString(1));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			String query = "SELECT ID, romNR, romType, romInfo FROM Rom WHERE LACID="+id;
+			ResultSet rs = executeQuery(query);
+			while(rs.next()) {
+			
+				Array romID = rs.getArray("ID");
+				
+				Room room;
+				
+				String query2 = "SELECT * FROM Sensor WHERE romID="+romID;
+				ResultSet srs = executeQuery(query2);
+				
+				
+				while(srs.next()){
+					
+				}
+			
+				
+				
+					
+				
+				
+					Sensor s = new Sensor(romid,room,timestamp);
+				
+					
+						s.addEvent(new Event(id,eventtype,timestamp));
+				
+				
+				
+				
+				
+			}
+				
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		
 		
 	
 		Room r = new Room(0,0,"BAD","Et nydelig bad");
