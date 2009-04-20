@@ -30,6 +30,7 @@ public class Sensor {
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
 	private int nextID = 0;
+	private Room room;
 	
 	/**
 	 * 
@@ -43,12 +44,13 @@ public class Sensor {
 	 * @param installationDate Installation-date of the sensor
 	 */
 	
-	public Sensor(int id, boolean alarm, int battery, Timestamp installationDate){
+	public Sensor(int id, boolean alarm, int battery, Timestamp installationDate,Room r){
 		this.id=id;
 		if(id>=nextID)nextID=id+1;
 		this.alarmState=alarm;
 		this.battery=battery;
 		this.installationDate=installationDate;
+		this.room=r;
 		startup();
 		
 	}
@@ -67,6 +69,7 @@ public class Sensor {
 		alarmState=false;
 		battery=100;
 		installationDate = LAC.getTime();
+		this.room=room;
 		startup();
 	}
 	
@@ -233,6 +236,10 @@ public class Sensor {
 	 */
 	public void addPropertyChangeListener(PropertyChangeListener listener){
 		pcs.addPropertyChangeListener(listener);
+	}
+
+	public Room getRoom() {
+		return room;
 	}
 }
  

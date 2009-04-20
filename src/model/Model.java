@@ -6,6 +6,8 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import javax.swing.DefaultListModel;
+
 import apps.LAC;
 
 /**
@@ -16,7 +18,7 @@ import apps.LAC;
  *
  */
 
-public class Model implements PropertyChangeListener {
+public class Model extends DefaultListModel implements PropertyChangeListener {
  
 	/* START DATAFIELDS */
 	private int id;
@@ -90,6 +92,16 @@ public class Model implements PropertyChangeListener {
 			pcl.propertyChange(e);
 		}
 		
+	}
+
+	public ArrayList<Sensor> getSensors() {
+		ArrayList<Sensor> list = new ArrayList<Sensor>();
+		for(Room r : getRooms()){
+			for(Sensor s : r.getSensorer()){
+				list.add(s);
+			}
+		}
+		return list;
 	}
 
 
