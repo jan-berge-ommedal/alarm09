@@ -67,9 +67,9 @@ public class XmlSerializer {
 //	}
 
 //    public Person toPerson(String xml) throws java.io.IOException, java.text.ParseException, nu.xom.ParsingException {
-//	nu.xom.Builder parser = new nu.xom.Builder(false);
-//	nu.xom.Document doc = parser.build(xml, "");
-//	return assemblePerson(doc.getRootElement());
+//		nu.xom.Builder parser = new nu.xom.Builder(false);
+//		nu.xom.Document doc = parser.build(xml, "");
+//		return assemblePerson(doc.getRootElement());
 //    }
 	
 	private static Element sensorToXml(Sensor aSensor) {
@@ -79,8 +79,23 @@ public class XmlSerializer {
 		Element alarmState = new Element("alarmState");
 		if(aSensor.isAlarmState())alarmState.appendChild("true");
 		else alarmState.appendChild("false");
+		
 		Element room = new Element("Room");
+		Element roomid = new Element("id");
+		roomid.appendChild(Integer.toString(aSensor.getRoom().getID()));
+		Element romNR = new Element("romNR");
+		romNR.appendChild(Integer.toString(aSensor.getRoom().getRomNR()));
+		Element romType = new Element("rom type");
+		romType.appendChild(aSensor.getRoom().getRomType());
+		Element romInfo = new Element("rom info");
+		romInfo.appendChild(aSensor.getRoom().getRomInfo());
+		
+		Iterator it = aSensor.getRoom().iterator();
+		
+		
 		room.appendChild(aSensor.getRoom().getRomType());
+		
+		
 		Element installationDate = new Element("installationDate");
 		installationDate.appendChild(aSensor.getInstallationDate().toString());
 		Element battery = new Element("battery");

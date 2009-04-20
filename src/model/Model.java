@@ -4,6 +4,7 @@ package model;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import apps.LAC;
 
@@ -85,6 +86,10 @@ public class Model implements PropertyChangeListener {
 			pcl.propertyChange(e);
 		}
 		
+	}
+
+	public Iterator iterator() {
+		return sensorer.iterator();
 	}
 
 

@@ -11,8 +11,6 @@ import model.Room;
 import model.Sensor;
 
 public class LACProtocol {
-	
-	
 
 	
 
