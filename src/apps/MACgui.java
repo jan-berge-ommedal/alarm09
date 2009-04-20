@@ -65,9 +65,5 @@ public class MACgui extends JPanel implements Values {
 		updateAll.setBounds(LEFT_SPACE + 2*BUTTON_LONG_WIDTH + 2*DEFAULT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_LONG_WIDTH, BUTTON_HEIGHT);
 		
 	}
-	
-	public static void main(String[] args) {
-		MACgui window = new MACgui();
-	}
 
 }
