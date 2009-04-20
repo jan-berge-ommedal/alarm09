@@ -286,8 +286,8 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	public static void main(String[] args) {
 		//sensorAttributes(false);
 		//sensorsChecked();
-		//MACgui window2 = new MACgui();
-		LACgui window = new LACgui();
+		MACgui window2 = new MACgui();
+		//LACgui window = new LACgui();
 		//fireFightConfirm();
 		//fireFightConfirmed();
 		//logSaved();
