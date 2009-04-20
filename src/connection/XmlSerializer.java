@@ -57,8 +57,8 @@ public class XmlSerializer {
 	public Model toModel(String xml) throws ParseException {
 		Model aModel = new Model();
 		String[] xmls = xml.split("<");
-		aModel.setID(Integer.parseInt(xmls[1].substring(5)));
-		aModel.setAdresse(xmls[3].substring(9));
+		aModel.setID(Integer.parseInt(xmls[1].substring(4)));
+		aModel.setAdresse(xmls[2].substring(8));
 		
 		int roomteller = 100;
 		int sensorteller = 100;
@@ -72,7 +72,7 @@ public class XmlSerializer {
 		boolean seks = false;
 		EventType sju = EventType.ALARM;
 		
-		for (int i = 0; i < xmls.length; i++) {
+		for (int i = 3; i < xmls.length; i++) {
 			// Checks for room
 			if(xmls[i] == "<room>"){
 				roomteller = 0;
