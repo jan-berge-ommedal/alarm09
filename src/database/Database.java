@@ -266,7 +266,21 @@ public class Database {
 	}
 	
 	
-	
+	public void emptyTables(){
+		
+
+		try {
+			
+			executeUpdate("TRUCATE TABLE Event");
+			executeUpdate("TRUCATE TABLE LAC");
+			executeUpdate("TRUCATE TABLE Rom");
+			executeUpdate("TRUCATE TABLE Sensor");
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
 	
 	
 	public static void main(String[] args){
