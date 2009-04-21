@@ -109,6 +109,81 @@ public class Database {
 		
 	}
 	
+	
+	
+	
+	public void updateLAC(int ID,String adress){
+
+		try {
+
+			executeUpdate("UPDATE LAC SET adress = '" + adress + "' WHERE ID = "+ID);
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+	}
+	
+	
+	
+	
+	public void updateRoom(int ID,int romNR, String romType, String romInfo, boolean dontUpdateEmpties){
+		
+		try {
+
+			String query = "SELECT romNR, romType, romInfo FROM Rom WHERE ID="+ID;
+			ResultSet rs = executeQuery(query);
+			rs.next();
+			
+			romNR = (romNR==0 && dontUpdateEmpties) ? rs.getInt("romNR") : romNR;
+			romType = (romType=="" && dontUpdateEmpties) ? rs.getString("romType") : romType;
+			romInfo = (romInfo=="" && dontUpdateEmpties) ? rs.getString("romInfo") : romInfo;
+
+			executeUpdate("UPDATE LAC SET 	 romNR = " + romNR +
+					 						",romType = '" + romType + "'" +
+					 						",romInfo = '" + romInfo + "'" +
+						  "WHERE ID = "+ID);
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	public void updateRoom(int ID,int romNR, String romType, String romInfo){ updateRoom(ID,romNR,romType,romInfo, false); }
+	
+	
+	
+	
+	
+	
+	
+	public void updateSensor(int ID, boolean alarmState, int batteryStatus){
+
+		try {
+
+			int alarmStateInt = alarmState ? 1 : 0;
+			
+			executeUpdate("UPDATE LAC SET 	 alarmState  = " + alarmStateInt  +
+					 						",batteryStatus  = '" + batteryStatus  + "'" +
+						  "WHERE id = "+ID);
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+			
+	}
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	public static void main(String[] args){
 		
 		try {
