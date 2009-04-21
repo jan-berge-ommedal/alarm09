@@ -175,6 +175,23 @@ public class Database {
 			
 	}
 
+	public void updateSensor(int ID, boolean alarmState, int batteryStatus, Timestamp installationDate){
+
+		try {
+
+			int alarmStateInt = alarmState ? 1 : 0;
+			
+			executeUpdate("UPDATE LAC SET 	 alarmState  = " + alarmStateInt  +
+					 						",batteryStatus  = '" + batteryStatus  + "'" +
+					 						",installationDate   = '" + installationDate.toString()  + "'" +
+						  "WHERE id = "+ID);
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+			
+	}
+
 	
 	
 	
