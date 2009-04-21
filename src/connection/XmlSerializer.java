@@ -135,7 +135,7 @@ public class XmlSerializer {
 		int timer = Integer.parseInt(time.substring(11, 13));
 		int min = Integer.parseInt(time.substring(14, 16));
 		int sek = Integer.parseInt(time.substring(17, 19));
-		int nano = Integer.parseInt(time.substring(20, 23));
+		int nano = Integer.parseInt(time.substring(20));
 		
 		Timestamp t = new Timestamp(aar - 1900,maaned - 1,dag,timer,min,sek,(nano)*1000000);
 		return t;
