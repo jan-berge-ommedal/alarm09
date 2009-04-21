@@ -1,9 +1,6 @@
 package database;
 
 import java.sql.*;
-import java.util.ArrayList;
-
-import apps.LAC;
 
 import model.Event;
 import model.Model;
@@ -15,8 +12,6 @@ public class Database {
 	
 	private Connection db = null;
 	Statement st;
-	
-	private static int i =0;
 	
 	
 	public Database(String url, String user, String password, String databaseName) throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException {
@@ -315,8 +310,6 @@ public class Database {
 	public static void main(String[] args){
 		
 		try {
-			
-			
 			
 			Database db = new Database("mysql.stud.ntnu.no","janberge_admin","1234","janberge_db");
 			
