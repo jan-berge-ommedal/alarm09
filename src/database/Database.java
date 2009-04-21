@@ -14,7 +14,7 @@ import model.Event.EventType;
 public class Database {
 	
 	private Connection db = null;
-	private Statement st;
+	Statement st;
 	
 	private static int i =0;
 	
@@ -28,10 +28,12 @@ public class Database {
 	
 	
 	private ResultSet executeQuery(String query) throws SQLException{
+		Statement st = db.createStatement();
 		return st.executeQuery(query);
 	}
 	
 	private void executeUpdate(String query) throws SQLException{
+		Statement st = db.createStatement();
 		st.executeUpdate(query);
 	}
 	
