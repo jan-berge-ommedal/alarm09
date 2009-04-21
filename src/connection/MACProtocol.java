@@ -5,11 +5,11 @@ import java.net.ConnectException;
 
 import model.Model;
 
-import apps.MAC.LACAdaper;
+import apps.MAC.LACAdapter;
 
 public class MACProtocol {
 
-	public static void handleMSG(LACAdaper adaper, String receive) {
+	public static void handleMSG(LACAdapter adaper, String receive) {
 		if(receive.startsWith("GETMODEL")){
 			try {
 				if(!adaper.hasModel()){
@@ -26,7 +26,7 @@ public class MACProtocol {
 			}
 		}else if(receive.equals("GETNEXTID")){
 			try {
-				adaper.getConnection().send(""+adaper.getMAC().getDatabase().getNextLACID());
+				adaper.getConnection().send(""+adaper.getMAC().getDatabase().insertLAC(receive.substring(9)));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

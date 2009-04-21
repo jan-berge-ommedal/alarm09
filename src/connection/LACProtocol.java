@@ -20,8 +20,8 @@ public class LACProtocol {
 		return new Model();
 	}
 
-	public static int receiveNextModelID(Connection connection) throws ConnectException, IOException {
-		connection.send("GETNEXTID");
+	public static int receiveNextModelID(Connection connection, String adress) throws ConnectException, IOException {
+		connection.send("GETNEXTID" + adress);
 		String s = connection.receive();
 		System.out.println(s);
 		return Integer.parseInt(s);
@@ -36,6 +36,7 @@ public class LACProtocol {
 		// TODO Auto-generated method stub
 		
 	}
+
 	
 
 }
