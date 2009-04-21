@@ -9,6 +9,8 @@ package no.ntnu.fp.net.co;
 import java.io.EOFException;
 import java.io.IOException;
 
+import connection.ConnectionImplementation;
+
 import no.ntnu.fp.net.admin.Log;
 import no.ntnu.fp.net.co.Connection;
 
@@ -36,7 +38,7 @@ public class TestCoServer {
     log.setLogName("Server");
 
     // server connection instance, listen on port 5555
-    Connection server = new ConnectionImpl(5555);
+    Connection server = new ConnectionImplementation(5555);
     // each new connection lives in its own instance
     Connection conn;
     try {

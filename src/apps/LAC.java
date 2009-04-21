@@ -16,6 +16,7 @@ import java.net.UnknownHostException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
+import connection.ConnectionImplementation;
 import connection.LACProtocol;
 import connection.TCPConnection;
 
@@ -23,7 +24,6 @@ import model.Model;
 import model.Room;
 import model.Sensor;
 import no.ntnu.fp.net.co.Connection;
-import no.ntnu.fp.net.co.ConnectionImpl;
 
 /**
  * This is the logical LAC 

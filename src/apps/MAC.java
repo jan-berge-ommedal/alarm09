@@ -7,6 +7,7 @@ import java.net.SocketTimeoutException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import connection.ConnectionImplementation;
 import connection.MACProtocol;
 import connection.TCPConnection;
 
@@ -14,7 +15,6 @@ import database.Database;
 
 import model.Model;
 import no.ntnu.fp.net.co.Connection;
-import no.ntnu.fp.net.co.ConnectionImpl;
 
 /**
  * This is the logical part of the MAC (the centralized alarm-central) 

@@ -17,10 +17,11 @@ import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 
+import connection.ConnectionImplementation;
+
 import no.ntnu.fp.net.admin.Log;
 import no.ntnu.fp.net.admin.Settings;
 import no.ntnu.fp.net.co.Connection;
-import no.ntnu.fp.net.co.ConnectionImpl;
 import no.ntnu.fp.net.co.SimpleConnection;
 import no.ntnu.fp.net.separat.client.ChatClient;
 
@@ -174,7 +175,7 @@ public class ChatServer extends JFrame {
         if (SIMPLE_CONNECTION)
             server = new SimpleConnection(listenPort);
         else
-            server = new ConnectionImpl(listenPort);
+            server = new ConnectionImplementation(listenPort);
 
         Thread listener = new Thread() {
 
@@ -185,7 +186,7 @@ public class ChatServer extends JFrame {
             public void run() {
                 while (true) {
                     try {
-                        DBG("Server lytter på:" + listenPort);
+                        DBG("Server lytter pï¿½:" + listenPort);
                         newConn = server.accept();
                         message = newConn.receive();
 
@@ -199,10 +200,10 @@ public class ChatServer extends JFrame {
                             broadcast(getUsers().toString());
                         }
                     } catch (SocketTimeoutException e) {
-		      DBG("startServer(): Noe gikk galt, forsøk igjen.");
+		      DBG("startServer(): Noe gikk galt, forsï¿½k igjen.");
 		      e.printStackTrace();
                     } catch (IOException e) {
-		      DBG("startServer(): Noe gikk galt, forsøk igjen.");
+		      DBG("startServer(): Noe gikk galt, forsï¿½k igjen.");
 		      e.printStackTrace();
                     }
                 }

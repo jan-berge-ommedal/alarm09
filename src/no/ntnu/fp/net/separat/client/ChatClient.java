@@ -10,10 +10,11 @@ import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
+import connection.ConnectionImplementation;
+
 import no.ntnu.fp.net.admin.Log;
 import no.ntnu.fp.net.admin.Settings;
 import no.ntnu.fp.net.co.Connection;
-import no.ntnu.fp.net.co.ConnectionImpl;
 import no.ntnu.fp.net.co.SimpleConnection;
 
 /**
@@ -48,7 +49,7 @@ public class ChatClient {
         if (SIMPLE_CONNECTION) {
             connection = new SimpleConnection(thisPort);
         } else {
-            connection = new ConnectionImpl(thisPort);
+            connection = new ConnectionImplementation(thisPort);
         }
         //	  this.username = JOptionPane.showInputDialog(gui,"Skriv inn
         // navn:");

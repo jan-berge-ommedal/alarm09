@@ -9,6 +9,8 @@ import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import connection.ConnectionImplementation;
+
 import no.ntnu.fp.net.admin.Log;
 import no.ntnu.fp.net.co.Connection;
 
@@ -35,7 +37,7 @@ public class TestCoClient {
     log.setLogName("Client");
 
     // Connection object listening on 4001
-    Connection conn = new ConnectionImpl(4001);
+    Connection conn = new ConnectionImplementation(4001);
     InetAddress addr;  // will hold address of host to connect to
     try {
       // get address of local host and connect
