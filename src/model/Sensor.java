@@ -44,14 +44,14 @@ public class Sensor {
 	 * @param installationDate Installation-date of the sensor
 	 */
 	
-	public Sensor(int id, boolean alarm, int battery, Timestamp installationDate,Room r){
+	public Sensor(int id, boolean alarm, int battery, Timestamp installationDate,Room r, boolean startSensor){
 		this.id=id;
 		if(id>=nextID)nextID=id+1;
 		this.alarmState=alarm;
 		this.battery=battery;
 		this.installationDate=installationDate;
 		this.room=r;
-		startup();
+		if(startSensor)startup();
 		
 	}
 	
