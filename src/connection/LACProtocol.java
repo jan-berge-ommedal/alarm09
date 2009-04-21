@@ -3,9 +3,12 @@ package connection;
 import java.io.IOException;
 import java.net.ConnectException;
 
+import com.sun.org.apache.xml.internal.serializer.ToXMLSAXHandler;
+
 import apps.LAC;
 
 import no.ntnu.fp.net.co.Connection;
+import model.Event;
 import model.Model;
 import model.Room;
 import model.Sensor;
@@ -27,14 +30,29 @@ public class LACProtocol {
 		return Integer.parseInt(s);
 	}
 
-	public static void updateMAC(Connection connection, LAC lac, Sensor sensor) {
-		// TODO Auto-generated method stub
-		
+	public static void updateLAC(Connection connection, LAC lac) {
+		connection.send("UPDATELAC" + toXml(lac.getModel()));
 	}
 
-	public static void updateMAC(Connection connection, LAC lac, Room room) {
-		// TODO Auto-generated method stub
+	public static void updateRoom(Connection connection, Room room) {
+		connection.send("UPDATEROOM" + toXmlRoom(room));
 		
+	}
+	
+	public static void updateSensor(Connection connection, Event event){
+		connection.send("UPDATESENSOR" + toXmlSensor(event));
+	}
+	
+	public static void insertRoom(Connection connection, Room room){
+		connection.send("INSERTROOM" + toXmlRoom(room));
+	}
+	
+	public static void insertSensor(Connection connection, Sensor sensor){
+		connection.send("INSERTSENSOR" + toXmlSensor(sensor));
+	}
+	
+	public static void insertEvent(Connection connection, Event event){
+		connection.send("INSERTEVENT" + toXmlEvent(event));
 	}
 
 	
