@@ -13,7 +13,7 @@ import model.Event.EventType;
 
 public class Database {
 	
-	private Connection db;
+	private Connection db = null;
 	private Statement st;
 	
 	private static int i =0;
@@ -48,7 +48,7 @@ public class Database {
 
 	public int getNextLACID(){
 		try {
-			String query = "SELECT MAX(id) FROM LAC GROUP BY id";
+			String query = "SELECT MAX(id) FROM LAC GROUP BY NULL";
 			ResultSet rs = executeQuery(query);
 			rs.next();
 			//Column 1 er den første kolonnen!
@@ -105,8 +105,7 @@ public class Database {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
-		
+	
 		return m;
 		
 	}
@@ -115,8 +114,11 @@ public class Database {
 		
 		try {
 			Database db = new Database("mysql.stud.ntnu.no","janberge_admin","1234","janberge_db");
+			Model m = db.getLACModel(1);
+			System.out.println(m.toString());
 		} catch (Exception e) {
-			System.err.println("Could not connect to database");
+			// e.printStackTrace();
+			System.err.println("Could not connect to database (fra main)");
 		}
 		
 	}
