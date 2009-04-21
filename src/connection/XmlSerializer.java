@@ -55,6 +55,7 @@ public class XmlSerializer {
 	}
 	
 	public static Model toModel(String xml) throws ParseException {
+		System.out.println(xml + "\n");
 		Model aModel = new Model();
 		String[] xmls = xml.split("<");
 		aModel.setID(Integer.parseInt(xmls[2].substring(3)));
@@ -68,26 +69,28 @@ public class XmlSerializer {
 		int to = 0;
 		String tre = "";
 		String fire = ""; 
-		Timestamp fem = new Timestamp(en);
+		Timestamp fem = new Timestamp(0);
 		boolean seks = false; 
 		EventType sju = EventType.ALARM;
 		
-		for (int i = 3; i < xmls.length; i++) {
+		for (int i = 5; i < xmls.length; i++) {
+			roomteller++; sensorteller++; eventteller++;
+			
 			// Checks for room
-			if(xmls[i] == "<room>"){
+			if(xmls[i].equals("room>")){
 				roomteller = 0;
 			}
 			// Gets the right roomattributes
 			if(roomteller == 1){en = Integer.parseInt(xmls[i].substring(3));}
 			else if(roomteller == 3){to = Integer.parseInt(xmls[i].substring(6));}
 			else if(roomteller == 5){tre = xmls[i].substring(8);}
-			else if(roomteller == 7){fire = xmls[i].substring(7);}
+			else if(roomteller == 7){fire = xmls[i].substring(8);}
 			else if(roomteller == 9){
 				Room r = new Room(en, to, tre, fire);
 				aModel.addRoom(r);
 			}
 			// Checks for sensors
-			if(xmls[i] == "<Sensors>"){
+			if(xmls[i].equals("Sensors>")){
 				sensorteller = 0;
 			}
 			// Gets the right sensorattributes
@@ -100,16 +103,16 @@ public class XmlSerializer {
 				aModel.getRooms().get(aModel.getRooms().size()-1).addSensor(s);
 			}
 			// Checks for events
-			if(xmls[i] == "<events>"){
+			if(xmls[i].equals("events>")){
 				eventteller = 0;
 			}
 			// Gets the right eventattributes
 			if(eventteller == 1){en = Integer.parseInt(xmls[i].substring(3));}
 			else if(eventteller == 3){
-				if(xmls[i].substring(10) == "FALSEALARM") sju = EventType.FALSEALARM;
-				else if(xmls[i].substring(10) == "ALARM") sju = EventType.ALARM;
-				else if(xmls[i].substring(10) == "STARTUP") sju = EventType.STARTUP;
-				else sju = EventType.BATTERYREPLACEMENT;
+				for(EventType e : EventType.values()){
+					if(xmls[i].substring(10).equals(e.toString()))
+						sju = e;
+				}
 			}
 			else if(eventteller == 5){fem = makeTimestamp(xmls[i].substring(5));}
 			else if(eventteller == 7){
@@ -126,7 +129,16 @@ public class XmlSerializer {
 	}
 
 	private static Timestamp makeTimestamp(String time) {
-		return new Timestamp(Integer.parseInt(time.substring(0, 4)),Integer.parseInt(time.substring(5, 7)),Integer.parseInt(time.substring(8, 10)),Integer.parseInt(time.substring(11, 13)),Integer.parseInt(time.substring(14, 16)),Integer.parseInt(time.substring(17, 19)),Integer.parseInt(time.substring(20, 23)));
+		int aar = Integer.parseInt(time.substring(0, 4));
+		int maaned = Integer.parseInt(time.substring(5, 7));
+		int dag = Integer.parseInt(time.substring(8, 10));
+		int timer = Integer.parseInt(time.substring(11, 13));
+		int min = Integer.parseInt(time.substring(14, 16));
+		int sek = Integer.parseInt(time.substring(17, 19));
+		int nano = Integer.parseInt(time.substring(20, 23));
+		
+		Timestamp t = new Timestamp(aar - 1900,maaned - 1,dag,timer,min,sek,(nano)*1000000);
+		return t;
 	}
 
 
