@@ -158,7 +158,7 @@ public class Database {
 	
 	
 	
-	
+	// uten oppdatering av installationDate
 	public void updateSensor(int ID, boolean alarmState, int batteryStatus){
 
 		try {
@@ -175,6 +175,7 @@ public class Database {
 			
 	}
 
+	// m/ oppdatering av installationDate
 	public void updateSensor(int ID, boolean alarmState, int batteryStatus, Timestamp installationDate){
 
 		try {
