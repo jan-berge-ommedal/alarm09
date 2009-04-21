@@ -176,6 +176,27 @@ public class Database {
 	
 	
 	
+
+	public int insertLAC(String adress){
+
+		int id = -1;
+		
+		try {
+
+			executeUpdate("INSERT INTO LAC (adress) VALUES ('"+adress+"')");
+			String query = "SELECT MAX(id) AS id FROM LAC GROUP BY NULL";
+			ResultSet rs = executeQuery(query);
+			rs.next();
+			id = rs.getInt("id");
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return id;
+		
+	}
+	
 	
 	
 	
