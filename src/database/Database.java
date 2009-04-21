@@ -184,12 +184,12 @@ public class Database {
 		int id = -1;
 		
 		try {
-
-			executeUpdate("INSERT INTO LAC (adress) VALUES ('"+adress+"')");
+			
 			String query = "SELECT MAX(ID) AS id FROM LAC GROUP BY NULL";
 			ResultSet rs = executeQuery(query);
 			rs.next();
-			id = rs.getInt("id");
+			id = rs.getInt("id")+1;
+			executeUpdate("INSERT INTO LAC (adress) VALUES ('"+adress+"')");
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -201,18 +201,17 @@ public class Database {
 	
 	
 	
-	public int insertRoom(int romNR, String romType, String romInfo){
+	public int insertRoom(int LACID, int romNR, String romType, String romInfo){
 		
-
 		int id = -1;
 		
 		try {
-
-			executeUpdate("INSERT INTO Rom (romNR, romType, romInfo ) VALUES ("+romNR+",'"+romType+"','"+romInfo+"')");
+			
 			String query = "SELECT MAX(ID) AS id FROM Rom GROUP BY NULL";
 			ResultSet rs = executeQuery(query);
 			rs.next();
-			id = rs.getInt("id");
+			id = rs.getInt("id")+1;
+			executeUpdate("INSERT INTO Rom (ID, LACID, romNR, romType, romInfo ) VALUES ("+id+","+LACID+","+romNR+",'"+romType+"','"+romInfo+"')");
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -233,11 +232,12 @@ public class Database {
 
 			int alarmStateInt = alarmState ? 1 : 0;
 			
-			executeUpdate("INSERT INTO Rom (romID, installationDate, alarmState, batteryStatus) VALUES ("+romID+",NULL,"+alarmStateInt+","+batteryStatus+")");
 			String query = "SELECT MAX(id) AS id FROM Sensor GROUP BY NULL";
 			ResultSet rs = executeQuery(query);
 			rs.next();
-			id = rs.getInt("id");
+			id = rs.getInt("id")+1;		
+			executeUpdate("INSERT INTO Rom (id, romID, installationDate, alarmState, batteryStatus) VALUES ("+id+","+romID+",NULL,"+alarmStateInt+","+batteryStatus+")");
+
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -254,8 +254,15 @@ public class Database {
 	public static void main(String[] args){
 		
 		try {
+			
+			
+			
 			Database db = new Database("mysql.stud.ntnu.no","janberge_admin","1234","janberge_db");
-			Model m = db.getLACModel(1);
+			
+			// int io = db.insertLAC("Rundt svingen");
+			// System.out.println(io);
+			
+			Model m = db.getLACModel(3);
 			System.out.println(m.toString());
 		} catch (Exception e) {
 			// e.printStackTrace();
