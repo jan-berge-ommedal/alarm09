@@ -71,7 +71,7 @@ public class ModelTests extends TestCase implements PropertyChangeListener {
 	 * 	This test verifies that MTTF is correctly computed (Requirement 8)
 	 * 
 	 */
-	//FIXME UnitTest: MTTF-test
+	//FIXME Simon: MTTF-test
 	public void testMTTF(){
 		
 	}

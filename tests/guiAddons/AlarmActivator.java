@@ -8,7 +8,7 @@ import apps.MAC;
 import model.Model;
 
 
-//FIXME GUI: Alarm Activator
+//FIXME Eirik: Alarm Activator
 /**
  * This class will be used to test Requirement 14.
  * 

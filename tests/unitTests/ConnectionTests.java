@@ -10,7 +10,7 @@ import junit.framework.TestResult;
  * The test is executed with the following setup of "settings.xml":
 
 
-//FIXME LOOKUP: Sjekk med A2-dokumentasjon at denne konfigurasjonen genererer alle mulige feil
+//FIXME Jan: Sjekk med A2-dokumentasjon at denne konfigurasjonen genererer alle mulige feil
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
   <errors>true</errors>
@@ -41,7 +41,7 @@ public class ConnectionTests extends TestCase{
 	 * Denne testen skal sjekke at det opprettes en forbindelse mellom sender og mottaker.
 	 * Dette betyr at det ikke skal forekomme forstyrrelser fra andre forbindelser og at applikasjonlaget gjøres oppmerksom på forbindelsesbrudd 
 	 */
-	//FIXME UnitTest: Connection-test
+	//FIXME Jan: Connection-test
 	public void testConnection() {
 	
 	}
@@ -50,7 +50,7 @@ public class ConnectionTests extends TestCase{
 	 * Requirement 10
 	 * Denne testen skal sjekke at implementasjonen er reliable 
 	 */
-	//FIXME UnitTest: Correctness-test
+	//FIXME Jan: Correctness-test
 	public void testCorrectness() {
 	
 	}
@@ -59,7 +59,7 @@ public class ConnectionTests extends TestCase{
 	 * Requirement 10
 	 * Denne testen skal sjekke at alle pakker leveres in-order 
 	 */
-	//FIXME UnitTest: InOrder-test
+	//FIXME Jan: InOrder-test
 	public void testInOrder() {
 	
 	}
