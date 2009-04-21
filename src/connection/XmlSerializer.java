@@ -54,7 +54,7 @@ public class XmlSerializer {
 		return root.toXML();
 	}
 	
-	public Model toModel(String xml) throws ParseException {
+	public static Model toModel(String xml) throws ParseException {
 		Model aModel = new Model();
 		String[] xmls = xml.split("<");
 		aModel.setID(Integer.parseInt(xmls[1].substring(4)));
@@ -114,7 +114,7 @@ public class XmlSerializer {
 			else if(eventteller == 5){fem = makeTimestamp(xmls[i].substring(6));}
 			else if(eventteller == 7){
 				
-				Event e = new Event(en,sju,fem, aModel.getRooms().get(aModel.getRooms().size() -1).getSensorer().get(aModel.getRooms().get(aModel.getRooms().size() -1).getSensorer().size()-1));
+				Event e = new Event(en,sju,fem);
 				aModel.getRooms().get(aModel.getRooms().size() -1).getSensorer().get(aModel.getRooms().get(aModel.getRooms().size() -1).getSensorer().size()-1).addEvent(e);
 			}
 			
@@ -125,7 +125,7 @@ public class XmlSerializer {
 		return aModel;
 	}
 
-	private Timestamp makeTimestamp(String time) {
+	private static Timestamp makeTimestamp(String time) {
 		return new Timestamp(Integer.parseInt(time.substring(0, 4)),Integer.parseInt(time.substring(5, 7)),Integer.parseInt(time.substring(8, 10)),Integer.parseInt(time.substring(11, 13)),Integer.parseInt(time.substring(14, 16)),Integer.parseInt(time.substring(17, 19)),Integer.parseInt(time.substring(20, 23)));
 	}
 
