@@ -188,11 +188,12 @@ public class Database {
 		
 		try {
 			
+			executeUpdate("INSERT INTO LAC (adress) VALUES ('"+adress+"')");
+			
 			String query = "SELECT MAX(ID) AS id FROM LAC GROUP BY NULL";
 			ResultSet rs = executeQuery(query);
 			rs.next();
-			id = rs.getInt("id")+1;
-			executeUpdate("INSERT INTO LAC (adress) VALUES ('"+adress+"')");
+			id = rs.getInt("id");
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -210,11 +211,12 @@ public class Database {
 		
 		try {
 			
+			executeUpdate("INSERT INTO Rom (LACID, romNR, romType, romInfo ) VALUES ("+LACID+","+romNR+",'"+romType+"','"+romInfo+"')");
+			
 			String query = "SELECT MAX(ID) AS id FROM Rom GROUP BY NULL";
 			ResultSet rs = executeQuery(query);
 			rs.next();
-			id = rs.getInt("id")+1;
-			executeUpdate("INSERT INTO Rom (ID, LACID, romNR, romType, romInfo ) VALUES ("+id+","+LACID+","+romNR+",'"+romType+"','"+romInfo+"')");
+			id = rs.getInt("id");
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -234,13 +236,13 @@ public class Database {
 		try {
 
 			int alarmStateInt = alarmState ? 1 : 0;
-			
+				
+			executeUpdate("INSERT INTO Rom (romID, installationDate, alarmState, batteryStatus) VALUES ("+romID+",NULL,"+alarmStateInt+","+batteryStatus+")");
+
 			String query = "SELECT MAX(id) AS id FROM Sensor GROUP BY NULL";
 			ResultSet rs = executeQuery(query);
 			rs.next();
-			id = rs.getInt("id")+1;		
-			executeUpdate("INSERT INTO Rom (id, romID, installationDate, alarmState, batteryStatus) VALUES ("+id+","+romID+",NULL,"+alarmStateInt+","+batteryStatus+")");
-
+			id = rs.getInt("id");	
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -256,12 +258,12 @@ public class Database {
 		
 		try {
 			
+			executeUpdate("INSERT INTO Event (sensorID, eventType, time) VALUES ("+sensorID+",'"+eventType+"',NULL)");
+
 			String query = "SELECT MAX(id) AS id FROM Event GROUP BY NULL";
 			ResultSet rs = executeQuery(query);
 			rs.next();
-			id = rs.getInt("id")+1;		
-			executeUpdate("INSERT INTO Event (id, sensorID, eventType, time) VALUES ("+id+","+sensorID+",'"+eventType+"',NULL)");
-
+			id = rs.getInt("id");		
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -276,10 +278,10 @@ public class Database {
 
 		try {
 			
-			executeUpdate("TRUCATE TABLE Event");
-			executeUpdate("TRUCATE TABLE LAC");
-			executeUpdate("TRUCATE TABLE Rom");
-			executeUpdate("TRUCATE TABLE Sensor");
+			executeUpdate("TRUNCATE TABLE `Event`");
+			executeUpdate("TRUNCATE TABLE `LAC`");
+			executeUpdate("TRUNCATE TABLE `Rom`");
+			executeUpdate("TRUNCATE TABLE `Sensor`");
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -296,11 +298,13 @@ public class Database {
 			
 			Database db = new Database("mysql.stud.ntnu.no","janberge_admin","1234","janberge_db");
 			
-			db.emptyTables();
-			int io = db.insertLAC("Rundt svingen");
+			int io = 0;
+			// db.emptyTables();
+			// io = db.insertLAC("Rundt svingen");
+			// io = db.insertRoom(2, 5, "", "");
 			System.out.println(io);
 			
-			Model m = db.getLACModel(3);
+			Model m = db.getLACModel(1);
 			System.out.println(m.toString());
 		} catch (Exception e) {
 			// e.printStackTrace();
