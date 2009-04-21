@@ -34,7 +34,7 @@ public class XMLParsingTests extends TestCase{
 		s.addEvent(new Event(5,EventType.ALARM,new Timestamp(42367)));
 		s.addEvent(new Event(8,EventType.STARTUP, new Timestamp(4232)));
 		r.addSensor(s);
-		r.addSensor(new Sensor(6,false,67,new Timestamp(5674645),r));
+		r.addSensor(new Sensor(6,false,67,new Timestamp(5674645),r,true));
 		m.addRoom(r);
 		
 		System.out.println(m);
