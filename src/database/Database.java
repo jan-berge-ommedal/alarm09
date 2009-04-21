@@ -186,7 +186,7 @@ public class Database {
 		try {
 
 			executeUpdate("INSERT INTO LAC (adress) VALUES ('"+adress+"')");
-			String query = "SELECT MAX(id) AS id FROM LAC GROUP BY NULL";
+			String query = "SELECT MAX(ID) AS id FROM LAC GROUP BY NULL";
 			ResultSet rs = executeQuery(query);
 			rs.next();
 			id = rs.getInt("id");
@@ -199,6 +199,28 @@ public class Database {
 		
 	}
 	
+	
+	
+	public int insertRoom(int romNR, String romType, String romInfo){
+		
+
+		int id = -1;
+		
+		try {
+
+			executeUpdate("INSERT INTO Rom (romNR, romType, romInfo ) VALUES ("+romNR+",'"+romType+"','"+romInfo+"')");
+			String query = "SELECT MAX(ID) AS id FROM Rom GROUP BY NULL";
+			ResultSet rs = executeQuery(query);
+			rs.next();
+			id = rs.getInt("id");
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return id;
+		
+	}
 	
 	
 	
