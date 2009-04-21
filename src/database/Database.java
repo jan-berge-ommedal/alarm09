@@ -48,7 +48,7 @@ public class Database {
 
 	public int getNextLACID(){
 		try {
-			String query = "SELECT MAX(id) FROM LAC";
+			String query = "SELECT MAX(id) FROM LAC GROUP BY id";
 			ResultSet rs = executeQuery(query);
 			rs.next();
 			//Column 1 er den første kolonnen!
@@ -61,50 +61,44 @@ public class Database {
 	}
 	
 	public Model getLACModel(int id) {
+		
 		Model m = new Model();
 		m.setID(id);
-		
 		
 		try {
 			String query = "SELECT adress FROM LAC WHERE ID="+id;
 			ResultSet rs = executeQuery(query);
 			rs.next();
-			m.setAdresse(rs.getString(1));
+			m.setAdresse(rs.getString("adress"));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		
 		try {
+			
 			String query = "SELECT ID, romNR, romType, romInfo FROM Rom WHERE LACID="+id;
-			ResultSet rs = executeQuery(query);
-			while(rs.next()) {
+			ResultSet rooms = executeQuery(query);
+			while(rooms.next()) {
 			
-				Array romID = rs.getArray("ID");
+				// construct room
+				int romID = rooms.getInt("ID");
+				Room room = new Room(rooms.getInt("ID"),rooms.getInt("romNR"),rooms.getString("romType"),rooms.getString("romInfo"));
 				
-				Room room;
-				
-				String query2 = "SELECT * FROM Sensor WHERE romID="+romID;
-				ResultSet srs = executeQuery(query2);
-				
-				Array sensorID = rs.getArray("id");
-				
-				while(srs.next()){
-					String query3 = "SELECT * FROM Event WHERE ";
+				// traverse room's sensors
+				query = "SELECT * FROM Sensor WHERE romID="+romID;
+				ResultSet sensors = executeQuery(query);
+				while(sensors.next()){
+
+					// construct and add sensor to room
+					int sensorID = sensors.getInt("id");
+					Sensor s = new Sensor(romID, boolean alarm, int battery, Timestamp installationDate,room);
+					room.addSensor(s);
+					
 				}
-			
 				
 				
-					
-				
-				
-					Sensor s = new Sensor(romid,room,timestamp);
-				
-					
-						s.addEvent(new Event(id,eventtype,timestamp));
-				
-				
-				
-				
+				// add room to model's room-list
+				m.addRoom(room);
 				
 			}
 				
