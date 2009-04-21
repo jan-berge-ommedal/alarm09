@@ -8,6 +8,12 @@ import model.Room;
 import model.Sensor;
 import model.Event.EventType;
 
+/**
+ * 
+ * @author oddy was here
+ *
+ */
+
 public class Database {
 	
 	private Connection db = null;
