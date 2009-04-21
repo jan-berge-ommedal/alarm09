@@ -95,11 +95,11 @@ public class XmlSerializer {
 			}
 			// Gets the right sensorattributes
 			if(sensorteller == 1){en = Integer.parseInt(xmls[i].substring(3));}
-			else if(sensorteller == 3){seks = true ? xmls[i].substring(11) == "true" : false;}
+			else if(sensorteller == 3){seks = (true ? xmls[i].substring(11).equals("true"): false);}
 			else if(sensorteller == 5){fem = makeTimestamp(xmls[i].substring(10));}
 			else if(sensorteller == 7){to = Integer.parseInt(xmls[i].substring(8));}
 			else if(sensorteller == 9){
-				Sensor s = new Sensor(en, seks, to,fem, aModel.getRooms().get(aModel.getRooms().size()-1));
+				Sensor s = new Sensor(en, seks, to,fem, aModel.getRooms().get(aModel.getRooms().size()-1), false);
 				aModel.getRooms().get(aModel.getRooms().size()-1).addSensor(s);
 			}
 			// Checks for events
