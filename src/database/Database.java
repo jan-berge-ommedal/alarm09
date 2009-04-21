@@ -86,9 +86,10 @@ public class Database {
 				String query2 = "SELECT * FROM Sensor WHERE romID="+romID;
 				ResultSet srs = executeQuery(query2);
 				
+				Array sensorID = rs.getArray("id");
 				
 				while(srs.next()){
-					
+					String query3 = "SELECT * FROM Event WHERE ";
 				}
 			
 				
