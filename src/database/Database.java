@@ -33,8 +33,8 @@ public class Database {
 	
 	private void executeUpdate(String query) throws SQLException{
 		st.executeUpdate(query);
-
 	}
+	
 	public void close(){
 		try {
 			st.close();
@@ -85,13 +85,13 @@ public class Database {
 				Room room = new Room(rooms.getInt("ID"),rooms.getInt("romNR"),rooms.getString("romType"),rooms.getString("romInfo"));
 				
 				// traverse room's sensors
-				query = "SELECT * FROM Sensor WHERE romID="+romID;
+				query = "SELECT id, alarmState, batteryStatus, installationDate FROM Sensor WHERE romID="+romID;
 				ResultSet sensors = executeQuery(query);
 				while(sensors.next()){
 
 					// construct and add sensor to room
 					int sensorID = sensors.getInt("id");
-					Sensor s = new Sensor(romID, boolean alarm, int battery, Timestamp installationDate,room);
+					Sensor s = new Sensor(romID, sensors.getBoolean("alarmState"),sensors.getInt("batteryStatus"), sensors.getTimestamp("installationDate"),room);
 					room.addSensor(s);
 					
 				}
@@ -107,17 +107,18 @@ public class Database {
 		}
 		
 		
-		
-	
-		Room r = new Room(0,0,"BAD","Et nydelig bad");
-		Sensor s = new Sensor(0,r,LAC.getTime());
-		
-		s.addEvent(new Event(0,EventType.ALARM,LAC.getTime(),s));
-		s.addEvent(new Event(0,EventType.FALSEALARM,LAC.getTime(),s));
-		
 		return m;
 		
 	}
 	
-
+	public static void main(String[] args){
+		
+		try {
+			Database db = new Database("mysql.stud.ntnu.no","janberge_admin","1234","janberge_db");
+		} catch (Exception e) {
+			System.err.println("Could not connect to database");
+		}
+		
+	}
+	
 }
