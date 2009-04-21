@@ -57,8 +57,8 @@ public class XmlSerializer {
 	public static Model toModel(String xml) throws ParseException {
 		Model aModel = new Model();
 		String[] xmls = xml.split("<");
-		aModel.setID(Integer.parseInt(xmls[1].substring(4)));
-		aModel.setAdresse(xmls[2].substring(8));
+		aModel.setID(Integer.parseInt(xmls[2].substring(3)));
+		aModel.setAdresse(xmls[4].substring(7));
 		
 		int roomteller = 100;
 		int sensorteller = 100;
@@ -69,7 +69,7 @@ public class XmlSerializer {
 		String tre = "";
 		String fire = ""; 
 		Timestamp fem = new Timestamp(en);
-		boolean seks = false;
+		boolean seks = false; 
 		EventType sju = EventType.ALARM;
 		
 		for (int i = 3; i < xmls.length; i++) {
@@ -78,10 +78,10 @@ public class XmlSerializer {
 				roomteller = 0;
 			}
 			// Gets the right roomattributes
-			if(roomteller == 1){en = Integer.parseInt(xmls[i].substring(4));}
-			else if(roomteller == 3){to = Integer.parseInt(xmls[i].substring(7));}
-			else if(roomteller == 5){tre = xmls[i].substring(9);}
-			else if(roomteller == 7){fire = xmls[i].substring(8);}
+			if(roomteller == 1){en = Integer.parseInt(xmls[i].substring(3));}
+			else if(roomteller == 3){to = Integer.parseInt(xmls[i].substring(6));}
+			else if(roomteller == 5){tre = xmls[i].substring(8);}
+			else if(roomteller == 7){fire = xmls[i].substring(7);}
 			else if(roomteller == 9){
 				Room r = new Room(en, to, tre, fire);
 				aModel.addRoom(r);
@@ -91,10 +91,10 @@ public class XmlSerializer {
 				sensorteller = 0;
 			}
 			// Gets the right sensorattributes
-			if(sensorteller == 1){en = Integer.parseInt(xmls[i].substring(4));}
-			else if(sensorteller == 3){seks = true ? xmls[i].substring(12) == "true" : false;}
-			else if(sensorteller == 5){fem = makeTimestamp(xmls[i].substring(11));}
-			else if(sensorteller == 7){to = Integer.parseInt(xmls[i].substring(9));}
+			if(sensorteller == 1){en = Integer.parseInt(xmls[i].substring(3));}
+			else if(sensorteller == 3){seks = true ? xmls[i].substring(11) == "true" : false;}
+			else if(sensorteller == 5){fem = makeTimestamp(xmls[i].substring(10));}
+			else if(sensorteller == 7){to = Integer.parseInt(xmls[i].substring(8));}
 			else if(sensorteller == 9){
 				Sensor s = new Sensor(en, seks, to,fem, aModel.getRooms().get(aModel.getRooms().size()-1));
 				aModel.getRooms().get(aModel.getRooms().size()-1).addSensor(s);
@@ -104,14 +104,14 @@ public class XmlSerializer {
 				eventteller = 0;
 			}
 			// Gets the right eventattributes
-			if(eventteller == 1){en = Integer.parseInt(xmls[i].substring(4));}
+			if(eventteller == 1){en = Integer.parseInt(xmls[i].substring(3));}
 			else if(eventteller == 3){
-				if(xmls[i].substring(11) == "FALSEALARM") sju = EventType.FALSEALARM;
-				else if(xmls[i].substring(11) == "ALARM") sju = EventType.ALARM;
-				else if(xmls[i].substring(11) == "STARTUP") sju = EventType.STARTUP;
+				if(xmls[i].substring(10) == "FALSEALARM") sju = EventType.FALSEALARM;
+				else if(xmls[i].substring(10) == "ALARM") sju = EventType.ALARM;
+				else if(xmls[i].substring(10) == "STARTUP") sju = EventType.STARTUP;
 				else sju = EventType.BATTERYREPLACEMENT;
 			}
-			else if(eventteller == 5){fem = makeTimestamp(xmls[i].substring(6));}
+			else if(eventteller == 5){fem = makeTimestamp(xmls[i].substring(5));}
 			else if(eventteller == 7){
 				
 				Event e = new Event(en,sju,fem);
