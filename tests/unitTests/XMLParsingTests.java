@@ -1,6 +1,9 @@
 package unitTests;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
+
+import com.sun.xml.internal.bind.v2.runtime.XMLSerializer;
 
 import junit.framework.TestCase;
 
@@ -35,8 +38,14 @@ public class XMLParsingTests extends TestCase{
 		System.out.println(m);
 		
 		String xmlParse = XmlSerializer.toXml(m);
-		Model m2 = XmlSerializer.toModel(xmlParse);
-		assertEquals(m.toString(), m2.toString());
+		Model m2;
+		try {
+			m2 = XmlSerializer.toModel(xmlParse);
+			assertEquals(m.toString(), m2.toString());
+		} catch (ParseException e) {
+			assertEquals("Ddidnt read proper format", true, false);
+		}
+		
 	}
 
 }
