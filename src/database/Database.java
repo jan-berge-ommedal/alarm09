@@ -90,8 +90,7 @@ public class Database {
 				while(sensors.next()){
 
 					// construct and add sensor to room
-					int sensorID = sensors.getInt("id");
-					Sensor s = new Sensor(romID, sensors.getBoolean("alarmState"),sensors.getInt("batteryStatus"), sensors.getTimestamp("installationDate"),room);
+					Sensor s = new Sensor(sensors.getInt("id"), sensors.getBoolean("alarmState"),sensors.getInt("batteryStatus"), sensors.getTimestamp("installationDate"),room);
 					room.addSensor(s);
 					
 				}
