@@ -47,21 +47,6 @@ public class Database {
 		}
 	}
 	
-
-	public int getNextLACID(){
-		try {
-			String query = "SELECT MAX(id) FROM LAC GROUP BY NULL";
-			ResultSet rs = executeQuery(query);
-			rs.next();
-			//Column 1 er den første kolonnen!
-			return rs.getInt(1)+1;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return -1;
-		
-	}
-	
 	public Model getLACModel(int id) {
 		
 		Model m = new Model();
@@ -264,7 +249,27 @@ public class Database {
 		return id;
 		
 	}
-	
+
+	public int insertEvent(int sensorID, String eventType){
+		
+		int id = -1;
+		
+		try {
+			
+			String query = "SELECT MAX(id) AS id FROM Event GROUP BY NULL";
+			ResultSet rs = executeQuery(query);
+			rs.next();
+			id = rs.getInt("id")+1;		
+			executeUpdate("INSERT INTO Event (id, sensorID, eventType, time) VALUES ("+id+","+sensorID+",'"+eventType+"',NULL)");
+
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return id;
+		
+	}
 	
 	public void emptyTables(){
 		
@@ -291,8 +296,9 @@ public class Database {
 			
 			Database db = new Database("mysql.stud.ntnu.no","janberge_admin","1234","janberge_db");
 			
-			// int io = db.insertLAC("Rundt svingen");
-			// System.out.println(io);
+			db.emptyTables();
+			int io = db.insertLAC("Rundt svingen");
+			System.out.println(io);
 			
 			Model m = db.getLACModel(3);
 			System.out.println(m.toString());
