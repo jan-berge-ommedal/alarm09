@@ -223,7 +223,29 @@ public class Database {
 	}
 	
 	
-	
+
+	public int insertSensor(int romID, boolean alarmState, int batteryStatus){
+		
+
+		int id = -1;
+		
+		try {
+
+			int alarmStateInt = alarmState ? 1 : 0;
+			
+			executeUpdate("INSERT INTO Rom (romID, installationDate, alarmState, batteryStatus) VALUES ("+romID+",NULL,"+alarmStateInt+","+batteryStatus+")");
+			String query = "SELECT MAX(id) AS id FROM Sensor GROUP BY NULL";
+			ResultSet rs = executeQuery(query);
+			rs.next();
+			id = rs.getInt("id");
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return id;
+		
+	}
 	
 	
 	
