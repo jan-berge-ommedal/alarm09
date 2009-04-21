@@ -98,6 +98,28 @@ public class Database {
 	
 	
 	
+	public Sensor getEvents(Sensor s){
+		
+		int id = s.getId();
+		
+		try {
+			String query = "SELECT id,eventType, time FROM Event WHERE sensorID="+id;
+			ResultSet events = executeQuery(query);
+			while(events.next()){
+				
+				s.addEvent(new Event(events.getInt("id"),EventType.valueOf(events.getString("eventType")),events.getTimestamp("time")));
+				
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return s;
+		
+	}
+	
+	
+	
 	
 	public void updateLAC(int ID,String adress){
 
@@ -252,7 +274,7 @@ public class Database {
 		
 	}
 
-	public int insertEvent(int sensorID, String eventType){
+	public int insertEvent(int sensorID, EventType eventType){
 		
 		int id = -1;
 		
