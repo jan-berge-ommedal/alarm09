@@ -1,5 +1,7 @@
 package unitTests;
 
+import help.AlarmHelp;
+
 import java.sql.Timestamp;
 import java.text.ParseException;
 
@@ -26,7 +28,7 @@ import model.Event.EventType;
 public class XMLParsingTests extends TestCase{
 	
 	public void testParse(){
-		Model m = new Model();
+		Model m = AlarmHelp.getDefaultModel();
 		Room r = new Room(3,51,"sdfgdfgh","asdfasdf");
 		Sensor s = new Sensor(r);
 		s.addEvent(new Event(5,EventType.ALARM,new Timestamp(42367)));
@@ -41,6 +43,7 @@ public class XMLParsingTests extends TestCase{
 		Model m2;
 		try {
 			m2 = XmlSerializer.toModel(xmlParse);
+			System.out.println("\n"+m2);
 			assertEquals(m.toString(), m2.toString());
 		} catch (ParseException e) {
 			assertEquals("Ddidnt read proper format", true, false);
