@@ -6,7 +6,7 @@ import java.net.ConnectException;
 import model.Model;
 
 import apps.MAC.LACAdaper;
-import apps.MAC.LACAdapter;
+
 
 public class MACProtocol {
 
@@ -37,7 +37,7 @@ public class MACProtocol {
 				String[] s = receive.split(" ");
 				adaper.getMAC().getDatabase().updateLAC(Integer.parseInt(s[1]), s[2]);
 			} 
-			catch (IOException e) {
+			catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -46,7 +46,7 @@ public class MACProtocol {
 				String[] s = receive.split(" ");
 				adaper.getMAC().getDatabase().updateRoom(Integer.parseInt(s[1]), Integer.parseInt(s[2]), s[3], s[4]);
 			} 
-			catch (IOException e) {
+			catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -54,9 +54,9 @@ public class MACProtocol {
 			try{
 				String[] s = receive.split(" ");
 				boolean b = (s[2].equals("true")) ? true : false;
-				adaper.getMAC().getDatabase().updateSensor(Integer.parseInt(s[1]), b, batteryStatus, installationDate)
+				adaper.getMAC().getDatabase().updateSensor(Integer.parseInt(s[1]), b, Integer.parseInt(s[3]), XmlSerializer.makeTimestamp(s[4]));
 			} 
-			catch (IOException e) {
+			catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -64,7 +64,7 @@ public class MACProtocol {
 			try{
 
 			} 
-			catch (IOException e) {
+			catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -72,7 +72,7 @@ public class MACProtocol {
 			try{
 
 			} 
-			catch (IOException e) {
+			catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -80,7 +80,7 @@ public class MACProtocol {
 			try{
 
 			} 
-			catch (IOException e) {
+			catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
