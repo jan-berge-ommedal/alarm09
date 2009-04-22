@@ -47,7 +47,7 @@ public class XmlSerializer {
 		root.appendChild(adress);
 		
 		for (Room r : aModel.getRooms()) {
-			Element element = sensorToXml(r);
+			Element element = insertXmlRoom(r);
 			root.appendChild(element);
 		}
 		
@@ -143,7 +143,7 @@ public class XmlSerializer {
 
 
 	
-	private static Element sensorToXml(Room aRoom) {
+	public static Element insertXmlRoom(Room aRoom) {
 		Element element = new Element("room");
 		
 		Element roomid = new Element("id");
@@ -162,44 +162,69 @@ public class XmlSerializer {
 		
 		
 		for (Sensor s : aRoom.getSensorer()) {
-			Element sensor = new Element("Sensors");
-			
-			Element id = new Element("id");
-			id.appendChild(Integer.toString(s.getId()));
-			Element alarmState = new Element("alarmState");
-			alarmState.appendChild((s.isAlarmState() ? "true" : "false"));
-			Element timeStamp = new Element ("timeStamp");
-			timeStamp.appendChild(s.getInstallationDate().toString());
-			Element battery = new Element("battery");
-			battery.appendChild(Integer.toString(s.getBattery()));
-			
-			sensor.appendChild(id);
-			sensor.appendChild(alarmState);
-			sensor.appendChild(timeStamp);
-			sensor.appendChild(battery);
-			
-			for (Event e : s.getEvents()) {
-				Element events = new Element("events");
-				
-				Element eventId = new Element("id");
-				eventId.appendChild(Integer.toString(e.getID()));
-				Element eventType = new Element("eventType");
-				eventType.appendChild(e.getEventType().toString());
-				Element time = new Element("time");
-				time.appendChild(e.getTime().toString());
-				
-				events.appendChild(eventId);
-				events.appendChild(eventType);
-				events.appendChild(time);
-				
-				sensor.appendChild(events);
-			} 
-			
-			element.appendChild(sensor);
+			Element e = insertXmlSensor(s); 
+			element.appendChild(e);
 		}
 		
 		return element;
 	}
+
+	public static String toXmlRoom(Room room) {
+		String s = Integer.toString(room.getID()) + " " + Integer.toString(room.getRomNR()) + " " + room.getRomType() + " " + room.getRomInfo(); 
+		return s;
+	}
+
+	public static String toXmlSensor(Sensor sensor) {
+		String a = Integer.toString(sensor.getId());
+		String b = (sensor.isAlarmState() ? "true" : "false");
+		String c = sensor.getInstallationDate().toString();
+		String d = Integer.toString(sensor.getBattery());
+		
+		return a + " " + b + " " + c + " " + d;
+	}
+
+	public static Element insertXmlSensor(Sensor s) {
+		Element main = new Element("Sensors");
+		
+		Element id = new Element("id");
+		id.appendChild(Integer.toString(s.getId()));
+		Element alarmState = new Element("alarmState");
+		alarmState.appendChild((s.isAlarmState() ? "true" : "false"));
+		Element timeStamp = new Element ("timeStamp");
+		timeStamp.appendChild(s.getInstallationDate().toString());
+		Element battery = new Element("battery");
+		battery.appendChild(Integer.toString(s.getBattery()));
+		
+		main.appendChild(id);
+		main.appendChild(alarmState);
+		main.appendChild(timeStamp);
+		main.appendChild(battery);
+		
+		for (Event e : s.getEvents()) {
+			
+			Element ele = insertXmlEvent(e);
+			main.appendChild(ele);
+		} 
+		return main;
+	}
+
+	public static Element insertXmlEvent(Event e) {
+		Element events = new Element("events");
+		
+		Element eventId = new Element("id");
+		eventId.appendChild(Integer.toString(e.getID()));
+		Element eventType = new Element("eventType");
+		eventType.appendChild(e.getEventType().toString());
+		Element time = new Element("time");
+		time.appendChild(e.getTime().toString());
+		
+		events.appendChild(eventId);
+		events.appendChild(eventType);
+		events.appendChild(time);
+		
+		return events;
+	}
+
 
 }
 

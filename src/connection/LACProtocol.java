@@ -30,29 +30,29 @@ public class LACProtocol {
 		return Integer.parseInt(s);
 	}
 
-	public static void updateLAC(Connection connection, LAC lac) {
-		connection.send("UPDATELAC" + toXml(lac.getModel()));
+	public static void updateLAC(Connection connection, LAC lac) throws ConnectException, IOException {
+		connection.send("UPDATELAC" + lac.getModel().getAdresse());
 	}
 
-	public static void updateRoom(Connection connection, Room room) {
-		connection.send("UPDATEROOM" + toXmlRoom(room));
+	public static void updateRoom(Connection connection, Room room) throws ConnectException, IOException {
+		connection.send("UPDATEROOM" + XmlSerializer.toXmlRoom(room));
 		
 	}
 	
-	public static void updateSensor(Connection connection, Event event){
-		connection.send("UPDATESENSOR" + toXmlSensor(event));
+	public static void updateSensor(Connection connection, Sensor sensor) throws ConnectException, IOException {
+		connection.send("UPDATESENSOR" + XmlSerializer.toXmlSensor(sensor));
 	}
 	
-	public static void insertRoom(Connection connection, Room room){
-		connection.send("INSERTROOM" + toXmlRoom(room));
+	public static void insertRoom(Connection connection, Room room) throws ConnectException, IOException {
+		connection.send("INSERTROOM" + XmlSerializer.insertXmlRoom(room).toString());
 	}
 	
-	public static void insertSensor(Connection connection, Sensor sensor){
-		connection.send("INSERTSENSOR" + toXmlSensor(sensor));
+	public static void insertSensor(Connection connection, Sensor sensor) throws ConnectException, IOException {
+		connection.send("INSERTSENSOR" + XmlSerializer.insertXmlSensor(sensor).toString());
 	}
 	
-	public static void insertEvent(Connection connection, Event event){
-		connection.send("INSERTEVENT" + toXmlEvent(event));
+	public static void insertEvent(Connection connection, Event event) throws ConnectException, IOException {
+		connection.send("INSERTEVENT" + XmlSerializer.insertXmlEvent(event).toString());
 	}
 
 	
