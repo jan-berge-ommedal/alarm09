@@ -48,7 +48,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	
 	public LACgui(LAC lac) {
 		this.lac = lac;
-		this.initialize(false, false);
+		this.initialize(true, false);
 	}
 	
 	public LACgui(MACgui macgui) {
