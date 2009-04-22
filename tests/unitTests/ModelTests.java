@@ -1,14 +1,19 @@
 package unitTests;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.sql.Timestamp;
+
+import apps.LAC;
 
 import sun.misc.GC.LatencyRequest;
 
 import junit.framework.TestCase;
 
+import model.Event;
 import model.Model;
 import model.Room;
 import model.Sensor;
+import model.Event.EventType;
 
 
 public class ModelTests extends TestCase implements PropertyChangeListener {
@@ -73,7 +78,37 @@ public class ModelTests extends TestCase implements PropertyChangeListener {
 	 */
 	//FIXME Simon: MTTF-test
 	public void testMTTF(){
+		Model m = new Model();
+		Room r = new Room(1, 12, "Pokerrom", "Dette er et svett pokerrom", m);
+		long currentTime = System.currentTimeMillis();
+		Timestamp currentTimeTimestamp = new Timestamp(currentTime);
+		long currentTimeOffset = currentTime + 50000;
 		
+		Sensor s = new Sensor(2, false, 100, currentTimeTimestamp , r, true);
+		m.addRoom(r);
+		r.addSensor(s);
+		
+		s.setInstallationDate(new Timestamp(System.currentTimeMillis()-50000));
+		long expected = 50000;
+		assertEquals(checkNearness(s.computeMTTF(),expected ), true);
+		
+		Event e1 = new Event(2,EventType.ALARM,currentTimeTimestamp, s);
+		s.addEvent(e1);
+		assertEquals(s.computeMTTF(), true);
+		
+		Event e2 = new Event(3,EventType.ALARM,currentTimeTimestamp, s);
+		s.addEvent(e2);
+		expected = 25000;
+		assertEquals(s.computeMTTF(), true);
+		
+		Event e3 = new Event(4,EventType.ALARM,currentTimeTimestamp, s);
+		s.addEvent(e2);
+		expected = 16667;
+		assertEquals(s.computeMTTF(), true);
+	}
+
+	private boolean checkNearness(long computeMTTF, long expected) {
+		return (computeMTTF< expected+5 && computeMTTF>expected-5 ? true : false);
 	}
 	
 }
