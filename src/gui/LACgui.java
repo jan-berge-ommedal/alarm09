@@ -4,6 +4,8 @@ import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+
 import model.*;
 import apps.LAC;
 
@@ -502,9 +504,15 @@ public class LACgui extends JPanel implements Values, ActionListener {
 			catch (NullPointerException npe) {
 				//trenger ikke gjøre noe;
 			}
-			Sensor sensor = new Sensor(room);
-			if (sensor.getRoom() != null) {
-				this.lac.getModel(); //jan ordner imo
+			Sensor sensor;
+			try {
+				sensor = new Sensor(this.lac, room);
+				room.addSensor(sensor);
+				if (sensor.getRoom() != null) {
+					this.lac.getModel().addRoom(room);
+				}
+			} catch (IOException e1) {
+				System.err.println("Could not create Sensor due to IO error");
 			}
 		}
 	}
