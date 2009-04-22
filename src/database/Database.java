@@ -70,7 +70,7 @@ public class Database {
 			
 				// construct room
 				int romID = rooms.getInt("ID");
-				Room room = new Room(rooms.getInt("ID"),rooms.getInt("romNR"),rooms.getString("romType"),rooms.getString("romInfo"));
+				Room room = new Room(rooms.getInt("ID"),rooms.getInt("romNR"),rooms.getString("romType"),rooms.getString("romInfo"),m);
 				
 				// traverse room's sensors
 				query = "SELECT id, alarmState, batteryStatus, installationDate FROM Sensor WHERE romID="+romID;
@@ -108,7 +108,7 @@ public class Database {
 			ResultSet events = executeQuery(query);
 			while(events.next()){
 				
-				s.addEvent(new Event(events.getInt("id"),EventType.valueOf(events.getString("eventType")),events.getTimestamp("time")));
+				s.addEvent(new Event(events.getInt("id"),EventType.valueOf(events.getString("eventType")),events.getTimestamp("time"),s));
 				
 			}
 		} catch (SQLException e) {
