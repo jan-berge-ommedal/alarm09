@@ -122,12 +122,36 @@ public class ConnectionTests extends TestCase implements HostListener{
 	/**
 	 * Requirement 10
 	 * Denne testen skal sjekke at implementasjonen er reliable 
+	 * @throws IOException 
+	 * @throws UnknownHostException 
+	 * @throws SocketTimeoutException 
 	 */
 	//FIXME Jan: Correctness-test
 	public void testCorrectness() {
 		
-		SimpleHost host = new SimpleHost(820);
+		SimpleHost host;
+		try {
+			host = new SimpleHost(820);
 		
+			ServerConnection c = host.acceptNewConnection();
+			host.addHostListener(this);
+		
+			Connection sender = new ConnectionImplementation(920);
+			sender.connect(InetAddress.getByName("localhost"), 820);
+			
+			
+			String complexMessage = "gg34æøÅ2riuf\"dq32fuh3§!#¤%&#Ãz&/()=?=)(/&%¤#‡!25ityqioQE¤WT¤%WGFAWyeæ56gtQE¤WTYE%RGTSUIT(&OWT%E¤&IUEHYERW#¤T%DFGDSFGDFYER&UYHAswergfrju=J";
+			for(int i=0; i<1000 ; i++){
+				nextMessage=complexMessage;
+				sender.send(complexMessage);
+			}
+			
+			sender.close();
+			c.getThread().stop();
+		
+		} catch (IOException e) {
+			assertEquals("Her er det noe galt", false);
+		}
 	
 	}
 	
@@ -156,9 +180,8 @@ public class ConnectionTests extends TestCase implements HostListener{
 
 	@Override
 	public void receivedMsg(String msg, ServerConnectionThread thread) {
-		assertEquals("Expected Message didnt match", nextMessage, msg);
+		assertEquals("Expected Message didnt match", nextMessage.equals(msg));
 		nextMessage=null;
-		
 	}
 
 }

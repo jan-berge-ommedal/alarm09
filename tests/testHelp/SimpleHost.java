@@ -84,6 +84,7 @@ public class SimpleHost implements HostListener{
 		private ServerSocket serverSocket;
 		private SimpleHost host;
 		private Connection connection;
+		private boolean running;
 			
 			public ServerConnectionThread(SimpleHost host) {
 				this.setName("Connection "+host.getConnectionThreads().size());
@@ -105,6 +106,7 @@ public class SimpleHost implements HostListener{
 							e.printStackTrace();
 						}					
 			}
+			
 
 			public Connection getConnection() {
 				return connection;
