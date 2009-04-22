@@ -13,6 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import help.AlarmHelp;
 
 /**
  * 
@@ -41,18 +42,18 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	 */
 	
 	public LACgui(Model model) {
-		this.initialize(true, false);
 		this.model = model;
+		this.initialize(true, false);
 	}
 	
 	public LACgui(LAC lac) {
-		this.initialize(false, false);
 		this.lac = lac;
+		this.initialize(false, false);
 	}
 	
 	public LACgui(MACgui macgui) {
-		this.initialize(false, true);
 		this.macgui = macgui;
+		this.initialize(false, true);
 	}
 	
 	public LACgui() {
@@ -112,7 +113,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 			returnMAC.setVisible(false);
 		}
 		sensors = new JLabel("Sensors");
-		if (model) { //hvis model = null har ikke lacen adresse
+		if (model && this.model.getAdresse() != null) {
 			adresse = new JLabel(this.model.getAdresse());
 		}
 		else {
@@ -333,7 +334,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	
 	/**
 	 * Slenger opp en infoboks som bekrefter at sensorene er i orden
-	 * Burde denne metoden tatt inn en boolean parameter i tilfellet sensorene ikke er i orden?
+	 * 
 	 */
 	public static void sensorsChecked(boolean ok) {
 		final JFrame frame = new JFrame();
@@ -394,7 +395,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		//sensorAttributes(false);
 		//sensorsChecked();
 		//MACgui window2 = new MACgui();
-		LACgui window = new LACgui();
+		LACgui window = new LACgui(AlarmHelp.getDefaultModel());
 		//fireFightConfirm();
 		//fireFightConfirmed();
 		//logSaved();
