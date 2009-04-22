@@ -196,31 +196,26 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		}
 		header.setBounds(2*LEFT_SPACE, TOP_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		//forskjellige tekstfelter og labels
-		JLabel ROOMid = new JLabel("Room-ID:");
-		JLabel ROOMna = new JLabel("Room name:");
+		JLabel ROOMna = new JLabel("Room info:");
 		JLabel ROOMty = new JLabel("Room type:");
 		JLabel ROOMnu = new JLabel("Room number:");
-		final JTextField id = new JTextField();
 		final JTextField name = new JTextField();
 		final JTextField type = new JTextField();
 		final JTextField number = new JTextField();
 		if (!install && model != null) {
-			id.setText("omg"); //disse feltene må endres slik at dersom en sensor skal endres så må de gjeldende feltene settes
 			name.setText("noob");
 			type.setText("owned");
 		}
-		ROOMid.setBounds(LEFT_SPACE, TOP_SPACE + LABEL_HEIGHT + DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		ROOMna.setBounds(LEFT_SPACE, TOP_SPACE + 2*LABEL_HEIGHT + 2*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		ROOMty.setBounds(LEFT_SPACE, TOP_SPACE + 3*LABEL_HEIGHT + 3*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		ROOMnu.setBounds(LEFT_SPACE, TOP_SPACE + 4*LABEL_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
-		id.setBounds(LEFT_SPACE + LABEL_WIDTH + DEFAULT_SPACE, TOP_SPACE + LABEL_HEIGHT + DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		name.setBounds(LEFT_SPACE + LABEL_WIDTH + DEFAULT_SPACE, TOP_SPACE + 2*LABEL_HEIGHT + 2*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		type.setBounds(LEFT_SPACE + LABEL_WIDTH + DEFAULT_SPACE, TOP_SPACE + 3*LABEL_HEIGHT + 3*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		number.setBounds(LEFT_SPACE + LABEL_WIDTH + DEFAULT_SPACE, TOP_SPACE + 4*LABEL_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		
 		//knappene
 		JButton save = new JButton("Save");
-		save.addActionListener(new SensorAttributesListener(this.lac, id, number, type, name));
+		save.addActionListener(new SensorAttributesListener(this.lac, number, type, name));
 		JButton cancel = new JButton("Return");
 		cancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -233,11 +228,9 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		
 		//legger til elementene på jpanel
 		panel.add(header);
-		panel.add(ROOMid);
 		panel.add(ROOMna);
 		panel.add(ROOMty);
 		panel.add(ROOMnu);
-		panel.add(id);
 		panel.add(name);
 		panel.add(type);
 		panel.add(number);
@@ -463,7 +456,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		private JTextField romtype;
 		private JTextField rominfo;
 		
-		public SensorAttributesListener(LAC lac, JTextField romid, JTextField romnummer, JTextField romtype, JTextField rominfo) {
+		public SensorAttributesListener(LAC lac, JTextField romnummer, JTextField romtype, JTextField rominfo) {
 			this.lac=lac;
 			this.romid = romid;
 			this.romnummer = romnummer;
@@ -473,13 +466,11 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			int romID = -1;
 			int romNUMMER = -1;
 			String romTYPE = "";
 			String romINFO = "";
 			Room room = null;
 			try {
-				romID = Integer.parseInt(romid.getText());
 				romNUMMER = Integer.parseInt(romnummer.getText());			
 			}
 			catch (NumberFormatException nfe) {
@@ -496,7 +487,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 				sensorAttributeError(true);
 			}
 			try {
-				room = new Room(romID, romNUMMER, romTYPE, romINFO, lac.getModel());
+				// opprett room = new Room(romNUMMER, romTYPE, romINFO, lac.getModel());
 			}
 			catch (NullPointerException npe) {
 				//trenger ikke gjøre noe;
