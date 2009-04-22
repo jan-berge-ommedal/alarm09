@@ -1,11 +1,14 @@
 package unitTests;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.InetAddress;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
 import testHelp.HostListener;
 import testHelp.SimpleHost;
+import testHelp.SimpleHost.ServerConnection;
 import testHelp.SimpleHost.ServerConnectionThread;
 
 import no.ntnu.fp.net.co.Connection;
@@ -54,35 +57,77 @@ public class ConnectionTests extends TestCase implements HostListener{
 	//FIXME Jan: Connection-test
 	public void testConnection() {
 		
-		SimpleHost host;
 		try {
-			host = new SimpleHost(800);
-			
-			
-			host.addHostListener(this);
-			host.acceptNewConnection();
-			
-			Connection client1 = new ConnectionImplementation(900);
-			client1.connect(InetAddress.getByName("localhost"), 800);
-			String aMessage = "TestMessage";
-			nextMessage = aMessage;
-			client1.send(aMessage);
-		}catch (IOException e) {
-			assertEquals("You failed Start DEBUGGING", true, false);
+			typicalTransmit();
+		} catch (IOException e) {
+			assertEquals("Her er det noe galt", false,true);
 		}
-
 		
+		connectIssues();
 		
-		
+		closeIssues();
 	
 	}
 	
+	private void closeIssues() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void connectIssues() {
+		SimpleHost host;
+		ServerConnection hostConnection1 = null;
+		
+		try {
+			host = new SimpleHost(810);
+			host.addHostListener(this);
+			hostConnection1 = host.acceptNewConnection();
+		} catch (IOException e) {
+			assertEquals("Her er det noe galt", false,true);
+		}
+						
+		Connection client1 = new ConnectionImplementation(900);
+		
+		try {
+			client1.send("Dette går ikke ann");
+			assertEquals("Skal ikke kunne sende uten connecta", false, true);
+		}catch (IOException e) {}
+		
+		
+		try {
+			client1.connect(InetAddress.getByName("192.563.74.86"), 800);
+		} catch (SocketTimeoutException e1) {
+		} catch (UnknownHostException e1) {
+		} catch (IOException e1) {
+			assertEquals("Kast unkownHostException eller SocketTimeout", false, true);
+		}
+		
+		try {
+			hostConnection1.getThread().getConnection().send("Dette går ikke ann");
+			assertEquals("Skal ikke kunne sende uten å ha receiva data (Skal være threeway)", false, true);
+		}catch (IOException e) {}
+		
+		
+	}
+
+	private void typicalTransmit() throws UnknownHostException, IOException {
+		SimpleHost host = new SimpleHost(800);
+		ServerConnection hostConnection = host.acceptNewConnection();
+		Connection con = new ConnectionImplementation(900);
+		con.connect(InetAddress.getByName("localhost"), 800);
+		con.close();
+		hostConnection.getThread().stop();		
+	}
+
 	/**
 	 * Requirement 10
 	 * Denne testen skal sjekke at implementasjonen er reliable 
 	 */
 	//FIXME Jan: Correctness-test
 	public void testCorrectness() {
+		
+		SimpleHost host = new SimpleHost(820);
+		
 	
 	}
 	

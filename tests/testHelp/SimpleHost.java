@@ -29,8 +29,10 @@ public class SimpleHost implements HostListener{
 		listeners.add(listener);
 	}
 	
-	public void acceptNewConnection(){
-		connections.add(new ServerConnection(this));
+	public ServerConnection acceptNewConnection(){
+		ServerConnection connection = new ServerConnection(this);
+		connections.add(connection);
+		return connection;
 	}
 	
 	@Override
@@ -57,11 +59,18 @@ public class SimpleHost implements HostListener{
 	}
 
 
-	class ServerConnection{
+	public class ServerConnection{
+		private ServerConnectionThread thread;
 	
 		private ServerConnection(SimpleHost host){
-			Thread thread = new ServerConnectionThread(host);
+			thread = new ServerConnectionThread(host);
 		}
+
+		public ServerConnectionThread getThread() {
+			return thread;
+		}
+		
+		
 		
 	}
 	
@@ -94,15 +103,14 @@ public class SimpleHost implements HostListener{
 						
 						}catch (IOException e) {
 							e.printStackTrace();
-						}
-		
-						
-					
-						
-					
-					
-				
+						}					
 			}
+
+			public Connection getConnection() {
+				return connection;
+			}
+			
+			
 			
 			
 	}

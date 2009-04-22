@@ -5,6 +5,8 @@ import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import apps.LAC;
+
 /**
  * This is a JAVA-Bean that represents a room. It supports PropertyChange-listening. 
  * 
@@ -27,6 +29,15 @@ public class Room {
 	private ArrayList<Sensor> sensorer = new ArrayList<Sensor>();
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	
+	/**
+	 * USE THIS WHEN CREATING ROOMS THAT EXISTS IN DATABASE
+	 * 
+	 * @param id
+	 * @param romNR
+	 * @param romType
+	 * @param romInfo
+	 * @param model
+	 */
 
 	public Room(int id, int romNR, String romType, String romInfo, Model model) {
 		this.id = id;
@@ -35,6 +46,27 @@ public class Room {
 		this.romInfo = romInfo;
 		
 		this.model=model;
+	}
+	
+	/**
+	 * USE THIS WHEN CREATING NEW ROOMS THAT DOESNT EXISTS IN DATABASE
+	 * 
+	 * @param id
+	 * @param romNR
+	 * @param romType
+	 * @param romInfo
+	 * @param model
+	 */
+
+	public Room(LAC lac, int romNR, String romType, String romInfo) {
+		this.model = lac.getModel();
+		this.romNR = romNR;
+		this.romType = romType;
+		this.romInfo = romInfo;
+		
+		
+		this.id = lac.getNextRoomID(this);
+		
 	}
 	
 	/* SECTION OF SIMPLE GET & SET */

@@ -205,7 +205,7 @@ public class Database {
 	
 	
 
-	public int insertLAC(String adress){
+	public int LAC(String adress){
 
 		int id = -1;
 		

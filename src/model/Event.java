@@ -2,6 +2,8 @@ package model;
 
 import java.sql.Timestamp;
 
+import apps.LAC;
+
 /**
  * Data-model of an Sensor-Event 
  * <br><br>
@@ -20,12 +22,41 @@ public class Event {
 	
 	private Sensor sensor;
 	
+	/**
+	 * USE THIS WHEN CREATING A NEW EVENT
+	 * 
+	 * @param eventType
+	 * @param time
+	 * @param s
+	 */
+
+	public Event(LAC lac, EventType eventType, Timestamp time,Sensor s) {
+		this.eventType = eventType;
+		this.time = time;
+		this.sensor=sensor;
+		
+		
+		this.id = lac.getNextLACID(this);
+		
+	
+		
+	}
+	
+	
+	/**
+	 * USE THIS WHEN LOADING A EVENT
+	 * 
+	 * @param eventType
+	 * @param time
+	 * @param s
+	 */
 
 	public Event(int id, EventType eventType, Timestamp time,Sensor s) {
 		this.eventType = eventType;
 		this.time = time;
 		this.id = id;
 		
+	
 		this.sensor=sensor;
 	}
 	

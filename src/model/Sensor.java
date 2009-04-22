@@ -29,7 +29,6 @@ public class Sensor {
 	private ArrayList<Event> events = new ArrayList<Event>();
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
-	private int nextID = 0;
 	private Room room;
 	
 	/**
@@ -46,7 +45,6 @@ public class Sensor {
 	
 	public Sensor(int id, boolean alarm, int battery, Timestamp installationDate,Room r, boolean startSensor){
 		this.id=id;
-		if(id>=nextID)nextID=id+1;
 		this.alarmState=alarm;
 		this.battery=battery;
 		this.installationDate=installationDate;
@@ -64,12 +62,13 @@ public class Sensor {
 	 * @param installationDate Installation-date of the sensor
 	 */
 	
-	public Sensor(Room room){
-		this.id = nextID++;
+	public Sensor(LAC lac, Room room){
 		alarmState=false;
 		battery=100;
 		installationDate = LAC.getTime();
 		this.room=room;
+		
+		this.id = lac.getNextSensorID(this);
 		startup();
 	}
 	

@@ -21,6 +21,7 @@ import connection.ConnectionImplementation;
 import connection.LACProtocol;
 import connection.TCPConnection;
 
+import model.Event;
 import model.Model;
 import model.Room;
 import model.Sensor;
@@ -219,6 +220,18 @@ public class LAC implements PropertyChangeListener {
 		}else
 			new LAC();
 		*/
+	}
+
+	public int getNextRoomID(Room room) {
+		return LACProtocol.insertRoom(connection, room);
+	}
+
+	public int getNextSensorID(Sensor sensor) {
+		return LACProtocol.insertSensor(connection, sensor);
+	}
+
+	public int getNextLACID(Event event) {
+		return LACProtocol.insertEvent(connection, event);
 	}
 
 	
