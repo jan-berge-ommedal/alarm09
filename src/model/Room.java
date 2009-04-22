@@ -21,6 +21,7 @@ public class Room {
 	private String romInfo;
 	/* END DATAFIELDS */
 	
+	
 	private ArrayList<Sensor> sensorer = new ArrayList<Sensor>();
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	

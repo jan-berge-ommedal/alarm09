@@ -1,6 +1,7 @@
-package unitTests;
+package testHelp;
 
-import unitTests.SimpleHost.ServerConnectionThread;
+import testHelp.SimpleHost.ServerConnectionThread;
+
 
 public interface HostListener {
 

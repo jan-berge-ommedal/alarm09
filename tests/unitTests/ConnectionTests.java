@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import unitTests.SimpleHost.ServerConnectionThread;
+import testHelp.HostListener;
+import testHelp.SimpleHost;
+import testHelp.SimpleHost.ServerConnectionThread;
 
 import no.ntnu.fp.net.co.Connection;
 import connection.ConnectionImplementation;
@@ -113,10 +115,5 @@ public class ConnectionTests extends TestCase implements HostListener{
 		nextMessage=null;
 		
 	}
-	
-	
 
-		
-	
-		
 }

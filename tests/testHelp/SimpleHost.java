@@ -1,4 +1,4 @@
-package unitTests;
+package testHelp;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+
 
 import no.ntnu.fp.net.co.Connection;
 
@@ -70,7 +71,7 @@ public class SimpleHost implements HostListener{
 		return mainConnection;
 	}
 	
-	class ServerConnectionThread extends Thread{
+	public class ServerConnectionThread extends Thread{
 		private ServerSocket serverSocket;
 		private SimpleHost host;
 		private Connection connection;

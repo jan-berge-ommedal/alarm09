@@ -81,6 +81,7 @@ public class LAC implements PropertyChangeListener {
 		while(i>0){
 			try {
 				connect();
+				System.out.println("Connected to the MAC");
 				return;
 			} catch(BindException e){
 				throw new IOException("Port in use");
