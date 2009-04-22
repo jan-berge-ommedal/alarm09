@@ -176,7 +176,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	/**
 	 * Kalles når en sensor skal innstalleres og lukker vinduet samt åpner vinduet for sensorinnstallering
 	 */
-	public static void sensorAttributes(boolean install, Model model) {
+	public void sensorAttributes(boolean install, Model model) {
 		final JFrame frame = new JFrame("Sensor attributes");
 		JPanel panel  = new JPanel();
 		panel.setLayout(null);
@@ -220,26 +220,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		
 		//knappene
 		JButton save = new JButton("Save");
-		save.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				int romID = -1;
-				int romNUMMER = -1;
-				try {
-					romID = Integer.parseInt(id.getText());
-					romNUMMER = Integer.parseInt(number.getText());			
-				}
-				catch (NumberFormatException nfe) {
-					//gi infoboks
-				}
-		
-				String romTYPE = type.getText();
-				String info = name.getText();
-				
-				Room room = new Room(romID, romNUMMER, romTYPE, "");
-			
-			}
-		}
-		);
+		save.addActionListener(new SensorAttributesListener(this.lac, id, number, type, name));
 		JButton cancel = new JButton("Return");
 		cancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -327,7 +308,11 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		panel.add(y);
 	}
 	
-	public static void sensorAttributeError() {
+	/**
+	 * Mekker gui
+	 * @param numbers - hvis true er talla lol, hvis false nullpointer
+	 */
+	public static void sensorAttributeError(boolean numbers) {
 		final JFrame frame = new JFrame();
 		JPanel panel  = new JPanel();
 		
@@ -337,7 +322,13 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		frame.setContentPane(panel);
 		frame.setVisible(true);
 		
-		JLabel info = new JLabel("You need to enter numbers for roomID and ");
+		JLabel info = new JLabel();
+		if (numbers) {
+			info.setText("Please insert integers l0lzcak0r");
+		}
+		else {
+			info.setText("herreguuud sett stats før save mb?!??!?!??!");
+		}
 		JButton y = new JButton("OK");
 		y.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -464,5 +455,56 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		}
 		
 	}
-
+	
+	class SensorAttributesListener implements ActionListener{
+		private LAC lac;
+		private JTextField romid;
+		private JTextField romnummer;
+		private JTextField romtype;
+		private JTextField rominfo;
+		
+		public SensorAttributesListener(LAC lac, JTextField romid, JTextField romnummer, JTextField romtype, JTextField rominfo) {
+			this.lac=lac;
+			this.romid = romid;
+			this.romnummer = romnummer;
+			this.romtype = romtype;
+			this.rominfo = rominfo;
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			int romID = -1;
+			int romNUMMER = -1;
+			String romTYPE = "";
+			String romINFO = "";
+			Room room = null;
+			try {
+				romID = Integer.parseInt(romid.getText());
+				romNUMMER = Integer.parseInt(romnummer.getText());			
+			}
+			catch (NumberFormatException nfe) {
+				sensorAttributeError(true);
+			}
+			catch (NullPointerException npe) {
+				sensorAttributeError(false);
+			}
+			try {
+				romTYPE = romtype.getText();
+				romINFO = rominfo.getText();
+			}
+			catch (NullPointerException npe) {
+				sensorAttributeError(true);
+			}
+			try {
+				room = new Room(romID, romNUMMER, romTYPE, romINFO, lac.getModel());
+			}
+			catch (NullPointerException npe) {
+				//trenger ikke gjøre noe;
+			}
+			Sensor sensor = new Sensor(room);
+			if (sensor.getRoom() != null) {
+				this.lac.getModel().
+			}
+		}
+	}
 }
