@@ -36,6 +36,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	private JLabel adresse;
 	private LAC lac;
 	private MACgui macgui;
+	private JLabel id;
 	
 	/*
 	 * Her følger diverse konstruktører som alle kaller initialize på et senere tidspunkt
@@ -127,13 +128,13 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	
 		pane.setLayout(null);
 		pane.add(installSensor);
-		pane.add(saveLog);
+		//pane.add(saveLog);
 		pane.add(checkSensors);
 		pane.add(sensors);
 		pane.add(returnMAC);
 		pane.add(adresse);
 		installSensor.setBounds(LEFT_SPACE, TOP_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
-		saveLog.setBounds(LEFT_SPACE + BUTTON_WIDTH + DEFAULT_SPACE, TOP_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
+		//saveLog.setBounds(LEFT_SPACE + BUTTON_WIDTH + DEFAULT_SPACE, TOP_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		sensors.setBounds(LEFT_SPACE, TOP_SPACE + BUTTON_HEIGHT + 2*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		checkSensors.setBounds(LEFT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT);
 		returnMAC.setBounds(LEFT_SPACE + BUTTON_WIDTH + DEFAULT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT);
@@ -145,7 +146,16 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		sensorList = new BlinkingList();
 		if (model) { //hvis initialize kalles med en model settes listen til å være med elementene
 			sensorList.setModel(this.model);
+			String id = "LAC ID:  " + this.model.getID();
+			this.id = new JLabel(id);
+			this.id.setFont(f);
 		}
+		if (!model) {
+			this.id = new JLabel("ingen id valgt");
+		}
+		this.id.setVisible(true);
+		pane.add(this.id);
+		this.id.setBounds(LEFT_SPACE + BUTTON_WIDTH + DEFAULT_SPACE, TOP_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		sensorList.setCellRenderer(new LACrenderer());
 		sensorList.setVisibleRowCount(7); 
 		sensorList.setVisible(true);
