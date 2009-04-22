@@ -34,6 +34,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	private JButton saveLog;
 	private JButton checkSensors;
 	private JButton returnMAC;
+	private JButton editSensor;
 	private JLabel sensors;
 	private JList sensorList;
 	private Model model;
@@ -55,10 +56,6 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		this.initialize(true, false);
 	}
 	
-
-	
-	
-	
 	public LACgui() {
 		this.initialize(false, false);
 	}
@@ -72,8 +69,6 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		this.sensorList.setModel(model);
 		this.repaint();
 	}
-	
-
 	
 	/**
 	 * 
@@ -101,6 +96,10 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		checkSensors = new JButton("Check Sensors");
 		checkSensors.addActionListener(this);
 		checkSensors.setMargin(asdf);
+		editSensor = new JButton("Edit sensor");
+		editSensor.addActionListener(this);
+		editSensor.setMargin(asdf);
+		editSensor.setVisible(true); //må settes til false by default og gjøres synlig når element velges
 		//Merk at returnMAC må håndteres dynamisk for å unngå at den vises når LACvinduet
 		//ikke er aksessert fra MAC
 		returnMAC = new JButton("Return to MAC");
@@ -129,12 +128,13 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		pane.add(sensors);
 		pane.add(returnMAC);
 		pane.add(adresse);
+		pane.add(editSensor);
 		installSensor.setBounds(LEFT_SPACE, TOP_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		//saveLog.setBounds(LEFT_SPACE + BUTTON_WIDTH + DEFAULT_SPACE, TOP_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		sensors.setBounds(LEFT_SPACE, TOP_SPACE + BUTTON_HEIGHT + 2*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		checkSensors.setBounds(LEFT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT);
 		returnMAC.setBounds(LEFT_SPACE + BUTTON_WIDTH + DEFAULT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT);
-		//adresse.setBounds()
+		editSensor.setBounds(LEFT_SPACE, 700 - TOP_SPACE - 5*BUTTON_HEIGHT - 4*DEFAULT_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		
 		/*
 		 * Initialiserer JListen
@@ -208,9 +208,10 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		final JTextField name = new JTextField();
 		final JTextField type = new JTextField();
 		final JTextField number = new JTextField();
-		if (!install && model != null) {
-			name.setText("noob");
+		if (!install && model != null) { //den skal editeres, feltene skal ha info
+			name.setText("lol"); //må hente ut sensorinfo her. how?
 			type.setText("owned");
+			number.setText("omg");
 		}
 		ROOMna.setBounds(LEFT_SPACE, TOP_SPACE + 2*LABEL_HEIGHT + 2*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		ROOMty.setBounds(LEFT_SPACE, TOP_SPACE + 3*LABEL_HEIGHT + 3*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
@@ -221,7 +222,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		
 		//knappene
 		JButton save = new JButton("Save");
-		save.addActionListener(new SensorAttributesListener(this.lac, number, type, name));
+		save.addActionListener(new SensorAttributesListener(this.lac, number, type, name)); //hva gjøres uten lac?
 		JButton cancel = new JButton("Return");
 		cancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
