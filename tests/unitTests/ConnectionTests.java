@@ -1,5 +1,13 @@
 package unitTests;
 
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+import unitTests.SimpleHost.ServerConnectionThread;
+
+import no.ntnu.fp.net.co.Connection;
+import connection.ConnectionImplementation;
 import junit.framework.TestCase;
 import junit.framework.TestResult;
 
@@ -33,9 +41,9 @@ import junit.framework.TestResult;
  *
  */
 
-public class ConnectionTests extends TestCase{
-	
-	
+public class ConnectionTests extends TestCase implements HostListener{
+	private String nextMessage;
+
 	/**
 	 * Requirement 10
 	 * Denne testen skal sjekke at det opprettes en forbindelse mellom sender og mottaker.
@@ -43,6 +51,27 @@ public class ConnectionTests extends TestCase{
 	 */
 	//FIXME Jan: Connection-test
 	public void testConnection() {
+		
+		SimpleHost host;
+		try {
+			host = new SimpleHost(800);
+			
+			
+			host.addHostListener(this);
+			host.acceptNewConnection();
+			
+			Connection client1 = new ConnectionImplementation(900);
+			client1.connect(InetAddress.getByName("localhost"), 800);
+			String aMessage = "TestMessage";
+			nextMessage = aMessage;
+			client1.send(aMessage);
+		}catch (IOException e) {
+			assertEquals("You failed Start DEBUGGING", true, false);
+		}
+
+		
+		
+		
 	
 	}
 	
@@ -64,4 +93,30 @@ public class ConnectionTests extends TestCase{
 	
 	}
 	
+	
+
+	@Override
+	public void connectionClosed(ServerConnectionThread thread) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void connectionEstablished(ServerConnectionThread thread) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void receivedMsg(String msg, ServerConnectionThread thread) {
+		assertEquals("Expected Message didnt match", nextMessage, msg);
+		nextMessage=null;
+		
+	}
+	
+	
+
+		
+	
+		
 }
