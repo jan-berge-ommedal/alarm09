@@ -41,10 +41,7 @@ public class ConnectionImplementation extends AbstractConnection {
 
     /** Keeps track of the used ports for each server port. */
     private static Map<Integer, Boolean> usedPorts = Collections.synchronizedMap(new HashMap<Integer, Boolean>());
-    private int myport;
-    private String myaddress;
-    private int remoteport;
-    private InetAddress remoteaddress;
+
     /**
      * Initialise initial sequence number and setup state machine.
      * 
@@ -52,8 +49,8 @@ public class ConnectionImplementation extends AbstractConnection {
      *            - the local port to associate with this connection
      */
     public ConnectionImplementation(int myPort) {
-        this.myport = myPort;
-        this.myaddress = this.getIPv4Address();
+        this.myPort = myPort;
+        this.myAddress = this.getIPv4Address();
     	usedPorts.put(0, true);
     }
 
@@ -81,17 +78,19 @@ public class ConnectionImplementation extends AbstractConnection {
      */
     public void connect(InetAddress remoteAddress, int remotePort) throws IOException,
             SocketTimeoutException {
-        
+        this.remoteAddress = remoteAddress.toString();
+        this.remotePort = remotePort;
+	
     	KtnDatagram d = this.constructInternalPacket(Flag.SYN);
         
         d.setDest_addr(remoteAddress.toString());
         d.setDest_port(remotePort);
-
-        this.remoteaddress = remoteAddress;
-        this.remoteport = remotePort;
         
         try {
+            this.state = State.SYN_SENT;
+            this.lastDataPacketSent = d;
 			this.simplySendPacket(d);
+
 		} catch (ClException e) {
 			e.printStackTrace();
 		}
@@ -107,9 +106,10 @@ public class ConnectionImplementation extends AbstractConnection {
     	KtnDatagram h = this.receivePacket(true);
     	while(h.getFlag() != Flag.SYN) {
     		h = this.receivePacket(true);
+    		this.state = State.SYN_RCVD;
     	}
     	this.sendAck(h, true);
-		return new ConnectionImplementation(this.myport);
+		return new ConnectionImplementation(this.myPort);
 	}
 
     /**
@@ -126,10 +126,6 @@ public class ConnectionImplementation extends AbstractConnection {
      */
     public void send(String msg) throws ConnectException, IOException {
         KtnDatagram f  = this.constructDataPacket(msg);
-        f.setDest_addr(remoteaddress.toString());
-        f.setDest_port(remoteport);
-        f.setSrc_addr(this.myaddress);
-        f.setSrc_port(this.myport);
         this.sendDataPacketWithRetransmit(f);
     }
 
@@ -142,7 +138,11 @@ public class ConnectionImplementation extends AbstractConnection {
      * @see AbstractConnection#sendAck(KtnDatagram, boolean)
      */
     public String receive() throws ConnectException, IOException {
-        return "Wait for it";
+    	KtnDatagram h = this.receivePacket(false);
+    	while (h.getSeq_nr() == this.lastValidPacketReceived.getSeq_nr()) {
+    		h = this.receivePacket(false);
+    	}
+    	return h.getPayload().toString();
     }
 
     /**
@@ -163,6 +163,13 @@ public class ConnectionImplementation extends AbstractConnection {
      * @return true if packet is free of errors, false otherwise.
      */
     protected boolean isValid(KtnDatagram packet) {
-        return false;
+    	if(packet.getSeq_nr() == this.lastDataPacketSent.getSeq_nr()) {
+    		if(this.lastDataPacketSent.getChecksum() == packet.getChecksum()) {
+    			this.lastValidPacketReceived = packet;
+    			return true;
+    		}
+    		else return false;
+    	}
+        else return false;
     }
 }
