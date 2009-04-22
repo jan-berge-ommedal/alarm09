@@ -64,7 +64,9 @@ public class MACProtocol {
 		else if(receive.substring(0, 10).equals("INSERTROOM")){
 			try{
 				String[] s = receive.split(" ");
-				adaper.getMAC().getDatabase().insertRoom(Integer.parseInt(s[5]), Integer.parseInt(s[2]), s[3], s[4]);
+				int roomID = adaper.getMAC().getDatabase().insertRoom(Integer.parseInt(s[5]), Integer.parseInt(s[2]), s[3], s[4]);
+				adaper.getConnection().send(Integer.toString(roomID));
+				
 			} 
 			catch (Exception e) {
 				e.printStackTrace();
@@ -74,7 +76,8 @@ public class MACProtocol {
 			try{
 				String[] s = receive.split(" ");
 				boolean b = (s[2].equals("true")) ? true : false;
-				adaper.getMAC().getDatabase().insertSensor(Integer.parseInt(s[5]), b, Integer.parseInt(s[4]));
+				int sensorID = adaper.getMAC().getDatabase().insertSensor(Integer.parseInt(s[5]), b, Integer.parseInt(s[4]));
+				adaper.getConnection().send(Integer.toString(sensorID));
 			} 
 			catch (Exception e) {
 				e.printStackTrace();
@@ -88,7 +91,8 @@ public class MACProtocol {
 					if(s[2].equals(e.toString()))
 						et = e;
 				}
-				adaper.getMAC().getDatabase().insertEvent(Integer.parseInt(s[1]), et);
+				int eventID = adaper.getMAC().getDatabase().insertEvent(Integer.parseInt(s[1]), et);
+				adaper.getConnection().send(Integer.toString(eventID));
 			} 
 			catch (Exception e) {
 				e.printStackTrace();
