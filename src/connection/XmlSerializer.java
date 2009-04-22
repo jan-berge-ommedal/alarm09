@@ -128,7 +128,7 @@ public class XmlSerializer {
 		return aModel;
 	}
 
-	private static Timestamp makeTimestamp(String time) {
+	public static Timestamp makeTimestamp(String time) {
 		int aar = Integer.parseInt(time.substring(0, 4));
 		int maaned = Integer.parseInt(time.substring(5, 7));
 		int dag = Integer.parseInt(time.substring(8, 10));
@@ -170,7 +170,7 @@ public class XmlSerializer {
 	}
 
 	public static String toXmlRoom(Room room) {
-		String s = Integer.toString(room.getID()) + " " + Integer.toString(room.getRomNR()) + " " + room.getRomType() + " " + room.getRomInfo(); 
+		String s = " " + Integer.toString(room.getID()) + " " + Integer.toString(room.getRomNR()) + " " + room.getRomType() + " " + room.getRomInfo(); 
 		return s;
 	}
 
@@ -180,7 +180,7 @@ public class XmlSerializer {
 		String c = sensor.getInstallationDate().toString();
 		String d = Integer.toString(sensor.getBattery());
 		
-		return a + " " + b + " " + c + " " + d;
+		return " " + a + " " + b + " " + c + " " + d;
 	}
 
 	public static Element insertXmlSensor(Sensor s) {
