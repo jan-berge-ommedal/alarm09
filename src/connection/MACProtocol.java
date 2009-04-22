@@ -62,7 +62,8 @@ public class MACProtocol {
 		}
 		else if(receive.substring(0, 9).equals("INSERTROOM")){
 			try{
-
+				String[] s = receive.split(" ");
+				adaper.getMAC().getDatabase().insertRoom(Integer.parseInt(s[5]), Integer.parseInt(s[2]), s[3], s[4]);
 			} 
 			catch (Exception e) {
 				e.printStackTrace();
@@ -70,7 +71,8 @@ public class MACProtocol {
 		}
 		else if(receive.substring(0, 9).equals("INSERTSENSOR")){
 			try{
-
+				String[] s = receive.split(" ");
+				adaper.getMAC().getDatabase().insertSensor(romID, alarmState, batteryStatus);
 			} 
 			catch (Exception e) {
 				e.printStackTrace();

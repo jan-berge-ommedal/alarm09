@@ -44,11 +44,11 @@ public class LACProtocol {
 	}
 	
 	public static void insertRoom(Connection connection, Room room) throws ConnectException, IOException {
-		connection.send("INSERTROOM" + XmlSerializer.insertXmlRoom(room).toString());
+		connection.send("INSERTROOM" + XmlSerializer.toXmlRoom(room));
 	}
 	
 	public static void insertSensor(Connection connection, Sensor sensor) throws ConnectException, IOException {
-		connection.send("INSERTSENSOR" + XmlSerializer.insertXmlSensor(sensor).toString());
+		connection.send("INSERTSENSOR" + XmlSerializer.toXmlSensor(sensor));
 	}
 	
 	public static void insertEvent(Connection connection, Event event) throws ConnectException, IOException {

@@ -72,6 +72,8 @@ public class XmlSerializer {
 		Timestamp fem = new Timestamp(0);
 		boolean seks = false; 
 		EventType sju = EventType.ALARM;
+		Room r;
+		Sensor s = null;
 		
 		for (int i = 5; i < xmls.length; i++) {
 			roomteller++; sensorteller++; eventteller++;
@@ -86,7 +88,7 @@ public class XmlSerializer {
 			else if(roomteller == 5){tre = xmls[i].substring(8);}
 			else if(roomteller == 7){fire = xmls[i].substring(8);}
 			else if(roomteller == 9){
-				Room r = new Room(en, to, tre, fire);
+				r = new Room(en, to, tre, fire, aModel);
 				aModel.addRoom(r);
 			}
 			// Checks for sensors
@@ -99,7 +101,7 @@ public class XmlSerializer {
 			else if(sensorteller == 5){fem = makeTimestamp(xmls[i].substring(10));}
 			else if(sensorteller == 7){to = Integer.parseInt(xmls[i].substring(8));}
 			else if(sensorteller == 9){
-				Sensor s = new Sensor(en, seks, to,fem, aModel.getRooms().get(aModel.getRooms().size()-1), false);
+				s = new Sensor(en, seks, to,fem, aModel.getRooms().get(aModel.getRooms().size()-1), false);
 				aModel.getRooms().get(aModel.getRooms().size()-1).addSensor(s);
 			}
 			// Checks for events
@@ -117,7 +119,7 @@ public class XmlSerializer {
 			else if(eventteller == 5){fem = makeTimestamp(xmls[i].substring(5));}
 			else if(eventteller == 7){
 				
-				Event e = new Event(en,sju,fem);
+				Event e = new Event(en,sju,fem, s);
 				aModel.getRooms().get(aModel.getRooms().size() -1).getSensorer().get(aModel.getRooms().get(aModel.getRooms().size() -1).getSensorer().size()-1).addEvent(e);
 			}
 			
@@ -170,7 +172,7 @@ public class XmlSerializer {
 	}
 
 	public static String toXmlRoom(Room room) {
-		String s = " " + Integer.toString(room.getID()) + " " + Integer.toString(room.getRomNR()) + " " + room.getRomType() + " " + room.getRomInfo(); 
+		String s = " " + Integer.toString(room.getID()) + " " + Integer.toString(room.getRomNR()) + " " + room.getRomType() + " " + room.getRomInfo() + " " + room.getModel().getID(); 
 		return s;
 	}
 
@@ -179,8 +181,9 @@ public class XmlSerializer {
 		String b = (sensor.isAlarmState() ? "true" : "false");
 		String c = sensor.getInstallationDate().toString();
 		String d = Integer.toString(sensor.getBattery());
+		String e = Integer.toString(sensor.getRoom().getModel().getID());
 		
-		return " " + a + " " + b + " " + c + " " + d;
+		return " " + a + " " + b + " " + c + " " + d + " " + e;
 	}
 
 	public static Element insertXmlSensor(Sensor s) {
