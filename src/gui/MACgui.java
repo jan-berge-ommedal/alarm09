@@ -98,16 +98,16 @@ public class MACgui extends JPanel implements Values, ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == viewLog) {
-			viewLog();
+			viewLog(); //opprett og vis en liste over events, sortert etter dato
 		}
 		else if (e.getSource() == checkMarked) {
-			//sjekk markerte lacs - hva innbærer det WTFreak
+			//sjekk markerte lacs - dvs sjekk alle alarmene til alle sjekka lacs. metodekall
 		}
 		else if (e.getSource() == updateMarked) {
-			//oppdater alle markerte lacs
+			//oppdater alle markerte lacs - metodekall med markerte elementer
 		}
 		else if (e.getSource() == updateAll) {
-			//updater alle lacs
+			//updater alle lacs - metodekall
 		}	
 	}
 }

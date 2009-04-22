@@ -142,11 +142,9 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		 * Initialiserer JListen
 		 */
 		sensorList = new BlinkingList();
-		
-		if (model) { //hvis initialize kalles med en model settes listen til å være med elementene, hvis ikke opprettes en liste med ett "lol" element
+		if (model) { //hvis initialize kalles med en model settes listen til å være med elementene
 			sensorList.setModel(this.model);
 		}
-		
 		sensorList.setCellRenderer(new LACrenderer());
 		sensorList.setVisibleRowCount(7); 
 		sensorList.setVisible(true);
@@ -395,8 +393,8 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	public static void main(String[] args) {
 		//sensorAttributes(false);
 		//sensorsChecked();
-		MACgui window2 = new MACgui();
-		//LACgui window = new LACgui();
+		//MACgui window2 = new MACgui();
+		LACgui window = new LACgui();
 		//fireFightConfirm();
 		//fireFightConfirmed();
 		//logSaved();
@@ -408,7 +406,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 			logSaved(); //skulle vi lagt inn mulighet for feilmelding dersom loggen ikke lagres?
 		}
 		else if (evt.getSource() == installSensor) {
-			sensorAttributes(false, this.model);
+			sensorAttributes(true, this.model);
 		}
 		else if (evt.getSource() == checkSensors) {
 			if (this.lac != null) {
