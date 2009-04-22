@@ -83,7 +83,7 @@ public class Sensor {
 	 * @param installationDate
 	 */
 	private void startup() {	
-		addEvent(new Event(computeNextEventID(), Event.EventType.STARTUP,LAC.getTime()));	
+		addEvent(new Event(computeNextEventID(), Event.EventType.STARTUP,LAC.getTime(),this));	
 		Thread t = new Thread(){
 			/**
 	 		* A thread that decreases the remaining batterytime

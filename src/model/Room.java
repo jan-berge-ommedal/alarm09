@@ -21,19 +21,27 @@ public class Room {
 	private String romInfo;
 	/* END DATAFIELDS */
 	
+	private Model model;
+	
 	
 	private ArrayList<Sensor> sensorer = new ArrayList<Sensor>();
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	
 
-	public Room(int id, int romNR, String romType, String romInfo) {
+	public Room(int id, int romNR, String romType, String romInfo, Model model) {
 		this.id = id;
 		this.romNR = romNR;
 		this.romType = romType;
 		this.romInfo = romInfo;
+		
+		this.model=model;
 	}
 	
 	/* SECTION OF SIMPLE GET & SET */
+
+	public Model getModel() {
+		return model;
+	}
 
 	public int getID() {
 		return id;

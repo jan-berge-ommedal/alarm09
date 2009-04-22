@@ -18,13 +18,22 @@ public class Event {
 	private final Timestamp time; 
 	/* SLUTT DATAFELTER */
 	
+	private Sensor sensor;
+	
 
-	public Event(int id, EventType eventType, Timestamp time) {
+	public Event(int id, EventType eventType, Timestamp time,Sensor s) {
 		this.eventType = eventType;
 		this.time = time;
 		this.id = id;
+		
+		this.sensor=sensor;
 	}
 	
+
+	public Sensor getSensor() {
+		return sensor;
+	}
+
 
 	public int getID() {
 		return id;
