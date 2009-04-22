@@ -24,7 +24,7 @@ public class ModelTests extends TestCase implements PropertyChangeListener {
 	 */
 	public void testModelListening(){
 		Model m = new Model();
-		Room r = new Room(0,5,"TYPE","INFO");
+		Room r = new Room(0,5,"TYPE","INFO",m);
 		Sensor s1 = new Sensor(r);
 		Sensor s2 = new Sensor(r);
 		

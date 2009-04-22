@@ -29,10 +29,10 @@ public class XMLParsingTests extends TestCase{
 	
 	public void testParse(){
 		Model m = AlarmHelp.getDefaultModel();
-		Room r = new Room(3,51,"sdfgdfgh","asdfasdf");
+		Room r = new Room(3,51,"sdfgdfgh","asdfasdf",m);
 		Sensor s = new Sensor(r);
-		s.addEvent(new Event(5,EventType.ALARM,new Timestamp(42367)));
-		s.addEvent(new Event(8,EventType.STARTUP, new Timestamp(4232)));
+		s.addEvent(new Event(5,EventType.ALARM,new Timestamp(42367),s));
+		s.addEvent(new Event(8,EventType.STARTUP, new Timestamp(4232),s));
 		r.addSensor(s);
 		r.addSensor(new Sensor(6,false,67,new Timestamp(5674645),r,true));
 		m.addRoom(r);
