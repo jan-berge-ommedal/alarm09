@@ -52,7 +52,7 @@ public class LACProtocol {
 	}
 	
 	public static void insertEvent(Connection connection, Event event) throws ConnectException, IOException {
-		connection.send("INSERTEVENT" + XmlSerializer.insertXmlEvent(event).toString());
+		connection.send("INSERTEVENT" + XmlSerializer.toXmlEvent(event));
 	}
 
 	

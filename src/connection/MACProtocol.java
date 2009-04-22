@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.ConnectException;
 
 import model.Model;
+import model.Event.EventType;
 
 import apps.MAC.LACAdaper;
 
@@ -41,7 +42,7 @@ public class MACProtocol {
 				e.printStackTrace();
 			}
 		}
-		else if(receive.substring(0, 9).equals("UPDATEROOM")){
+		else if(receive.substring(0, 10).equals("UPDATEROOM")){
 			try{
 				String[] s = receive.split(" ");
 				adaper.getMAC().getDatabase().updateRoom(Integer.parseInt(s[1]), Integer.parseInt(s[2]), s[3], s[4]);
@@ -50,7 +51,7 @@ public class MACProtocol {
 				e.printStackTrace();
 			}
 		}
-		else if(receive.substring(0, 9).equals("UPDATESENSOR")){
+		else if(receive.substring(0, 12).equals("UPDATESENSOR")){
 			try{
 				String[] s = receive.split(" ");
 				boolean b = (s[2].equals("true")) ? true : false;
@@ -60,7 +61,7 @@ public class MACProtocol {
 				e.printStackTrace();
 			}
 		}
-		else if(receive.substring(0, 9).equals("INSERTROOM")){
+		else if(receive.substring(0, 10).equals("INSERTROOM")){
 			try{
 				String[] s = receive.split(" ");
 				adaper.getMAC().getDatabase().insertRoom(Integer.parseInt(s[5]), Integer.parseInt(s[2]), s[3], s[4]);
@@ -69,18 +70,25 @@ public class MACProtocol {
 				e.printStackTrace();
 			}
 		}
-		else if(receive.substring(0, 9).equals("INSERTSENSOR")){
+		else if(receive.substring(0, 12).equals("INSERTSENSOR")){
 			try{
 				String[] s = receive.split(" ");
-				adaper.getMAC().getDatabase().insertSensor(romID, alarmState, batteryStatus);
+				boolean b = (s[2].equals("true")) ? true : false;
+				adaper.getMAC().getDatabase().insertSensor(Integer.parseInt(s[5]), b, Integer.parseInt(s[4]));
 			} 
 			catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		else if(receive.substring(0, 9).equals("INSERTEVENT")){
+		else if(receive.substring(0, 11).equals("INSERTEVENT")){
 			try{
-
+				String[] s = receive.split(" ");
+				EventType et = null;
+				for(EventType e : EventType.values()){
+					if(s[2].equals(e.toString()))
+						et = e;
+				}
+				adaper.getMAC().getDatabase().insertEvent(Integer.parseInt(s[1]), et);
 			} 
 			catch (Exception e) {
 				e.printStackTrace();
