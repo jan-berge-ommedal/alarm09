@@ -4,7 +4,7 @@ import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import model.Model;
+import model.*;
 import apps.LAC;
 
 import javax.swing.JButton;
@@ -199,9 +199,11 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		JLabel ROOMid = new JLabel("Room-ID:");
 		JLabel ROOMna = new JLabel("Room name:");
 		JLabel ROOMty = new JLabel("Room type:");
-		JTextField id = new JTextField();
-		JTextField name = new JTextField();
-		JTextField type = new JTextField();
+		JLabel ROOMnu = new JLabel("Room number:");
+		final JTextField id = new JTextField();
+		final JTextField name = new JTextField();
+		final JTextField type = new JTextField();
+		final JTextField number = new JTextField();
 		if (!install && model != null) {
 			id.setText("omg"); //disse feltene må endres slik at dersom en sensor skal endres så må de gjeldende feltene settes
 			name.setText("noob");
@@ -210,15 +212,31 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		ROOMid.setBounds(LEFT_SPACE, TOP_SPACE + LABEL_HEIGHT + DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		ROOMna.setBounds(LEFT_SPACE, TOP_SPACE + 2*LABEL_HEIGHT + 2*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		ROOMty.setBounds(LEFT_SPACE, TOP_SPACE + 3*LABEL_HEIGHT + 3*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
+		ROOMnu.setBounds(LEFT_SPACE, TOP_SPACE + 4*LABEL_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		id.setBounds(LEFT_SPACE + LABEL_WIDTH + DEFAULT_SPACE, TOP_SPACE + LABEL_HEIGHT + DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		name.setBounds(LEFT_SPACE + LABEL_WIDTH + DEFAULT_SPACE, TOP_SPACE + 2*LABEL_HEIGHT + 2*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		type.setBounds(LEFT_SPACE + LABEL_WIDTH + DEFAULT_SPACE, TOP_SPACE + 3*LABEL_HEIGHT + 3*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
+		number.setBounds(LEFT_SPACE + LABEL_WIDTH + DEFAULT_SPACE, TOP_SPACE + 4*LABEL_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		
 		//knappene
 		JButton save = new JButton("Save");
 		save.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//må lagre sensoren
+				int romID = -1;
+				int romNUMMER = -1;
+				try {
+					romID = Integer.parseInt(id.getText());
+					romNUMMER = Integer.parseInt(number.getText());			
+				}
+				catch (NumberFormatException nfe) {
+					//gi infoboks
+				}
+		
+				String romTYPE = type.getText();
+				String info = name.getText();
+				
+				Room room = new Room(romID, romNUMMER, romTYPE, "");
+			
 			}
 		}
 		);
@@ -237,9 +255,11 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		panel.add(ROOMid);
 		panel.add(ROOMna);
 		panel.add(ROOMty);
+		panel.add(ROOMnu);
 		panel.add(id);
 		panel.add(name);
 		panel.add(type);
+		panel.add(number);
 		panel.add(save);
 		panel.add(cancel);
 		frame.repaint();
@@ -296,6 +316,28 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		frame.setVisible(true);
 		
 		JLabel info = new JLabel("You have initiated the automatic fire-fighting system!");
+		JButton y = new JButton("OK");
+		y.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.setVisible(false);
+			}
+		}
+		);
+		panel.add(info);
+		panel.add(y);
+	}
+	
+	public static void sensorAttributeError() {
+		final JFrame frame = new JFrame();
+		JPanel panel  = new JPanel();
+		
+		//pakker frame etc
+		frame.setSize(350, 110);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setContentPane(panel);
+		frame.setVisible(true);
+		
+		JLabel info = new JLabel("You need to enter numbers for roomID and ");
 		JButton y = new JButton("OK");
 		y.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
