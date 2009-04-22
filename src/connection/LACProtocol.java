@@ -31,7 +31,7 @@ public class LACProtocol {
 	}
 
 	public static void updateLAC(Connection connection, LAC lac) throws ConnectException, IOException {
-		connection.send("UPDATELAC" + lac.getModel().getAdresse());
+		connection.send("UPDATELAC" + " " + Integer.toString(lac.getModel().getID()) + " " + lac.getModel().getAdresse());
 	}
 
 	public static void updateRoom(Connection connection, Room room) throws ConnectException, IOException {

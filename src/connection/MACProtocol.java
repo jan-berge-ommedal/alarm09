@@ -5,11 +5,12 @@ import java.net.ConnectException;
 
 import model.Model;
 
+import apps.MAC.LACAdaper;
 import apps.MAC.LACAdapter;
 
 public class MACProtocol {
 
-	public static void handleMSG(LACAdapter adaper, String receive) {
+	public static void handleMSG(LACAdaper adaper, String receive) {
 		if(receive.startsWith("GETMODEL")){
 			try {
 				if(!adaper.hasModel()){
@@ -33,8 +34,8 @@ public class MACProtocol {
 		}
 		else if(receive.substring(0, 9).equals("UPDATELAC")){
 			try{
-				// Mangler matchende databasemetode
-				adaper.getConnection().send("" + adaper.getMAC().getDatabase(). );
+				String[] s = receive.split(" ");
+				adaper.getMAC().getDatabase().updateLAC(Integer.parseInt(s[1]), s[2]);
 			} 
 			catch (IOException e) {
 				e.printStackTrace();
@@ -42,7 +43,8 @@ public class MACProtocol {
 		}
 		else if(receive.substring(0, 9).equals("UPDATEROOM")){
 			try{
-				
+				String[] s = receive.split(" ");
+				adaper.getMAC().getDatabase().updateRoom(Integer.parseInt(s[1]), Integer.parseInt(s[2]), s[3], s[4]);
 			} 
 			catch (IOException e) {
 				e.printStackTrace();
@@ -50,7 +52,9 @@ public class MACProtocol {
 		}
 		else if(receive.substring(0, 9).equals("UPDATESENSOR")){
 			try{
-
+				String[] s = receive.split(" ");
+				boolean b = (s[2].equals("true")) ? true : false;
+				adaper.getMAC().getDatabase().updateSensor(Integer.parseInt(s[1]), b, batteryStatus, installationDate)
 			} 
 			catch (IOException e) {
 				e.printStackTrace();
