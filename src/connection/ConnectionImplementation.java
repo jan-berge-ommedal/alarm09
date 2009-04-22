@@ -83,9 +83,6 @@ public class ConnectionImplementation extends AbstractConnection {
 	
     	KtnDatagram d = this.constructInternalPacket(Flag.SYN);
         
-        d.setDest_addr(remoteAddress.toString());
-        d.setDest_port(remotePort);
-        
         try {
             this.state = State.SYN_SENT;
             this.lastDataPacketSent = d;
@@ -109,7 +106,7 @@ public class ConnectionImplementation extends AbstractConnection {
     		this.state = State.SYN_RCVD;
     	}
     	this.sendAck(h, true);
-		return new ConnectionImplementation(this.myPort);
+		return this;
 	}
 
     /**
