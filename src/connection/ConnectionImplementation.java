@@ -108,6 +108,9 @@ public class ConnectionImplementation extends AbstractConnection {
     	while(h.getFlag() != Flag.SYN) {
     		h = this.receivePacket(true);
     	}
+    	this.remoteAddress = h.getSrc_addr();
+    	this.remotePort = h.getSrc_port();
+    	
 		this.state = State.SYN_RCVD;
     	this.sendAck(h, true);
 		return this;
@@ -130,6 +133,7 @@ public class ConnectionImplementation extends AbstractConnection {
         	throw new ConnectException("No connection established");
         }
     	KtnDatagram f  = this.constructDataPacket(msg);
+    	this.lastDataPacketSent = f;
         this.sendDataPacketWithRetransmit(f);
     }
 
@@ -167,6 +171,15 @@ public class ConnectionImplementation extends AbstractConnection {
      * @see Connection#close()
      */
     public void close() throws IOException {
+        KtnDatagram g = this.constructInternalPacket(Flag.FIN);
+        try {
+            this.state = State.CLOSE_WAIT;
+            this.lastDataPacketSent = g;
+			this.simplySendPacket(g);
+
+		} catch (ClException e) {
+			e.printStackTrace();
+		}
         
     }
 
@@ -179,6 +192,14 @@ public class ConnectionImplementation extends AbstractConnection {
      * @return true if packet is free of errors, false otherwise.
      */
     protected boolean isValid(KtnDatagram packet) {
+    	if(packet.getFlag() == Flag.FIN) {
+    		this.state = State.CLOSE_WAIT;
+    		try {
+    		this.sendAck(packet, false);
+    		} catch (Exception e) {
+    			
+    		}
+    	}
     	if(packet.getSeq_nr() == this.lastDataPacketSent.getSeq_nr()) {
     		if(this.lastDataPacketSent.getChecksum() == packet.getChecksum()) {
     			this.lastValidPacketReceived = packet;
