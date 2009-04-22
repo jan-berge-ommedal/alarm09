@@ -1,7 +1,13 @@
 package connection;
 
+import model.Model;
+
+
+
 public interface ModelEditControll {
 
-	boolean testSensors();
+	public boolean testSensors();
+	public Model getModel();
+	public boolean hasAlarm();
 
 }
