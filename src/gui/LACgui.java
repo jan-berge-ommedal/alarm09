@@ -428,7 +428,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		//sensorAttributes(false);
 		//sensorsChecked();
 		//MACgui window2 = new MACgui();
-		LACgui window = new LACgui(AlarmHelp.getDefaultModel());
+		LACgui window = new LACgui(AlarmHelp.getDefaultModel()); //skulle gjerne hatt en LAC her
 		//fireFightConfirm();
 		//fireFightConfirmed();
 		//logSaved();
@@ -503,7 +503,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 			}
 			Sensor sensor = new Sensor(room);
 			if (sensor.getRoom() != null) {
-				this.lac.getModel().
+				this.lac.getModel(); //jan ordner imo
 			}
 		}
 	}
