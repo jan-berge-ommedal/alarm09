@@ -51,7 +51,7 @@ public class ConnectionImplementation extends AbstractConnection {
     public ConnectionImplementation(int myPort) {
         this.myPort = myPort;
         this.myAddress = this.getIPv4Address();
-    	usedPorts.put(0, true);
+    	//usedPorts.put(0, true);
     }
 
     private String getIPv4Address() {
@@ -91,6 +91,10 @@ public class ConnectionImplementation extends AbstractConnection {
 		} catch (ClException e) {
 			e.printStackTrace();
 		}
+		if(this.receiveAck() == null) {
+			throw new SocketTimeoutException("Timeout");
+		}
+		this.state = State.ESTABLISHED;
     }
 
     /**
@@ -103,8 +107,8 @@ public class ConnectionImplementation extends AbstractConnection {
     	KtnDatagram h = this.receivePacket(true);
     	while(h.getFlag() != Flag.SYN) {
     		h = this.receivePacket(true);
-    		this.state = State.SYN_RCVD;
     	}
+		this.state = State.SYN_RCVD;
     	this.sendAck(h, true);
 		return this;
 	}
@@ -122,7 +126,10 @@ public class ConnectionImplementation extends AbstractConnection {
      * @see no.ntnu.fp.net.co.Connection#send(String)
      */
     public void send(String msg) throws ConnectException, IOException {
-        KtnDatagram f  = this.constructDataPacket(msg);
+        if(this.state != State.ESTABLISHED) {
+        	throw new ConnectException("No connection established");
+        }
+    	KtnDatagram f  = this.constructDataPacket(msg);
         this.sendDataPacketWithRetransmit(f);
     }
 
@@ -136,10 +143,22 @@ public class ConnectionImplementation extends AbstractConnection {
      */
     public String receive() throws ConnectException, IOException {
     	KtnDatagram h = this.receivePacket(false);
-    	while (h.getSeq_nr() == this.lastValidPacketReceived.getSeq_nr()) {
-    		h = this.receivePacket(false);
-    	}
-    	return h.getPayload().toString();
+        if(this.state == State.ESTABLISHED) {
+        	while (h.getSeq_nr() <= this.lastValidPacketReceived.getSeq_nr()) {
+        		h = this.receivePacket(false);
+        	}
+        	this.sendAck(h, false);
+        	return h.getPayload().toString();
+        }
+        else if (this.state == State.SYN_RCVD)  {
+        	while (this.state == State.SYN_RCVD) {
+        		this.sendAck(h, false);
+        		this.state = State.ESTABLISHED;
+        		return h.getPayload().toString();
+        	}
+        }
+        else throw new ConnectException("No connection established");
+        return null;
     }
 
     /**
