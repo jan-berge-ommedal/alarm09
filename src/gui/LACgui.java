@@ -15,6 +15,8 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import connection.ModelEditControll;
 import help.AlarmHelp;
 
 /**
@@ -36,28 +38,26 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	private JList sensorList;
 	private Model model;
 	private JLabel adresse;
-	private LAC lac;
-	private MACgui macgui;
 	private JLabel id;
+	
+	private ModelEditControll controller;
 	
 	/*
 	 * Her følger diverse konstruktører som alle kaller initialize på et senere tidspunkt
 	 */
+	
+	public LACgui(ModelEditControll controller){
+		this.controller = controller;
+	}
 	
 	public LACgui(Model model) {
 		this.model = model;
 		this.initialize(true, false);
 	}
 	
-	public LACgui(LAC lac) {
-		this.lac = lac;
-		this.initialize(true, false);
-	}
+
 	
-	public LACgui(MACgui macgui) {
-		this.macgui = macgui;
-		this.initialize(false, true);
-	}
+	
 	
 	public LACgui() {
 		this.initialize(false, false);
@@ -73,13 +73,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		this.repaint();
 	}
 	
-	public void setMACgui(MACgui macgui) {
-		this.macgui = macgui;
-	}
-	
-	public MACgui getMACgui() {
-		return this.macgui;
-	}
+
 	
 	/**
 	 * 
@@ -448,8 +442,8 @@ public class LACgui extends JPanel implements Values, ActionListener {
 			sensorAttributes(true, this.model);
 		}
 		else if (evt.getSource() == checkSensors) {
-			if (this.lac != null) {
-				sensorsChecked(this.lac.testSensors());
+			if (this.controller != null) {
+				//sensorsChecked(this.controller.testSensors()); //hva tenker jan her?
 			}
 			else {
 				sensorsChecked();
@@ -469,7 +463,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		private JTextField rominfo;
 		
 		public SensorAttributesListener(LAC lac, JTextField romnummer, JTextField romtype, JTextField rominfo) {
-			this.lac=lac;
+			this.lac=lac; 
 			this.romid = romid;
 			this.romnummer = romnummer;
 			this.romtype = romtype;
@@ -506,7 +500,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 			}
 			Sensor sensor;
 			try {
-				sensor = new Sensor(this.lac, room);
+				sensor = new Sensor(this.lac, room); //hvordan skal dette ordnes når jeg ikke får ha lac? :(
 				room.addSensor(sensor);
 				if (sensor.getRoom() != null) {
 					this.lac.getModel().addRoom(room);
