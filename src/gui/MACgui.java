@@ -108,8 +108,6 @@ public class MACgui extends JPanel implements Values, ActionListener {
 		}
 		else if (e.getSource() == updateAll) {
 			//updater alle lacs
-		}
-		
+		}	
 	}
-
 }

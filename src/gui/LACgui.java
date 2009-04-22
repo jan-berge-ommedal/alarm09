@@ -5,6 +5,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import model.Model;
+import apps.LAC;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -32,14 +33,30 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	private JList sensorList;
 	private Model model;
 	private JLabel adresse;
+	private LAC lac;
+	private MACgui macgui;
+	
+	/*
+	 * Her følger diverse konstruktører som alle kaller initialize på et senere tidspunkt
+	 */
 	
 	public LACgui(Model model) {
-		this.initialize(true);
+		this.initialize(true, false);
 		this.model = model;
 	}
 	
+	public LACgui(LAC lac) {
+		this.initialize(false, false);
+		this.lac = lac;
+	}
+	
+	public LACgui(MACgui macgui) {
+		this.initialize(false, true);
+		this.macgui = macgui;
+	}
+	
 	public LACgui() {
-		this.initialize(false);
+		this.initialize(false, false);
 	}
 	
 	public Model getModel() {
@@ -52,10 +69,20 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		this.repaint();
 	}
 	
+	public void setMACgui(MACgui macgui) {
+		this.macgui = macgui;
+	}
+	
+	public MACgui getMACgui() {
+		return this.macgui;
+	}
+	
 	/**
-	 * felles initialisering for konstruktørene
+	 * 
+	 * @param model - en boolean som sier noe om guiet har en modell eller ikke
+	 * @param fromMac - en boolean som sier om lac er startet fra mac
 	 */
-	private void initialize(boolean model) {
+	private void initialize(boolean model, boolean fromMac) {
 		Insets asdf = new Insets(0,0,0,0);
 		JPanel pane = new JPanel();
 		JFrame frame = new JFrame("LAC");
@@ -81,8 +108,9 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		returnMAC = new JButton("Return to MAC");
 		returnMAC.addActionListener(this);
 		returnMAC.setMargin(asdf);
-		//returnMAC.setVisible(false);
-		
+		if (!fromMac) {
+			returnMAC.setVisible(false);
+		}
 		sensors = new JLabel("Sensors");
 		if (model) { //hvis model = null har ikke lacen adresse
 			adresse = new JLabel(this.model.getAdresse());
@@ -134,6 +162,12 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	 */
 	public void setFromMac(boolean fromMac) {
 		this.fromMac = fromMac;
+		if (fromMac) {
+			this.returnMAC.setVisible(true);
+		}
+		else {
+			this.returnMAC.setVisible(false);
+		}
 	}
 	
 	/*
@@ -143,9 +177,10 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	/**
 	 * Kalles når en sensor skal innstalleres og lukker vinduet samt åpner vinduet for sensorinnstallering
 	 */
-	public static void sensorAttributes(boolean install) {
-		JFrame frame = new JFrame("Sensor attributes");
+	public static void sensorAttributes(boolean install, Model model) {
+		final JFrame frame = new JFrame("Sensor attributes");
 		JPanel panel  = new JPanel();
+		panel.setLayout(null);
 		
 		//pakker frame etc
 		frame.setSize(400, 400);
@@ -168,6 +203,11 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		JTextField id = new JTextField();
 		JTextField name = new JTextField();
 		JTextField type = new JTextField();
+		if (!install && model != null) {
+			id.setText("omg"); //disse feltene må endres slik at dersom en sensor skal endres så må de gjeldende feltene settes
+			name.setText("noob");
+			type.setText("owned");
+		}
 		ROOMid.setBounds(LEFT_SPACE, TOP_SPACE + LABEL_HEIGHT + DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		ROOMna.setBounds(LEFT_SPACE, TOP_SPACE + 2*LABEL_HEIGHT + 2*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		ROOMty.setBounds(LEFT_SPACE, TOP_SPACE + 3*LABEL_HEIGHT + 3*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
@@ -179,14 +219,14 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		JButton save = new JButton("Save");
 		save.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//oppdater modellen
+				//må lagre sensoren
 			}
 		}
 		);
 		JButton cancel = new JButton("Return");
 		cancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//steng vinduet og åpne LACvinduet
+				frame.setVisible(false);
 			}
 		}
 		);
@@ -297,7 +337,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	 * Slenger opp en infoboks som bekrefter at sensorene er i orden
 	 * Burde denne metoden tatt inn en boolean parameter i tilfellet sensorene ikke er i orden?
 	 */
-	public static void sensorsChecked() {
+	public static void sensorsChecked(boolean ok) {
 		final JFrame frame = new JFrame();
 		JPanel panel  = new JPanel();
 		
@@ -307,7 +347,36 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		frame.setContentPane(panel);
 		frame.setVisible(true);
 		
-		JLabel info = new JLabel("Sensors OK!");
+		JLabel info = new JLabel();
+		if (ok) {
+			info.setText("Sensors are ok!");
+		}
+		else {
+			info.setText("Sensors are fail0r");
+		}
+		JButton y = new JButton("OK");
+		y.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.setVisible(false);
+			}
+		}
+		);
+		panel.add(info);
+		panel.add(y);
+	}
+	
+	public static void sensorsChecked() {
+		final JFrame frame = new JFrame();
+		JPanel panel  = new JPanel();
+		
+		//pakker frame etc
+		frame.setSize(170, 110);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setContentPane(panel);
+		frame.setVisible(true);
+		
+		JLabel info = new JLabel();
+		info.setText("No sensors checked");
 		JButton y = new JButton("OK");
 		y.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -326,8 +395,8 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	public static void main(String[] args) {
 		//sensorAttributes(false);
 		//sensorsChecked();
-		//MACgui window2 = new MACgui();
-		LACgui window = new LACgui();
+		MACgui window2 = new MACgui();
+		//LACgui window = new LACgui();
 		//fireFightConfirm();
 		//fireFightConfirmed();
 		//logSaved();
@@ -339,10 +408,15 @@ public class LACgui extends JPanel implements Values, ActionListener {
 			logSaved(); //skulle vi lagt inn mulighet for feilmelding dersom loggen ikke lagres?
 		}
 		else if (evt.getSource() == installSensor) {
-			sensorAttributes(false);
+			sensorAttributes(false, this.model);
 		}
 		else if (evt.getSource() == checkSensors) {
-			sensorsChecked();
+			if (this.lac != null) {
+				sensorsChecked(this.lac.testSensors());
+			}
+			else {
+				sensorsChecked();
+			}
 		}
 		else if (evt.getSource() == returnMAC) {
 			//returner til macen
