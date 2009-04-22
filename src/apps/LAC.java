@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.BindException;
+import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
@@ -47,28 +48,24 @@ public class LAC implements PropertyChangeListener {
 	 * 
 	 */
 	public LAC() {
-		gui = new LACgui();
+		gui = new LACgui(this);
 		try {
 			connect(5);
-			int modelID = LACProtocol.receiveNextModelID(connection);
+			String defaulfAddress = "My Adresss";
+			int modelID = LACProtocol.receiveNextModelID(connection, defaulfAddress);
+			Model m = new Model();
+			m.setID(modelID);
+			m.setAdresse(defaulfAddress);
+			this.setModel(m);
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
 		}
-		setModel(AlarmHelp.getDefaultModel());
-			
-			
-			
-		
-			
-
-		
 	}
 	
 	/**
 	 * This constructor is used when loading a LAC for storage
 	 * @param id an int, the stored id of the LAC
 	 */
-	/*
 	public LAC(int id) {
 		gui = new LACgui();
 		try {
@@ -78,7 +75,7 @@ public class LAC implements PropertyChangeListener {
 			System.err.println("Reattempting to connect");
 		}
 		
-	}*/
+	}
 	
 	private void connect(int i) throws IOException {
 		while(i>0){
@@ -155,9 +152,25 @@ public class LAC implements PropertyChangeListener {
 	@Override
 	public void propertyChange(PropertyChangeEvent e) {
 		if(e.getSource() instanceof Sensor)
-			LACProtocol.updateMAC(connection,this,((Sensor)e.getSource()));
+			try {
+				LACProtocol.updateSensor(connection,((Sensor)e.getSource()));
+			} catch (ConnectException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		else if(e.getSource() instanceof Room){
-			LACProtocol.updateMAC(connection,this,((Room)e.getSource()));
+			try {
+				LACProtocol.updateRoom(connection,((Room)e.getSource()));
+			} catch (ConnectException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
 		
 	}
