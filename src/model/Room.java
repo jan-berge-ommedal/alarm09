@@ -2,6 +2,7 @@ package model;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -56,9 +57,10 @@ public class Room {
 	 * @param romType
 	 * @param romInfo
 	 * @param model
+	 * @throws IOException 
 	 */
 
-	public Room(LAC lac, int romNR, String romType, String romInfo) {
+	public Room(LAC lac, int romNR, String romType, String romInfo) throws IOException {
 		this.model = lac.getModel();
 		this.romNR = romNR;
 		this.romType = romType;

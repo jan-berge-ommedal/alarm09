@@ -2,6 +2,7 @@ package model;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -60,9 +61,10 @@ public class Sensor {
 	 * @param events  of Events
 	 * @param room The room containing the sensor
 	 * @param installationDate Installation-date of the sensor
+	 * @throws IOException 
 	 */
 	
-	public Sensor(LAC lac, Room room){
+	public Sensor(LAC lac, Room room) throws IOException{
 		alarmState=false;
 		battery=100;
 		installationDate = LAC.getTime();

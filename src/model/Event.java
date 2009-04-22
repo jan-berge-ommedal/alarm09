@@ -1,5 +1,6 @@
 package model;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 
 import apps.LAC;
@@ -28,9 +29,10 @@ public class Event {
 	 * @param eventType
 	 * @param time
 	 * @param s
+	 * @throws IOException 
 	 */
 
-	public Event(LAC lac, EventType eventType, Timestamp time,Sensor s) {
+	public Event(LAC lac, EventType eventType, Timestamp time,Sensor s) throws IOException {
 		this.eventType = eventType;
 		this.time = time;
 		this.sensor=sensor;

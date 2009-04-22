@@ -222,15 +222,15 @@ public class LAC implements PropertyChangeListener {
 		*/
 	}
 
-	public int getNextRoomID(Room room) {
+	public int getNextRoomID(Room room) throws IOException {
 		return LACProtocol.insertRoom(connection, room);
 	}
 
-	public int getNextSensorID(Sensor sensor) {
+	public int getNextSensorID(Sensor sensor) throws IOException  {
 		return LACProtocol.insertSensor(connection, sensor);
 	}
 
-	public int getNextLACID(Event event) {
+	public int getNextLACID(Event event) throws IOException  {
 		return LACProtocol.insertEvent(connection, event);
 	}
 
