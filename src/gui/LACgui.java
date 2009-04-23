@@ -65,7 +65,8 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	public void setModel(Model model) {
 		this.model = model;
 		this.sensorList.setModel(model);
-		this.repaint();
+		this.
+		this.initialize(true, false);
 	}
 	
 	/**
