@@ -108,6 +108,7 @@ public class Model implements ListModel, PropertyChangeListener {
 		for(PropertyChangeListener pcl : listeners){
 			pcl.propertyChange(e);
 		}
+		System.out.println("Change in model");
 		
 	}
 
@@ -158,6 +159,7 @@ public class Model implements ListModel, PropertyChangeListener {
 		Model m = new Model();
 		Room r = new Room(0,51,"sdf","sdfsd",m);
 		m.addRoom(r);
+		r.setRomInfo("NEW INFO");
 		
 	}
 

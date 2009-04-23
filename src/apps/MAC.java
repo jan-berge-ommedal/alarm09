@@ -148,8 +148,8 @@ public class MAC{
 		return database;
 	}
 	
-	public LACAdaper[] getLACAdapters(){
-		return adapters.lacAdapters.toArray(new LACAdaper[adapters.getSize()]);
+	public LacAdapterList getLACAdapterList(){
+		return adapters;
 	}
 	
 
