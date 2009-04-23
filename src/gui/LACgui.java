@@ -46,6 +46,8 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	private JLabel sensorStatus;
 	private JLabel batteryStatus;
 	private JLabel date;
+	private ConnectionStatusPanel csp;
+	private JButton replaceSensor;
 	
 	private ModelEditControll mec;
 	
@@ -86,7 +88,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		/*
 		 * Buttons
 		 */
-		installSensor = new JButton("Install Sensor");
+		installSensor = new JButton("Install New Sensor");
 		installSensor.addActionListener(this);
 		installSensor.setMargin(asdf);
 		saveLog = new JButton("Save Log");
@@ -95,12 +97,19 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		checkSensors = new JButton("Check Sensors");
 		checkSensors.addActionListener(this);
 		checkSensors.setMargin(asdf);
+		
+		//knapper som kun gjelder dersom et listelement er valgt
 		editSensor = new JButton("Edit sensor");
 		editSensor.addActionListener(this);
 		editSensor.setMargin(asdf);
 		editSensor.setVisible(true); //må settes til false by default og gjøres synlig når element velges
 		//Merk at returnMAC må håndteres dynamisk for å unngå at den vises når LACvinduet
 		//ikke er aksessert fra MAC
+		replaceSensor = new JButton("Replace sensor");
+		replaceSensor.addActionListener(this);
+		replaceSensor.setMargin(asdf);
+		replaceSensor.setVisible(true); //må også settes false
+		
 		returnMAC = new JButton("Return to MAC");
 		returnMAC.addActionListener(this);
 		returnMAC.setMargin(asdf);
@@ -126,7 +135,10 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		JLabel roomID = new JLabel("Room ID");
 		JLabel sensorStatus = new JLabel("Sensor Status");
 		JLabel batteryStatus = new JLabel("Battery Status");
-		JLabel date = new JLabel("Date & time");
+		JLabel date = new JLabel("Date & Time");
+		
+		//connectionlabel
+		csp = new ConnectionStatusPanel(this.mec.getConnectionStatusWrapper());
 	
 		pane.setLayout(null);
 		pane.add(installSensor);
@@ -142,18 +154,22 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		pane.add(sensorStatus);
 		pane.add(batteryStatus);
 		pane.add(date);
-		installSensor.setBounds(LEFT_SPACE, TOP_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
+		pane.add(csp);
+		pane.add(replaceSensor);
+		installSensor.setBounds(LEFT_SPACE, TOP_SPACE, BUTTON_WIDTH+3*DEFAULT_SPACE, BUTTON_HEIGHT);
 		//saveLog.setBounds(LEFT_SPACE + BUTTON_WIDTH + DEFAULT_SPACE, TOP_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		sensors.setBounds(LEFT_SPACE, TOP_SPACE + BUTTON_HEIGHT + 2*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		checkSensors.setBounds(LEFT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT);
 		returnMAC.setBounds(LEFT_SPACE + BUTTON_WIDTH + DEFAULT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT);
-		editSensor.setBounds(LEFT_SPACE, 700 - TOP_SPACE - 5*BUTTON_HEIGHT - 4*DEFAULT_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
+		editSensor.setBounds(LEFT_SPACE, 700 - TOP_SPACE - 4*BUTTON_HEIGHT - 3*DEFAULT_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
+		replaceSensor.setBounds(LEFT_SPACE + DEFAULT_SPACE + BUTTON_WIDTH, 700 - TOP_SPACE - 4*BUTTON_HEIGHT - 3*DEFAULT_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		sensorID.setBounds(LEFT_SPACE, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		roomname.setBounds(LEFT_SPACE + LIST_LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		roomID.setBounds(LEFT_SPACE + 2*LIST_LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		sensorStatus.setBounds(LEFT_SPACE + 3*LIST_LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		batteryStatus.setBounds(LEFT_SPACE + 3*LIST_LABEL_WIDTH + LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		date.setBounds(LEFT_SPACE + 3*LABEL_WIDTH+2*LIST_LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
+		csp.setBounds(LEFT_SPACE + 4*BUTTON_WIDTH + 4*DEFAULT_SPACE, TOP_SPACE, 2*LABEL_WIDTH, 2*LABEL_HEIGHT);
 		
 		
 		/*
@@ -171,7 +187,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		}
 		this.id.setVisible(true);
 		pane.add(this.id);
-		this.id.setBounds(LEFT_SPACE + BUTTON_WIDTH + DEFAULT_SPACE, TOP_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
+		this.id.setBounds(LEFT_SPACE + BUTTON_WIDTH + 4*DEFAULT_SPACE, TOP_SPACE, BUTTON_WIDTH+DEFAULT_SPACE, BUTTON_HEIGHT);
 		sensorList.setCellRenderer(new LACrenderer());
 		sensorList.setVisibleRowCount(7); 
 		sensorList.setVisible(true);
