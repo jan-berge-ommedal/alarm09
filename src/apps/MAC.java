@@ -46,6 +46,7 @@ public class MAC{
 	private static int i = 0;
 	
 	public static final int SERVERPORT = 666;
+	public static final String MACIP = "10.20.9.207";
 	
 	public MAC() {
 		gui = new MACgui();

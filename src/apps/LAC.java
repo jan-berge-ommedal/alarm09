@@ -46,6 +46,7 @@ public class LAC extends ModelEditControll{
 	private LACgui gui;
 	
 	
+	
 	private static final int STARTPORT = 700;
 	private static String defaultAdres = "My Adresss";
 	
@@ -97,7 +98,7 @@ public class LAC extends ModelEditControll{
 		while(i>0){
 			try {
 				connection = new TCPConnection(port);
-				connection.connect(InetAddress.getByName("localhost"), MAC.SERVERPORT);
+				connection.connect(InetAddress.getByName(MAC.MACIP), MAC.SERVERPORT);
 				System.out.println("Connected to the MAC");
 				return;
 			}catch (BindException e){
