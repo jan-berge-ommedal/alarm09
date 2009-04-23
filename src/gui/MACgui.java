@@ -117,10 +117,18 @@ public class MACgui extends JPanel implements Values, ActionListener {
 			viewLog(); //opprett og vis en liste over events, sortert etter dato
 		}
 		else if (e.getSource() == checkMarked) {
-			//sjekk markerte lacs - dvs sjekk alle alarmene til alle sjekka lacs. metodekall
+			int[] selected = lacList.getSelectedIndices();
+			for (int i = 0; i < selected.length; i++) {
+				//TODO: Her må vi ha noe mere
+			}
 		}
 		else if (e.getSource() == updateMarked) {
 			//oppdater alle markerte lacs - metodekall med markerte elementer
+			//TODO: Her må vi ha noe mere
+			int[] selected = lacList.getSelectedIndices();
+			for (int i = 0; i < selected.length; i++) {
+				//TODO: Her må vi ha noe mere
+			}
 		}
 		else if (e.getSource() == updateAll) {
 			//updater alle lacs - metodekall
