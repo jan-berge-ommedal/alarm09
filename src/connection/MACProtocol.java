@@ -106,27 +106,27 @@ public class MACProtocol {
 		}
 	}
 	public void newRoom(Room r, Connection c) throws IOException{
-		String s = r.getID() + " " + r.getRomNR() + " " + r.getRomType() + " " + r.getRomInfo();
+		String s = "NEWROOM" + " " + r.getID() + " " + r.getRomNR() + " " + r.getRomType() + " " + r.getRomInfo();
 		c.send(s);
 	}
 	
 	public void newSensor(Sensor s, Connection c) throws IOException{
-		String st = s.getId() + " " + s.isAlarmState() + " " + s.getInstallationDate().toString() + " " + s.getBattery();
+		String st = "NEWSENSOR" + " " + s.getId() + " " + s.isAlarmState() + " " + s.getInstallationDate().toString() + " " + s.getBattery() + " " + s.getRoom().getID();
 		c.send(st);
 	}
 	
 	public void newEvent(Event e, Connection c) throws IOException{
-		String s = e.getID() + " " + e.getEventType().toString() + " " + e.getTime().toString();
+		String s = "NEWEVENT" + " " + e.getID() + " " + e.getEventType().toString() + " " + e.getTime().toString() + " " +  e.getSensor().getRoom().getID() + " " + e.getSensor().getId();
 		c.send(s);
 	}
 	
 	public void updateRoom(Room r, Connection c) throws IOException{
-		String s = r.getID() + " " + r.getRomNR() + " " + r.getRomType() + " " + r.getRomInfo();
+		String s = "UPDATEROOM" + " " + r.getID() + " " + r.getRomNR() + " " + r.getRomType() + " " + r.getRomInfo();
 		c.send(s);
 	}
 	
 	public void updateSensor(Sensor s, Connection c) throws IOException{
-		String st = s.getId() + " " + s.isAlarmState() + " " + s.getInstallationDate().toString() + " " + s.getBattery();
+		String st = "UPDATESENSOR" + " " + s.getId() + " " + s.isAlarmState() + " " + s.getInstallationDate().toString() + " " + s.getBattery();
 		c.send(st);
 	}
 
