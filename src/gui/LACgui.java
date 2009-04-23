@@ -43,7 +43,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	private JLabel id;
 	private JLabel sensorID;
 	private JLabel roomname;
-	private JLabel roomID;
+	private JLabel roomNUMBER;
 	private JLabel sensorStatus;
 	private JLabel batteryStatus;
 	private JLabel date;
@@ -131,12 +131,12 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		sensors.setVisible(true);
 		
 		//overskriftslabels for lista
-		JLabel sensorID = new JLabel("Sensor ID");
-		JLabel roomname = new JLabel("Room name");
-		JLabel roomID = new JLabel("Room ID");
-		JLabel sensorStatus = new JLabel("Sensor Status");
-		JLabel batteryStatus = new JLabel("Battery Status");
-		JLabel date = new JLabel("Date & Time");
+		sensorID = new JLabel("Sensor ID");
+		roomname = new JLabel("Room name");
+		roomNUMBER = new JLabel("Room number");
+		sensorStatus = new JLabel("Sensor Status");
+		batteryStatus = new JLabel("Battery Status");
+		date = new JLabel("Date & Time");
 		
 		//connectionlabel
 		csp = new ConnectionStatusPanel(this.mec.getConnectionStatusWrapper());
@@ -151,7 +151,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		pane.add(editSensor);
 		pane.add(sensorID);
 		pane.add(roomname);
-		pane.add(roomID);
+		pane.add(roomNUMBER);
 		pane.add(sensorStatus);
 		pane.add(batteryStatus);
 		pane.add(date);
@@ -166,7 +166,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		replaceSensor.setBounds(LEFT_SPACE + DEFAULT_SPACE + BUTTON_WIDTH, 700 - TOP_SPACE - 4*BUTTON_HEIGHT - 3*DEFAULT_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		sensorID.setBounds(LEFT_SPACE, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		roomname.setBounds(LEFT_SPACE + LIST_LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
-		roomID.setBounds(LEFT_SPACE + 2*LIST_LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
+		roomNUMBER.setBounds(LEFT_SPACE + 2*LIST_LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		sensorStatus.setBounds(LEFT_SPACE + 3*LIST_LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		batteryStatus.setBounds(LEFT_SPACE + 3*LIST_LABEL_WIDTH + LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		date.setBounds(LEFT_SPACE + 3*LABEL_WIDTH+2*LIST_LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
@@ -499,40 +499,33 @@ public class LACgui extends JPanel implements Values, ActionListener {
 			String romTYPE = "";
 			String romINFO = "";
 			Room room = null;
+		
+			boolean didCreateRoom = false;
 			try {
 				romNUMMER = Integer.parseInt(romnummer.getText());			
+				romTYPE = romtype.getText();
+				romINFO = rominfo.getText();
+				room = new Room(this.mec, romNUMMER, romTYPE, romINFO);
+				didCreateRoom=true;
 			}
 			catch (NumberFormatException nfe) {
 				sensorAttributeError(true);
-			}
-			catch (NullPointerException npe) {
+			}catch (NullPointerException npe) {
 				sensorAttributeError(false);
-			}
-			try {
-				romTYPE = romtype.getText();
-				romINFO = rominfo.getText();
-			}
-			catch (NullPointerException npe) {
-				sensorAttributeError(false);
-			}
-			try {
-				room = new Room(this.mec, romNUMMER, romTYPE, romINFO);
-			}
-			catch (NullPointerException npe) {
-				//trenger ikke gjøre noe;
-			}
-			catch (IOException ioe) {
+			}catch (IOException ioe) {
 				System.err.println("Could not create Room due to an IO-error");
 			}
-			Sensor sensor;
-			try {
-				sensor = new Sensor(this.mec, room);
-				room.addSensor(sensor);
-				if (sensor.getRoom() != null) {
-					this.mec.getModel().addRoom(room);
+			if(didCreateRoom){
+				Sensor sensor;
+				try {
+					sensor = new Sensor(this.mec, room);
+					room.addSensor(sensor);
+					if (sensor.getRoom() != null) {
+						this.mec.getModel().addRoom(room);
+					}
+				} catch (IOException e1) {
+					System.err.println("Could not create Sensor due to an IO-error");
 				}
-			} catch (IOException e1) {
-				System.err.println("Could not create Sensor due to an IO-error");
 			}
 		}
 	}
