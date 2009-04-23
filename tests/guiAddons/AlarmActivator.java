@@ -1,13 +1,19 @@
 package guiAddons;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.ListCellRenderer;
+import javax.swing.ListModel;
+import javax.swing.event.ListDataListener;
 
 import gui.BlinkingList;
 import gui.LACrenderer;
@@ -16,6 +22,7 @@ import help.AlarmHelp;
 import apps.LAC;
 import apps.MAC;
 import model.Model;
+import model.Sensor;
 
 
 //FIXME Eirik: Alarm Activator
@@ -31,7 +38,7 @@ import model.Model;
  */
 
 
-public class AlarmActivator extends JFrame implements Values, ActionListener{
+public class AlarmActivator extends JFrame implements Values{
 
 	private JButton checkAlarm;
 	private JLabel sensors;
@@ -45,41 +52,51 @@ public class AlarmActivator extends JFrame implements Values, ActionListener{
 	public AlarmActivator(Model model){
 		this.model = model;
 		JPanel pane = new JPanel();
-		JFrame frame = new JFrame("Alarm check");
-		frame.setSize(700, 700);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setContentPane(pane);
-		frame.setVisible(true);
+		this.setSize(700, 700);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setContentPane(pane);
+		this.setVisible(true);
 		
-		
-		checkAlarm = new JButton("Check alarm");
-		checkAlarm.addActionListener(this);
 		
 		sensors = new JLabel("Sensors");
+		sensors.setBounds(DEFAULT_SPACE, DEFAULT_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		status = new JLabel("Status");
+	
+		
+		statusFelt = new JLabel("Alarmstatus");
+		statusFelt.setBounds(DEFAULT_SPACE+BUTTON_WIDTH+DEFAULT_SPACE, DEFAULT_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		
 		pane.setLayout(null);
 		pane.add(sensors);
 		pane.add(status);
 		pane.add(statusFelt);
 		
-	JLabel[] statusf = new JLabel[20];
+		Sensor[] sensors = model.getSensors();
+		for(int i=0; i<sensors.length;i++){
+			final Sensor s = sensors[i];
+			JPanel elementPanel = new JPanel();			
+			
+			JLabel label = new JLabel("Sensor "+s.getId());
+			JButton alarmButton = new JButton("Start alarm");
+			alarmButton.addActionListener(new ActionListener(){
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					s.setAlarmState(true);
+				}
+			});
+			
+			elementPanel.add(label);
+			elementPanel.add(alarmButton);
+			elementPanel.setBounds(8, 50+i*30, 200, 30);
+			this.add(elementPanel);
+			
+			
+		}
 		
-	for (int i = 0; i < statusf.length; i++) {
-			statusf[i] = new JLabel();
-			statusf[i].setBounds(100, 40+(i*10), 30, 30);
-	}
-		
-		
-	sensorList = new BlinkingList();
 	
-	sensorList.setCellRenderer(new LACrenderer());
-	sensorList.setVisibleRowCount(40); 
-	sensorList.setVisible(true);
-	pane.add(sensorList);
-	sensorList.setBounds(LEFT_SPACE, TOP_SPACE + BUTTON_HEIGHT + 3*DEFAULT_SPACE + LABEL_HEIGHT, LIST_WIDTH, LIST_HEIGHT);
-	sensorList.setFixedCellWidth(LIST_ELEMENT_WIDTH);
-	sensorList.setFixedCellHeight(LIST_ELEMENT_HEIGHT);
+	
+	
+	this.setContentPane(pane);
 	}
 	
 	
@@ -91,7 +108,9 @@ public class AlarmActivator extends JFrame implements Values, ActionListener{
 		
 	}
 
-	public void actionPerformed(ActionEvent e) {
-		
-	}
+
 }
+
+	
+
+

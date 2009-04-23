@@ -26,6 +26,25 @@ public class BlinkingList extends JList{
 		t.start();
 	}
 	
+	public BlinkingList(Object[] o) {
+		super(o);
+		list = this;
+		Thread t = new Thread(){
+			public void run(){
+				while(running){
+					blink = (blink ? false : true);				
+					list.repaint();
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		};
+		t.start();
+	}
+	
 	public boolean isBlink(){
 		return blink;
 	}
