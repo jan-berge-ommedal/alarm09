@@ -2,8 +2,14 @@ package connection;
 
 import java.io.IOException;
 import java.net.ConnectException;
+import java.sql.Timestamp;
 
+import no.ntnu.fp.net.co.Connection;
+
+import model.Event;
 import model.Model;
+import model.Room;
+import model.Sensor;
 import model.Event.EventType;
 
 import apps.MAC.LACAdaper;
@@ -98,8 +104,30 @@ public class MACProtocol {
 				e.printStackTrace();
 			}
 		}
-		
-		
+	}
+	public void newRoom(Room r, Connection c) throws IOException{
+		String s = r.getID() + " " + r.getRomNR() + " " + r.getRomType() + " " + r.getRomInfo();
+		c.send(s);
+	}
+	
+	public void newSensor(Sensor s, Connection c) throws IOException{
+		String st = s.getId() + " " + s.isAlarmState() + " " + s.getInstallationDate().toString() + " " + s.getBattery();
+		c.send(st);
+	}
+	
+	public void newEvent(Event e, Connection c) throws IOException{
+		String s = e.getID() + " " + e.getEventType().toString() + " " + e.getTime().toString();
+		c.send(s);
+	}
+	
+	public void updateRoom(Room r, Connection c) throws IOException{
+		String s = r.getID() + " " + r.getRomNR() + " " + r.getRomType() + " " + r.getRomInfo();
+		c.send(s);
+	}
+	
+	public void updateSensor(Sensor s, Connection c) throws IOException{
+		String st = s.getId() + " " + s.isAlarmState() + " " + s.getInstallationDate().toString() + " " + s.getBattery();
+		c.send(st);
 	}
 
 }
