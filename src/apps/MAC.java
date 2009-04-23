@@ -49,7 +49,7 @@ public class MAC{
 	public static final String MACIP = "localhost";
 	
 	public MAC() {
-		gui = new MACgui();
+		gui = new MACgui(this);
 		try {
 			databaseConnectionWrapper.setConnectionStatus(ConnectionStatus.CONNECTING);
 			database = new Database("mysql.stud.ntnu.no","janberge_admin","1234","janberge_db");
