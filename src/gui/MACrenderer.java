@@ -97,10 +97,8 @@ public class MACrenderer extends DefaultListCellRenderer implements ListCellRend
 			
 		}
 
-		if(selected)
-			panel.setBackground(Color.PINK);
-		else
-			panel.setBackground(Color.WHITE);
+		panel.setBackground((selected ? Color.PINK : Color.WHITE));
+	
 		return panel;
 		
 		
