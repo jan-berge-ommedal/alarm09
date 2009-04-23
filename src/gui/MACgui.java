@@ -118,8 +118,9 @@ public class MACgui extends JPanel implements Values, ActionListener {
 			viewLog(); //opprett og vis en liste over events, sortert etter dato
 		}
 		else if (e.getSource() == checkMarked) {
-			LACAdaper[] selected = (LACAdaper[])lacList.getSelectedValues();
-			for (LACAdaper adaper : selected) {
+			
+			for (Object o : lacList.getSelectedValues()) {
+				LACAdaper adaper = (LACAdaper)o;
 				if(!adaper.testSensors()){
 					checkFailed(adaper.getModel().getID(), adaper.getModel().getAdresse());
 				}
