@@ -91,7 +91,7 @@ public class MACgui extends JPanel implements Values, ActionListener, PropertyCh
 		pane.add(databaseStatusPanel);
 			
 		
-		lacList = new JList();
+		lacList = new BlinkingList();
 		JScrollPane scrollpane = new JScrollPane(lacList,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollpane.setBounds(LEFT_SPACE, TOP_SPACE + BUTTON_HEIGHT + 3*DEFAULT_SPACE + LABEL_HEIGHT, LIST_WIDTH, LIST_HEIGHT);
 		setupList();
