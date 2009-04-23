@@ -55,7 +55,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	
 	public LACgui(ModelEditControll controller){
 		this.mec = controller;
-		this.initialize(true, false);
+		this.initialize(false, false);
 	}
 	
 	public Model getModel() {
