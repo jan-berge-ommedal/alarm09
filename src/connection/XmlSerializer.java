@@ -53,7 +53,7 @@ public class XmlSerializer {
 		
 		return root.toXML();
 	}
-	
+	// Takes a String and sets the modelattributes
 	public static Model toModel(String xml) throws ParseException {
 		System.out.println(xml + "\n");
 		Model aModel = new Model();
@@ -129,7 +129,7 @@ public class XmlSerializer {
 		
 		return aModel;
 	}
-
+	// Takes a String an uses it to make a timestamp
 	public static Timestamp makeTimestamp(String time) {
 		int aar = Integer.parseInt(time.substring(0, 4));
 		int maaned = Integer.parseInt(time.substring(5, 7));
@@ -144,7 +144,7 @@ public class XmlSerializer {
 	}
 
 
-	
+		
 	public static Element insertXmlRoom(Room aRoom) {
 		Element element = new Element("room");
 		
