@@ -438,20 +438,6 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		panel.add(info);
 		panel.add(y);
 	}
-	
-	/**
-	 * main for GUI testmetoder
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		//sensorAttributes(false);
-		//sensorsChecked();
-		//MACgui window2 = new MACgui();
-		//LACgui window = new LACgui(AlarmHelp.getDefaultModel()); //skulle gjerne hatt en LAC her
-		//fireFightConfirm();
-		//fireFightConfirmed();
-		//logSaved();
-	}
 
 	@Override
 	public void actionPerformed(ActionEvent evt) {
