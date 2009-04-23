@@ -36,7 +36,7 @@ import no.ntnu.fp.net.co.Connection;
 
 public class MAC{
 	private Connection macConnection;
-	private LacAdapterList adapters;	
+	private LacAdapterList adapters = new LacAdapterList();	
 	private Database database;
 	private ConnectionStatusWrapper databaseConnectionWrapper = new ConnectionStatusWrapper(ConnectionStatus.DISCONNECTED);
 	
@@ -48,7 +48,7 @@ public class MAC{
 	public static final int SERVERPORT = 666;
 	
 	public MAC() {
-		gui = new MACgui();
+		//gui = new MACgui();
 		try {
 			databaseConnectionWrapper.setConnectionStatus(ConnectionStatus.CONNECTING);
 			database = new Database("mysql.stud.ntnu.no","janberge_admin","1234","janberge_db");
@@ -57,7 +57,6 @@ public class MAC{
 			
 			System.out.println("MAC is running");
 			startMAC();
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.err.println("Could not connect to database");
@@ -70,7 +69,6 @@ public class MAC{
 		for(int id : database.getIDs()){
 			adapters.add(new LACAdaper(this, id));
 		}
-		
 	}
 
 	/**
@@ -110,9 +108,16 @@ public class MAC{
 						e.printStackTrace();
 					}
 				}else if(idString.startsWith("NEW")){//NY LAC, ber om ID
-					int returnid = database.insertLAC(idString.substring(3));
+					String adress = idString.substring(3);
+					int returnid = database.insertLAC(adress);
 					try {
 						newConnection.send(""+returnid);
+						Model m = new Model();
+						m.setID(returnid);
+						LACAdaper adapter = new LACAdaper(this,returnid);
+						adapter.setModel(m);
+						adapter.initializeConnection(newConnection);
+						adapters.add(adapter);
 					} catch (ConnectException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -173,7 +178,6 @@ public class MAC{
 		
 		public void initializeConnection(Connection newConnection) {
 			thread = new LACAdapterThread(this,newConnection);
-			thread.start();
 			connectionWrapper.setConnectionStatus(ConnectionStatus.CONNECTED);
 		}
 
