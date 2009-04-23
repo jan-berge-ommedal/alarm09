@@ -182,20 +182,16 @@ public class LAC extends ModelEditControll{
 			try {
 				LACProtocol.updateSensor(connection,((Sensor)e.getSource()));
 			} catch (ConnectException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		else if(e.getSource() instanceof Room){
 			try {
 				LACProtocol.updateRoom(connection,((Room)e.getSource()));
 			} catch (ConnectException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -220,9 +216,13 @@ public class LAC extends ModelEditControll{
 			}
 		}
 	}
+	
+	@Override
+	public void deleteAllEvents(Sensor sensor) {
+		sensor.deleteAllEvents();
+	}
 
 	/* MODELCONTROLLER */
-
 	public int getNextRoomID(Room room) throws IOException {
 		return LACProtocol.insertRoom(connection, room);
 	}
@@ -242,11 +242,7 @@ public class LAC extends ModelEditControll{
 		return false;
 	}
 
-	@Override
-	public void deleteAllEvents(Sensor sensor) {
-		
-		
-	}
+
 	
 
 

@@ -1,11 +1,15 @@
 package model;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+
+import javax.swing.Timer;
 
 import connection.ModelEditControll;
 
@@ -24,7 +28,7 @@ public class Sensor {
 	
 	/* START DATAFIELDS */
 	private int id;
-	private boolean alarmState;
+	private Boolean alarmState;
 	private Timestamp installationDate;
 	private int battery = 100;
 	/* END DATAFIELDS */
@@ -33,6 +37,8 @@ public class Sensor {
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
 	private Room room;
+	
+	public final static int ALARMCOUNDOWN = 15000;
 	
 	/**
 	 * 
@@ -145,15 +151,26 @@ public class Sensor {
 	}
 	/**
 	 * 
-	 * @return if the sensor has an alarm
+	 * @return the alarmstate of the sensor. True=Alarm, False=No Alarm, Null=Non Confirmed 
 	 */
 	public boolean isAlarmState() {
 		return alarmState;
 	}
 
-	public void setAlarmState(boolean alarmState) {
+	public void setAlarmState(Boolean alarmState) {
 		if(this.alarmState!=alarmState){
-			boolean oldValue = this.alarmState;
+			if(alarmState==null){
+				//Alarmen settes til Non Confirmed. Følgende timer setter den til true etter angitt tid 
+				Timer t = new Timer(ALARMCOUNDOWN,new ActionListener(){
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						setAlarmState(true);
+					}
+				});
+				t.setRepeats(false);
+				t.start();
+			}
+			Boolean oldValue = this.alarmState;
 			this.alarmState = alarmState;
 			pcs.firePropertyChange("INSTALLATIONDATE", oldValue, alarmState);
 		}
@@ -176,7 +193,7 @@ public class Sensor {
 	public void addEvent(Event event) {
 		int oldValue = this.events.size();
 		this.events.add(event);
-		pcs.firePropertyChange("SENSORS", oldValue, oldValue+1);
+		pcs.firePropertyChange("EVENTS", oldValue, oldValue+1);
 	}
 	
 	/**
@@ -252,6 +269,12 @@ public class Sensor {
 		}
 		
 		return s;
+	}
+
+	public void deleteAllEvents() {
+		int oldValue = events.size();
+		events.removeAll(events);
+		pcs.firePropertyChange("EVENTS", oldValue, 0);
 	}
 }
  

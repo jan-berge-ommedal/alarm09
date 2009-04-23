@@ -53,23 +53,25 @@ public class MAC{
 	
 	public MAC() {
 		gui = new MACgui(this);
-		try {
-			databaseConnectionWrapper.setConnectionStatus(ConnectionStatus.CONNECTING);
-			database = new Database("mysql.stud.ntnu.no","janberge_admin","1234","janberge_db");
-			databaseConnectionWrapper.setConnectionStatus(ConnectionStatus.CONNECTED);
-			loadAdapters();
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.err.println("Could not connect to database");
-		}	
-		
-		System.out.println("MAC is running");
+		boolean connectedToDatabase=false;
+		while(!connectedToDatabase){
+			try {
+				databaseConnectionWrapper.setConnectionStatus(ConnectionStatus.CONNECTING);
+				database = new Database("mysql.stud.ntnu.no","janberge_admin","1234","janberge_db");
+				databaseConnectionWrapper.setConnectionStatus(ConnectionStatus.CONNECTED);
+				loadAdapters();
+			} catch (Exception e) {
+				System.err.println("Could not connect to database");
+				databaseConnectionWrapper.setConnectionStatus(ConnectionStatus.DISCONNECTED);
+				try {
+					Thread.sleep(5000);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+				
+			}
+		}
 		startMAC();
-	
-		
-		
-		
-		
 	}
 	
 	public void addAdapterListListener(PropertyChangeListener listener){
@@ -257,6 +259,7 @@ public class MAC{
 		@Override
 		public void deleteAllEvents(Sensor sensor) {
 			database.removeSensorsEvents(sensor.getId());
+			sensor.deleteAllEvents();
 			MACProtocol.deleteAllEvents(thread.connection,sensor);
 		}
 

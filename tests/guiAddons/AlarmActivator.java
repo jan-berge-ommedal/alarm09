@@ -81,7 +81,7 @@ public class AlarmActivator extends JFrame implements Values{
 			alarmButton.addActionListener(new ActionListener(){
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					s.setAlarmState(true);
+					s.setAlarmState(null);
 				}
 			});
 			
