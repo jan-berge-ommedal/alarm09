@@ -157,9 +157,17 @@ public class Model implements ListModel, PropertyChangeListener {
 
 	public static void main(String[] args) {
 		Model m = new Model();
+		m.addPropertyChangeListener(new PropertyChangeListener(){
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				System.out.println(evt.getPropertyName());
+			}
+			
+		});
 		Room r = new Room(0,51,"sdf","sdfsd",m);
 		m.addRoom(r);
 		r.setRomInfo("NEW INFO");
+		
 		
 	}
 
