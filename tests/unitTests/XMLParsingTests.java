@@ -5,6 +5,8 @@ import help.AlarmHelp;
 import java.sql.Timestamp;
 import java.text.ParseException;
 
+import apps.LAC;
+
 import com.sun.xml.internal.bind.v2.runtime.XMLSerializer;
 
 import junit.framework.TestCase;
@@ -30,7 +32,7 @@ public class XMLParsingTests extends TestCase{
 	public void testParse(){
 		Model m = AlarmHelp.getDefaultModel();
 		Room r = new Room(3,51,"sdfgdfgh","asdfasdf",m);
-		Sensor s = new Sensor(r);
+		Sensor s = new Sensor(0,false,90,LAC.getTime(),r,false);
 		s.addEvent(new Event(5,EventType.ALARM,new Timestamp(42367),s));
 		s.addEvent(new Event(8,EventType.STARTUP, new Timestamp(4232),s));
 		r.addSensor(s);
