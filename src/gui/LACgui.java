@@ -30,6 +30,7 @@ import help.AlarmHelp;
 public class LACgui extends JPanel implements Values, ActionListener {
 	
 	private boolean fromMac;
+	private JFrame frame;
 	private JButton installSensor;
 	private JButton saveLog;
 	private JButton checkSensors;
@@ -67,7 +68,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	public void setModel(Model model) {
 		this.model = model;
 		this.sensorList.setModel(model);
-		
+		this.frame.dispose();
 		this.initialize(true, false);
 	}
 	
@@ -79,7 +80,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	private void initialize(boolean model, boolean fromMac) {
 		Insets asdf = new Insets(0,0,0,0);
 		JPanel pane = new JPanel();
-		JFrame frame = new JFrame("LAC");
+		frame = new JFrame("LAC");
 		frame.setSize(700, 700);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setContentPane(pane);
@@ -258,7 +259,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		
 		//knappene
 		JButton save = new JButton("Save");
-		save.addActionListener(new SensorAttributesListener(this.mec, number, type, name)); //hva gjøres uten lac?
+		save.addActionListener(new SensorAttributesListener(this.mec, number, type, name));
 		JButton cancel = new JButton("Return");
 		cancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -512,7 +513,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 				romINFO = rominfo.getText();
 			}
 			catch (NullPointerException npe) {
-				sensorAttributeError(true);
+				sensorAttributeError(false);
 			}
 			try {
 				room = new Room(this.mec, romNUMMER, romTYPE, romINFO);
