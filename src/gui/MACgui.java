@@ -12,6 +12,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 
 import apps.MAC;
+import apps.MAC.LACAdaper;
 
 /**
  * 
@@ -117,9 +118,11 @@ public class MACgui extends JPanel implements Values, ActionListener {
 			viewLog(); //opprett og vis en liste over events, sortert etter dato
 		}
 		else if (e.getSource() == checkMarked) {
-			int[] selected = lacList.getSelectedIndices();
-			for (int i = 0; i < selected.length; i++) {
-				//TODO: Her må vi ha noe mere
+			LACAdaper[] selected = (LACAdaper[])lacList.getSelectedValues();
+			for (LACAdaper adaper : selected) {
+				if(!adaper.testSensors()){
+					checkFailed(adaper.getModel().getID(), adaper.getModel().getAdresse());
+				}
 			}
 		}
 		else if (e.getSource() == updateMarked) {
@@ -133,5 +136,28 @@ public class MACgui extends JPanel implements Values, ActionListener {
 		else if (e.getSource() == updateAll) {
 			//updater alle lacs - metodekall
 		}	
+	}
+
+	private void checkFailed(int id, String adress) {
+		// TODO Auto-generated method stub
+			final JFrame frame = new JFrame();
+			JPanel panel  = new JPanel();
+			
+			//pakker frame etc
+			frame.setSize(350, 110);
+			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			frame.setContentPane(panel);
+			frame.setVisible(true);
+			
+			JLabel info = new JLabel("A sensor in LAC: " + adress + " and ID: " + id + " failed the sensorcheck");
+			JButton y = new JButton("OK");
+			y.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					frame.setVisible(false);
+				}
+			}
+			);
+			panel.add(info);
+			panel.add(y);
 	}
 }
