@@ -457,14 +457,14 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	}
 	
 	class SensorAttributesListener implements ActionListener{
-		private LAC lac;
+		private ModelEditControll mec;
 		private JTextField romid;
 		private JTextField romnummer;
 		private JTextField romtype;
 		private JTextField rominfo;
 		
-		public SensorAttributesListener(LAC lac, JTextField romnummer, JTextField romtype, JTextField rominfo) {
-			this.lac=lac; 
+		public SensorAttributesListener(ModelEditControll mec, JTextField romnummer, JTextField romtype, JTextField rominfo) {
+			this.mec = mec; 
 			this.romid = romid;
 			this.romnummer = romnummer;
 			this.romtype = romtype;
@@ -501,10 +501,10 @@ public class LACgui extends JPanel implements Values, ActionListener {
 			}
 			Sensor sensor;
 			try {
-				sensor = new Sensor(this.lac, room); //hvordan skal dette ordnes når jeg ikke får ha lac? :(
+				sensor = new Sensor(this.mec, room); //hvordan skal dette ordnes når jeg ikke får ha lac? :(
 				room.addSensor(sensor);
 				if (sensor.getRoom() != null) {
-					this.lac.getModel().addRoom(room);
+					this.mec.getModel().addRoom(room);
 				}
 			} catch (IOException e1) {
 				System.err.println("Could not create Sensor due to IO error");
