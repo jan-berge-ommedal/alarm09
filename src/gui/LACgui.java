@@ -47,24 +47,15 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	private JLabel batteryStatus;
 	private JLabel date;
 	
-	
-	private ModelEditControll controller;
+	private ModelEditControll mec;
 	
 	/*
 	 * Her følger diverse konstruktører som alle kaller initialize på et senere tidspunkt
 	 */
 	
 	public LACgui(ModelEditControll controller){
-		this.controller = controller;
-	}
-	
-	public LACgui(Model model) {
-		this.model = model;
+		this.mec = controller;
 		this.initialize(true, false);
-	}
-	
-	public LACgui() {
-		this.initialize(false, false);
 	}
 	
 	public Model getModel() {
@@ -157,9 +148,12 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		returnMAC.setBounds(LEFT_SPACE + BUTTON_WIDTH + DEFAULT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT);
 		editSensor.setBounds(LEFT_SPACE, 700 - TOP_SPACE - 5*BUTTON_HEIGHT - 4*DEFAULT_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		sensorID.setBounds(LEFT_SPACE, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
-		roomname.setBounds(LEFT_SPACE + LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
-		roomID.setBounds(LEFT_SPACE + 2*LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
-		date.setBounds(LEFT_SPACE + 4*LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
+		roomname.setBounds(LEFT_SPACE + LIST_LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
+		roomID.setBounds(LEFT_SPACE + 2*LIST_LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
+		sensorStatus.setBounds(LEFT_SPACE + 3*LIST_LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
+		batteryStatus.setBounds(LEFT_SPACE + 3*LIST_LABEL_WIDTH + LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
+		date.setBounds(LEFT_SPACE + 3*LABEL_WIDTH+2*LIST_LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
+		
 		
 		/*
 		 * Initialiserer JListen
@@ -247,7 +241,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		
 		//knappene
 		JButton save = new JButton("Save");
-		save.addActionListener(new SensorAttributesListener(this.lac, number, type, name)); //hva gjøres uten lac?
+		save.addActionListener(new SensorAttributesListener(this.mec, number, type, name)); //hva gjøres uten lac?
 		JButton cancel = new JButton("Return");
 		cancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -453,7 +447,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		//sensorAttributes(false);
 		//sensorsChecked();
 		//MACgui window2 = new MACgui();
-		LACgui window = new LACgui(AlarmHelp.getDefaultModel()); //skulle gjerne hatt en LAC her
+		//LACgui window = new LACgui(AlarmHelp.getDefaultModel()); //skulle gjerne hatt en LAC her
 		//fireFightConfirm();
 		//fireFightConfirmed();
 		//logSaved();
@@ -468,7 +462,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 			sensorAttributes(true, this.model);
 		}
 		else if (evt.getSource() == checkSensors) {
-			if (this.controller != null) {
+			if (this.mec != null) {
 				//sensorsChecked(this.controller.testSensors()); //hva tenker jan her?
 			}
 			else {
@@ -490,7 +484,6 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		
 		public SensorAttributesListener(ModelEditControll mec, JTextField romnummer, JTextField romtype, JTextField rominfo) {
 			this.mec = mec; 
-			this.romid = romid;
 			this.romnummer = romnummer;
 			this.romtype = romtype;
 			this.rominfo = rominfo;
@@ -519,10 +512,13 @@ public class LACgui extends JPanel implements Values, ActionListener {
 				sensorAttributeError(true);
 			}
 			try {
-				room = new Room(romNUMMER, romTYPE, romINFO, this.mec.getModel());
+				room = new Room(this.mec, romNUMMER, romTYPE, romINFO);
 			}
 			catch (NullPointerException npe) {
 				//trenger ikke gjøre noe;
+			}
+			catch (IOException ioe) {
+				System.err.println("Could not create Room due to an IO-error");
 			}
 			Sensor sensor;
 			try {
@@ -532,7 +528,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 					this.mec.getModel().addRoom(room);
 				}
 			} catch (IOException e1) {
-				System.err.println("Could not create Sensor due to IO error");
+				System.err.println("Could not create Sensor due to an IO-error");
 			}
 		}
 	}

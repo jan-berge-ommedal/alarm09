@@ -12,6 +12,7 @@ public interface Values {
 	public static final int DEFAULT_SPACE = 10;
 	public static final int BUTTON_LONG_WIDTH = 150;
 	public static final int LABEL_WIDTH = 100;
+	public static final int LIST_LABEL_WIDTH = 80;
 	public static final int LABEL_HEIGHT = 20;
 	public static final int LIST_WIDTH = 600;
 	public static final int LIST_HEIGHT = 300;

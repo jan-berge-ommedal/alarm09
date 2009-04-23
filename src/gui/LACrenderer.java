@@ -20,13 +20,13 @@ import model.Sensor;
  *
  */
 public class LACrenderer extends DefaultListCellRenderer implements ListCellRenderer, Values {
-	private static final int CELLHEIGHT = 25;
-	private static final int roomTYPESIZE = 100;
-	private static final int roomNRSIZE = 50;
-	private static final int roomNAMESIZE = 100;
-	private static final int batterySIZE = 50;
-	private static final int sensorStatusSIZE = 50;
-	private static final int timeStampSIZE = 150;
+	private static final int CELLHEIGHT = LABEL_HEIGHT;
+	private static final int roomTYPESIZE = LIST_LABEL_WIDTH;
+	private static final int roomNRSIZE = LIST_LABEL_WIDTH;
+	private static final int roomNAMESIZE = LIST_LABEL_WIDTH;
+	private static final int batterySIZE = LIST_LABEL_WIDTH;
+	private static final int sensorStatusSIZE = LIST_LABEL_WIDTH;
+	private static final int timeStampSIZE = 2*LIST_LABEL_WIDTH;
 	
 	private static final Color colorOn = Color.RED;
 	private static final Color colorOff = new Color(255,150,150);
@@ -72,7 +72,7 @@ public class LACrenderer extends DefaultListCellRenderer implements ListCellRend
 		SensorStatus.setBounds(roomNAMESIZE+roomNRSIZE+roomTYPESIZE, 0, sensorStatusSIZE, CELLHEIGHT);
 		//JLabel BatteryStatus = new JLabel(""+s.getBattery());
 		BatteryIndicator BatteryStatus = new BatteryIndicator(s.getBattery());
-		BatteryStatus.setBounds(roomNAMESIZE+roomNRSIZE+roomTYPESIZE+sensorStatusSIZE+15, 0, batterySIZE, CELLHEIGHT);
+		BatteryStatus.setBounds(roomNAMESIZE+roomNRSIZE+roomTYPESIZE+sensorStatusSIZE+20, 0, batterySIZE, CELLHEIGHT);
 		
 		JLabel timestampLabel = new JLabel(s.getInstallationDate().toString());
 		timestampLabel.setBounds(roomNAMESIZE+roomNRSIZE+roomTYPESIZE+sensorStatusSIZE+batterySIZE+25, 0, timeStampSIZE, CELLHEIGHT);
