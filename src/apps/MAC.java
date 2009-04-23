@@ -77,11 +77,11 @@ public class MAC{
 	 * 
 	 */
 	private void startMAC(){
-		//try {
-			macConnection = new ConnectionImplementation(SERVERPORT);
-		//} catch (IOException e2) {
+		try {
+			macConnection = new TCPConnection(SERVERPORT);
+		} catch (IOException e2) {
 			//e2.printStackTrace();
-		//}
+		}
 		while(running){
 			Connection newConnection = null;
 	
