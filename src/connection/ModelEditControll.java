@@ -21,7 +21,7 @@ public abstract class ModelEditControll implements PropertyChangeListener {
 	 */ 
 	public boolean testSensors() {
 		for (Sensor s : model.getSensors()) {
-			if(s.isAlarmState())return true;
+			if(s.testSensor())return true;
 		}	
 		return false;
 	}
