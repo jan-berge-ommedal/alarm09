@@ -15,6 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 
 import connection.ModelEditControll;
 import help.AlarmHelp;
@@ -133,7 +134,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		//overskriftslabels for lista
 		sensorID = new JLabel("Sensor ID");
 		roomname = new JLabel("Room name");
-		roomNUMBER = new JLabel("Room number");
+		roomNUMBER = new JLabel("GET A ROOM!");
 		sensorStatus = new JLabel("Sensor Status");
 		batteryStatus = new JLabel("Battery Status");
 		date = new JLabel("Date & Time");
@@ -191,6 +192,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		this.id.setBounds(LEFT_SPACE + BUTTON_WIDTH + 4*DEFAULT_SPACE, TOP_SPACE, BUTTON_WIDTH+DEFAULT_SPACE, BUTTON_HEIGHT);
 		sensorList.setCellRenderer(new LACrenderer());
 		sensorList.setVisibleRowCount(7); 
+		sensorList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		sensorList.setVisible(true);
 		pane.add(sensorList);
 		sensorList.setBounds(LEFT_SPACE, TOP_SPACE + BUTTON_HEIGHT + 5*DEFAULT_SPACE + 3*LABEL_HEIGHT, LIST_WIDTH, LIST_HEIGHT);
