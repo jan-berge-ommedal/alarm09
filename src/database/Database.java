@@ -23,6 +23,7 @@ public class Database {
 	public Database(String url, String user, String password, String databaseName) throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 		Class.forName("com.mysql.jdbc.Driver").newInstance();
 		db = DriverManager.getConnection("jdbc:mysql://"+url,user,password);
+		System.out.println("connecta");
 		st = db.createStatement();
 		st.executeQuery("USE "+databaseName);
 	}
@@ -260,7 +261,7 @@ public class Database {
 
 			int alarmStateInt = alarmState ? 1 : 0;
 				
-			executeUpdate("INSERT INTO Rom (romID, installationDate, alarmState, batteryStatus) VALUES ("+romID+",NULL,"+alarmStateInt+","+batteryStatus+")");
+			executeUpdate("INSERT INTO Sensor (romID, installationDate, alarmState, batteryStatus) VALUES ("+romID+",NULL,"+alarmStateInt+","+batteryStatus+")");
 
 			String query = "SELECT MAX(id) AS id FROM Sensor GROUP BY NULL";
 			ResultSet rs = executeQuery(query);
@@ -321,7 +322,7 @@ public class Database {
 			
 			int io = 0;
 			// db.emptyTables();
-			// io = db.insertLAC("Rundt svingen");
+			io = db.insertLAC("Rundt svingen");
 			// io = db.insertRoom(2, 5, "", "");
 			System.out.println(io);
 			
