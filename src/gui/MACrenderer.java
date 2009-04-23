@@ -24,11 +24,11 @@ import apps.LAC;
  *
  */
 public class MACrenderer extends DefaultListCellRenderer implements ListCellRenderer, Values {
-	private static final int CELLHEIGHT = 25;
-	private static final int lacIDSIZE = 50;
-	private static final int lacNAMESIZE = 100;
-	private static final int alarmSIZE = 50;
-	private static final int statuspanelSIZE = 50;
+	private static final int CELLHEIGHT = LABEL_HEIGHT;
+	private static final int lacIDSIZE = LIST_LABEL_WIDTH;
+	private static final int lacNAMESIZE = LIST_LABEL_WIDTH;
+	private static final int alarmSIZE = LIST_LABEL_WIDTH ;
+	private static final int statuspanelSIZE = LIST_LABEL_WIDTH;
 	
 	private static final Color colorOn = Color.RED;
 	private static final Color colorOff = new Color(255,150,150);
@@ -78,7 +78,7 @@ public class MACrenderer extends DefaultListCellRenderer implements ListCellRend
 					alarmstLabel.setBackground(Color.GREEN);
 		alarmstLabel.setBounds(alarmSIZE, 1, LIST_ELEMENT_WIDTH, LIST_ELEMENT_HEIGHT);
 		
-		connectionStatus.setBounds(statuspanelSIZE, 25, LIST_ELEMENT_WIDTH, LIST_ELEMENT_HEIGHT);
+		connectionStatus.setBounds(statuspanelSIZE, 1, LIST_ELEMENT_WIDTH, LIST_ELEMENT_HEIGHT);
 		
 		panel.add(ID);
 		panel.add(LOC);
