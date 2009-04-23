@@ -23,10 +23,9 @@ public class MACProtocol {
 				if(!adaper.hasModel()){
 					Model m = adaper.getMAC().getDatabase().getLACModel(Integer.parseInt(receive.substring(8)));
 					adaper.setModel(m);
-					adaper.getConnection().send(XmlSerializer.toXml(m));
-				}else{
-					adaper.getConnection().send(XmlSerializer.toXml(adaper.getModel()));
 				}
+				adaper.getConnection().send(XmlSerializer.toXml(adaper.getModel()));
+			
 			} catch (ConnectException e) {
 				e.printStackTrace();
 			} catch (IOException e) {

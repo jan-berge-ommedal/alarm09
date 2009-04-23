@@ -202,22 +202,7 @@ public class LAC extends ModelEditControll{
 		
 	}
 	
-	
-	/**
-	 * @deprecated just a test;)
-	 * 
-	 * @param f
-	 * @return
-	 * @throws NumberFormatException
-	 * @throws IOException
-	 */
-	/*
-	private static LAC parse(File f) throws NumberFormatException, IOException {
-		BufferedReader reader = new BufferedReader(new FileReader(f));
-		LAC lac = new LAC(Integer.parseInt(reader.readLine()));		
-		return lac;
-	}
-	*/
+
 
 	public static void main(String[] args) {
 		boolean run = true;

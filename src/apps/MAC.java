@@ -101,6 +101,7 @@ public class MAC{
 				
 				String idString = newConnection.receive();
 				if(idString.startsWith("ID")){
+					// THE LAC REQUESTED TO LOAD MODEL FROM DB
 					int LACid = Integer.parseInt(idString.substring(2));
 					boolean found = false;
 					for (LACAdaper adapter : adapters.lacAdapters) {
@@ -113,6 +114,7 @@ public class MAC{
 						}
 					}
 					try {
+						//IF THE GIVEN ID FOUND AND FREE, RETURN "ACK" ELSE RETURN "NAK"
 						newConnection.send((found ? "ACK" :"NAK"));
 					} catch (ConnectException e) {
 						// TODO Auto-generated catch block
@@ -122,6 +124,7 @@ public class MAC{
 						e.printStackTrace();
 					}
 				}else if(idString.startsWith("NEW")){//NY LAC, ber om ID
+					//THE LAC CREATE A NEW MODEL IN DB
 					String adress = idString.substring(3);
 					int returnid = database.insertLAC(adress);
 					try {
