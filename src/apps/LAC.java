@@ -41,8 +41,8 @@ public class LAC extends ModelEditControll implements PropertyChangeListener{
 	
 	private LACgui gui;
 	
-	private static int connectionint = 1;
-	private static final int SERVERPORT = 666;
+	private static final int STARTPORT = 700;
+	private static String defaultAdres = "My Adresss";
 	
 	/**
 	 * This constructor is used when creating a completly new LAC
@@ -52,11 +52,15 @@ public class LAC extends ModelEditControll implements PropertyChangeListener{
 		gui = new LACgui(this);
 		try {
 			connect(5);
-			String defaulfAddress = "My Adresss";
-			int modelID = LACProtocol.receiveNextModelID(connection, defaulfAddress);
+			connection.send("NEW"+defaultAdres);
+			String reveiceID = connection.receive();
+			System.out.println(reveiceID);
+			
+			int modelID = Integer.parseInt(reveiceID);
+			
 			Model m = new Model();
 			m.setID(modelID);
-			m.setAdresse(defaulfAddress);
+			m.setAdresse(defaultAdres);
 			this.setModel(m);
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
@@ -70,8 +74,10 @@ public class LAC extends ModelEditControll implements PropertyChangeListener{
 	public LAC(int id) {
 		gui = new LACgui();
 		try {
-			connect();
+			connect(5);
+			connection.send("ID"+id);
 			setModel(LACProtocol.receiveCompleteModel(connection, id));
+			
 		} catch (IOException e) {
 			System.err.println("Reattempting to connect");
 		}
@@ -79,13 +85,15 @@ public class LAC extends ModelEditControll implements PropertyChangeListener{
 	}
 	
 	private void connect(int i) throws IOException {
+		int port = STARTPORT;
 		while(i>0){
 			try {
-				connect();
+				connection = new TCPConnection(port);
+				connection.connect(InetAddress.getByName("localhost"), MAC.SERVERPORT);
 				System.out.println("Connected to the MAC");
 				return;
-			} catch(BindException e){
-				throw new IOException("Port in use");
+			}catch (BindException e){
+				System.err.println("Port "+port+" in use, trying port "+(++port));
 			}catch (IOException e) {
 				System.err.println("Reattempting to connect ("+i+" retries left)");
 			}finally{
@@ -95,10 +103,7 @@ public class LAC extends ModelEditControll implements PropertyChangeListener{
 		throw new IOException("Could not connect to the MAC");
 	}
 	
-	private void connect() throws SocketTimeoutException, UnknownHostException, IOException{
-			connection = new TCPConnection(SERVERPORT+connectionint++);
-			connection.connect(InetAddress.getByName("localhost"), SERVERPORT);
-	}
+	
 	
 	/**
 	 * Returns the datamodel of the LAC

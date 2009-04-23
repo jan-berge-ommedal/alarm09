@@ -3,14 +3,17 @@ package apps;
 import gui.MACgui;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
 import connection.ConnectionImplementation;
+import connection.ConnectionStatusWrapper;
 import connection.MACProtocol;
 import connection.ModelEditControll;
 import connection.TCPConnection;
+import connection.ConnectionStatusWrapper.ConnectionStatus;
 
 import database.Database;
 
@@ -31,21 +34,32 @@ public class MAC{
 	private Connection macConnection;
 	private ArrayList<LACAdaper> adapters = new ArrayList<LACAdaper>();	
 	private Database database;
+	private ConnectionStatusWrapper databaseConnectionWrapper = new ConnectionStatusWrapper(ConnectionStatus.DISCONNECTED);
+	
 	private MACgui gui;
 	private boolean running = true;
 	
 	private static int i = 0;
 	
+	public static final int SERVERPORT = 666;
+	
 	public MAC() {
 		gui = new MACgui();
 		try {
+			databaseConnectionWrapper.setConnectionStatus(ConnectionStatus.CONNECTING);
 			database = new Database("mysql.stud.ntnu.no","janberge_admin","1234","janberge_db");
-			macConnection = new TCPConnection(666);
+			databaseConnectionWrapper.setConnectionStatus(ConnectionStatus.CONNECTED);
 			loadAdapters();
+			
+			System.out.println("MAC is running");
 			startMAC();
+			
 		} catch (Exception e) {
+			e.printStackTrace();
 			System.err.println("Could not connect to database");
 		}
+		
+		
 	}
 	
 	private void loadAdapters() {
@@ -60,28 +74,60 @@ public class MAC{
 	 * 
 	 */
 	private void startMAC(){
+		try {
+			macConnection = new TCPConnection(SERVERPORT);
+		} catch (IOException e2) {
+			e2.printStackTrace();
+		}
 		while(running){
-			Connection newConnection;
+			Connection newConnection = null;
+	
 			try {
-				newConnection = macConnection.accept();
-			
-			String idString = newConnection.receive();
-			int LACid = Integer.parseInt(idString);
-			
-			boolean found = false;
-			for (LACAdaper adapter : adapters) {
-				if(adapter.getID()==LACid){
-					adapter.initializeConnection(newConnection);
-					found = true;
-					break;
+					newConnection = macConnection.accept();
+				
+				String idString = newConnection.receive();
+				if(idString.startsWith("ID")){
+					int LACid = Integer.parseInt(idString.substring(2));
+					boolean found = false;
+					for (LACAdaper adapter : adapters) {
+						if(adapter.getID()==LACid){
+							adapter.initializeConnection(newConnection);
+							found = true;
+							break;
+						}
+					}
+					try {
+						newConnection.send((found ? "OK" :"NAK"));
+					} catch (ConnectException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}else if(idString.startsWith("NEW")){//NY LAC, ber om ID
+					int returnid = database.insertLAC(idString.substring(3));
+					try {
+						newConnection.send(""+returnid);
+					} catch (ConnectException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
+			
+			}catch (SocketTimeoutException e1) {
+					// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 			}
-			newConnection.send((found ? "OK" :"NAK"));
-			} catch (SocketTimeoutException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			
+					
+			
 		}
 	}
 	
