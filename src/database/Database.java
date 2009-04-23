@@ -321,6 +321,16 @@ public class Database {
 		}
 	}
 
+
+	public void removeSensorsEvents(int sensorid){
+		try {
+			executeUpdate("DELETE FROM sensorID WHERE id = "+sensorid);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	
 	public void removeSensor(int id){
 		try {
 			executeUpdate("DELETE FROM Sensor WHERE id = "+id);
