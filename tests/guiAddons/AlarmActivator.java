@@ -59,12 +59,12 @@ public class AlarmActivator extends JFrame implements Values{
 		
 		
 		sensors = new JLabel("Sensors");
-		sensors.setBounds(DEFAULT_SPACE+10, DEFAULT_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
+		sensors.setBounds(18, DEFAULT_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		status = new JLabel("Status");
 	
 		
 		statusFelt = new JLabel("Alarmstatus");
-		statusFelt.setBounds(DEFAULT_SPACE+BUTTON_WIDTH+DEFAULT_SPACE+10, DEFAULT_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
+		statusFelt.setBounds(DEFAULT_SPACE+BUTTON_WIDTH+DEFAULT_SPACE+8, DEFAULT_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		
 		pane.setLayout(null);
 		pane.add(sensors);
