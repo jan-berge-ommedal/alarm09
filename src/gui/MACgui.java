@@ -30,9 +30,11 @@ public class MACgui extends JPanel implements Values, ActionListener {
 	private JButton updateAll;
 	private JLabel lacs;
 	private JList lacList;
+	private MAC mac;
 	
 	
-	public MACgui() {
+	public MACgui(MAC mac) {
+		this.mac=mac;
 		Insets asdf = new Insets(0,0,0,0);
 		JPanel pane = new JPanel();
 		JFrame frame = new JFrame("MAC");
@@ -77,6 +79,7 @@ public class MACgui extends JPanel implements Values, ActionListener {
 		updateAll.setBounds(LEFT_SPACE + 2*BUTTON_LONG_WIDTH + 2*DEFAULT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_LONG_WIDTH, BUTTON_HEIGHT);
 		
 		lacList = new JList();
+		lacList.setModel(mac.getLACAdapterList());
 		lacList.setCellRenderer(new MACrenderer());
 		lacList.setVisibleRowCount(7); 
 		lacList.setVisible(true);
@@ -108,9 +111,6 @@ public class MACgui extends JPanel implements Values, ActionListener {
 		panel.add(y);
 	}
 	
-	public static void main(String[] args) {
-		MACgui mac = new MACgui();
-	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -139,7 +139,6 @@ public class MACgui extends JPanel implements Values, ActionListener {
 	}
 
 	private void checkFailed(int id, String adress) {
-		// TODO Auto-generated method stub
 			final JFrame frame = new JFrame();
 			JPanel panel  = new JPanel();
 			
