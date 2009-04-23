@@ -8,7 +8,10 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
+
+import apps.MAC;
 
 /**
  * 
@@ -25,6 +28,7 @@ public class MACgui extends JPanel implements Values, ActionListener {
 	private JButton updateMarked;
 	private JButton updateAll;
 	private JLabel lacs;
+	private JList sensorList;
 	
 	
 	public MACgui() {
@@ -71,6 +75,13 @@ public class MACgui extends JPanel implements Values, ActionListener {
 		updateMarked.setBounds(LEFT_SPACE + BUTTON_LONG_WIDTH + DEFAULT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_LONG_WIDTH, BUTTON_HEIGHT);
 		updateAll.setBounds(LEFT_SPACE + 2*BUTTON_LONG_WIDTH + 2*DEFAULT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_LONG_WIDTH, BUTTON_HEIGHT);
 		
+		sensorList.setCellRenderer(new MACrenderer());
+		sensorList.setVisibleRowCount(7); 
+		sensorList.setVisible(true);
+		pane.add(sensorList);
+		sensorList.setBounds(LEFT_SPACE, TOP_SPACE + BUTTON_HEIGHT + 3*DEFAULT_SPACE + LABEL_HEIGHT, LIST_WIDTH, LIST_HEIGHT);
+		sensorList.setFixedCellWidth(LIST_ELEMENT_WIDTH);
+		sensorList.setFixedCellHeight(LIST_ELEMENT_HEIGHT);
 	}
 	
 	public static void viewLog() {
@@ -93,6 +104,10 @@ public class MACgui extends JPanel implements Values, ActionListener {
 		);
 		panel.add(info);
 		panel.add(y);
+	}
+	
+	public static void main(String[] args) {
+		MACgui mac = new MACgui();
 	}
 
 	@Override
