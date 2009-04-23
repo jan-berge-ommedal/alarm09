@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 
 import model.Model;
+import model.Sensor;
 
 import connection.ModelEditControll;
 
@@ -46,10 +47,8 @@ public class MACrenderer extends DefaultListCellRenderer implements ListCellRend
 		ModelEditControll element = (ModelEditControll)object;
 		Model m = element.getModel();
 		
-	
-		//Location
-		m.getAdresse();
-		element.hasAlarm();
+		Sensor s = (Sensor)object;
+		
 		
 		/*
 		 * Initialiserer og legger til de JLabelene som skal være i JPanelet
@@ -57,21 +56,29 @@ public class MACrenderer extends DefaultListCellRenderer implements ListCellRend
 		JLabel ID = new JLabel("ID");
 		JLabel LOC = new JLabel("Location");
 		JLabel ALARMst = new JLabel("Alarm Status");
-		if(element.hasAlarm())
-			ALARMst.setBackground(((BlinkingList)list).isBlink() ? colorOn : colorOff);
-			else
-				ALARMst.setBackground(Color.GREEN);
 		
 		
-		JLabel lacNameLabel = new JLabel("LAC "+(index+1));
-		lacNameLabel.setBounds(0, 0, lacNAMESIZE, CELLHEIGHT);
 		
-		JLabel lacLabel = new JLabel();
-		lacLabel.setBounds(lacNAMESIZE, 0, 100, CELLHEIGHT);		
-
+		JLabel lacIDLabel = new JLabel("ID "+(index+1));
+		lacIDLabel.setBounds(0, 0, lacIDSIZE, CELLHEIGHT);
+		
+		JLabel LOCLabel = new JLabel(m.getAdresse());
+		LOCLabel.setBounds(lacNAMESIZE, 0, 100, CELLHEIGHT);
+		
+		JLabel alarmstLabel = new JLabel();
+		
+		if(s.isAlarmState())
+			alarmstLabel.setBackground(((BlinkingList)list).isBlink() ? colorOn : colorOff);
+				else
+					alarmstLabel.setBackground(Color.GREEN);
+		alarmstLabel.setBounds(alarmSIZE, 1, LIST_ELEMENT_WIDTH, LIST_ELEMENT_HEIGHT); 
+		
 		panel.add(ID);
 		panel.add(LOC);
 		panel.add(ALARMst);
+		panel.add(lacIDLabel);
+		panel.add(LOCLabel);
+		panel.add(alarmstLabel);
 		
 		
 		return panel;
