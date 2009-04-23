@@ -28,6 +28,7 @@ import help.AlarmHelp;
  * inneholder mainmetoden som skal brukes for å teste guienhetene
  *
  */
+@SuppressWarnings("serial")
 public class LACgui extends JPanel implements Values, ActionListener {
 	
 	private boolean fromMac;
@@ -50,7 +51,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	private JLabel date;
 	private ConnectionStatusPanel csp;
 	private JButton replaceSensor;
-	
+	private JButton changeBattery;
 	private ModelEditControll mec;
 	
 	/*
@@ -104,13 +105,15 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		editSensor = new JButton("Edit sensor");
 		editSensor.addActionListener(this);
 		editSensor.setMargin(asdf);
-		editSensor.setVisible(true); //må settes til false by default og gjøres synlig når element velges
-		//Merk at returnMAC må håndteres dynamisk for å unngå at den vises når LACvinduet
-		//ikke er aksessert fra MAC
+		editSensor.setVisible(true);
 		replaceSensor = new JButton("Replace sensor");
 		replaceSensor.addActionListener(this);
 		replaceSensor.setMargin(asdf);
-		replaceSensor.setVisible(true); //må også settes false
+		replaceSensor.setVisible(true);
+		changeBattery = new JButton("Change Battery");
+		changeBattery.addActionListener(this);
+		changeBattery.setMargin(asdf);
+		changeBattery.setVisible(true);
 		
 		returnMAC = new JButton("Return to MAC");
 		returnMAC.addActionListener(this);
@@ -158,6 +161,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		pane.add(date);
 		pane.add(csp);
 		pane.add(replaceSensor);
+		pane.add(changeBattery);
 		installSensor.setBounds(LEFT_SPACE, TOP_SPACE, BUTTON_WIDTH+3*DEFAULT_SPACE, BUTTON_HEIGHT);
 		//saveLog.setBounds(LEFT_SPACE + BUTTON_WIDTH + DEFAULT_SPACE, TOP_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		sensors.setBounds(LEFT_SPACE, TOP_SPACE + BUTTON_HEIGHT + 2*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
@@ -165,6 +169,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		returnMAC.setBounds(LEFT_SPACE + BUTTON_WIDTH + DEFAULT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT);
 		editSensor.setBounds(LEFT_SPACE, 700 - TOP_SPACE - 4*BUTTON_HEIGHT - 3*DEFAULT_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		replaceSensor.setBounds(LEFT_SPACE + DEFAULT_SPACE + BUTTON_WIDTH, 700 - TOP_SPACE - 4*BUTTON_HEIGHT - 3*DEFAULT_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
+		changeBattery.setBounds(LEFT_SPACE + 2*DEFAULT_SPACE + 2*BUTTON_WIDTH, 700 - TOP_SPACE - 4*BUTTON_HEIGHT - 3*DEFAULT_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		sensorID.setBounds(LEFT_SPACE, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		roomname.setBounds(LEFT_SPACE + LIST_LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		roomNUMBER.setBounds(LEFT_SPACE + 2*LIST_LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
@@ -261,7 +266,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		
 		//knappene
 		JButton save = new JButton("Save");
-		save.addActionListener(new SensorAttributesListener(this.mec, number, type, name));
+		save.addActionListener(new SensorAttributesListener(frame, this.mec, number, type, name));
 		JButton cancel = new JButton("Return");
 		cancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -458,6 +463,32 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		panel.add(info);
 		panel.add(y);
 	}
+	
+	/**
+	 * Metode som slenger opp infoboks dersom man vil editere listeelementer som ikke er valgt
+	 */
+	public static void noElementSelected() {
+		final JFrame frame = new JFrame();
+		JPanel panel  = new JPanel();
+		
+		//pakker frame etc
+		frame.setSize(170, 110);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setContentPane(panel);
+		frame.setVisible(true);
+		
+		JLabel info = new JLabel();
+		info.setText("No element selected");
+		JButton y = new JButton("OK");
+		y.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.setVisible(false);
+			}
+		}
+		);
+		panel.add(info);
+		panel.add(y);
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent evt) {
@@ -475,6 +506,32 @@ public class LACgui extends JPanel implements Values, ActionListener {
 				sensorsChecked();
 			}
 		}
+		else if (evt.getSource() == editSensor) {
+			if (this.sensorList.getSelectedIndex() != -1) { //sjekk om jlist har selected item
+				//sensorvindu dukker opp for editering
+				
+			}
+			else { //liste har ikke selected item
+				noElementSelected();
+			}
+			
+		}
+		else if (evt.getSource() == replaceSensor) {
+			if (this.sensorList.getSelectedIndex() != -1) { //sjekk om jlist har selected item
+				//sensorvindu dukker opp for utbytting
+			}
+			else { //liste har ikke selected item
+				noElementSelected();
+			}
+		}
+		else if (evt.getSource() == changeBattery) {
+			if (this.sensorList.getSelectedIndex() != -1) { //sjekk om jlist har selected item
+				((Sensor)sensorList.getSelectedValue()).setBattery(100);
+			}
+			else { //liste har ikke selected item
+				noElementSelected();
+			}
+		}
 		else if (evt.getSource() == returnMAC) {
 			//returner til macen
 		}
@@ -487,8 +544,10 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		private JTextField romnummer;
 		private JTextField romtype;
 		private JTextField rominfo;
+		private JFrame frame;
 		
-		public SensorAttributesListener(ModelEditControll mec, JTextField romnummer, JTextField romtype, JTextField rominfo) {
+		public SensorAttributesListener(JFrame frame, ModelEditControll mec, JTextField romnummer, JTextField romtype, JTextField rominfo) {
+			this.frame = frame;
 			this.mec = mec; 
 			this.romnummer = romnummer;
 			this.romtype = romtype;
@@ -522,6 +581,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 				try {
 					sensor = new Sensor(this.mec, room);
 					room.addSensor(sensor);
+					this.frame.setVisible(false);
 					if (sensor.getRoom() != null) {
 						this.mec.getModel().addRoom(room);
 					}
