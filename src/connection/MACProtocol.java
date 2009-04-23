@@ -82,7 +82,7 @@ public class MACProtocol {
 			try{
 				String[] s = receive.split(" ");
 				boolean b = (s[2].equals("true")) ? true : false;
-				int sensorID = adaper.getMAC().getDatabase().insertSensor(Integer.parseInt(s[5]), b, Integer.parseInt(s[4]));
+				int sensorID = adaper.getMAC().getDatabase().insertSensor(Integer.parseInt(s[1]), b, Integer.parseInt(s[5]));
 				adaper.getConnection().send(Integer.toString(sensorID));
 			} 
 			catch (Exception e) {
