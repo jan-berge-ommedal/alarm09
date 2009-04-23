@@ -338,27 +338,7 @@ public class Database {
 			e.printStackTrace();
 		}
 	}
-	public static void main(String[] args){
-		
-		try {
-			
-			Database db = new Database("mysql.stud.ntnu.no","janberge_admin","1234","janberge_db");
-			
-			int io = 0;
-			// db.emptyTables();
-			io = db.insertLAC("Rundt svingen");
-			// io = db.insertRoom(2, 5, "", "");
-			System.out.println(io);
-			
-			Model m = db.getLACModel(1);
-			System.out.println(m.toString());
-		} catch (Exception e) {
-			// e.printStackTrace();
-			System.err.println("Could not connect to database (fra main)");
-		}
-		
-	}
-
+	
 
 	public int[] getIDs() {
 		int[] ids = null;
@@ -381,5 +361,30 @@ public class Database {
 		
 		return ids;
 	}
+	
+	public static void main(String[] args){
+		
+		try {
+			
+			Database db = new Database("mysql.stud.ntnu.no","janberge_admin","1234","janberge_db");
+			
+			int io = 0;
+			// testos:
+			// db.emptyTables();
+			// io = db.insertLAC("Rundt svingen");
+			// io = db.insertRoom(2, 5, "", "");
+			// io = db.insertSensor(1,true,50);
+			System.out.println(io);
+			
+			Model m = db.getLACModel(1);
+			System.out.println(m.toString());
+		} catch (Exception e) {
+			// e.printStackTrace();
+			System.err.println("Could not connect to database (fra main)");
+		}
+		
+	}
+
+
 	
 }
