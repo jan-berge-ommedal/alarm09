@@ -48,6 +48,8 @@ public class MACrenderer extends DefaultListCellRenderer implements ListCellRend
 		ModelEditControll element = (ModelEditControll)object;
 		Model m = element.getModel();
 		
+		Sensor s = (Sensor)object;
+		
 		//Lager connectionstatuspanel
 		ConnectionStatusPanel connectionStatus = new ConnectionStatusPanel(element.getConnectionStatusWrapper());
 				
@@ -70,7 +72,7 @@ public class MACrenderer extends DefaultListCellRenderer implements ListCellRend
 		JLabel alarmstLabel = new JLabel();
 		
 		//sjekker om alarm er ok
-		if(element.hasAlarm())
+		if(s.isAlarmState())
 			alarmstLabel.setBackground(((BlinkingList)list).isBlink() ? colorOn : colorOff);
 				else
 					alarmstLabel.setBackground(Color.GREEN);
