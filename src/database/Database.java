@@ -23,7 +23,7 @@ public class Database {
 	public Database(String url, String user, String password, String databaseName) throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 		Class.forName("com.mysql.jdbc.Driver").newInstance();
 		db = DriverManager.getConnection("jdbc:mysql://"+url,user,password);
-		System.out.println("connecta");
+		System.out.println("Connecta te databasen");
 		st = db.createStatement();
 		st.executeQuery("USE "+databaseName);
 	}
@@ -313,7 +313,21 @@ public class Database {
 		
 	}
 	
-	
+	public void removeEvent(int id){
+		try {
+			executeUpdate("DELETE FROM Event WHERE id = "+id);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void removeSensor(int id){
+		try {
+			executeUpdate("DELETE FROM Sensor WHERE id = "+id);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 	public static void main(String[] args){
 		
 		try {
