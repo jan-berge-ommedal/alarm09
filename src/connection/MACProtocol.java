@@ -129,5 +129,9 @@ public class MACProtocol {
 		String st = "UPDATESENSOR" + " " + s.getId() + " " + s.isAlarmState() + " " + s.getInstallationDate().toString() + " " + s.getBattery();
 		c.send(st);
 	}
+	public static void deleteAllEvents(Connection connection, Sensor sensor) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

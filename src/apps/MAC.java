@@ -237,6 +237,13 @@ public class MAC{
 		}
 
 
+		@Override
+		public void deleteAllEvents(Sensor sensor) {
+			database.removeSensorsEvents(sensor.getId());
+			MACProtocol.deleteAllEvents(thread.connection,sensor);
+		}
+
+
 
 	}
 	

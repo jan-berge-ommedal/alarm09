@@ -17,7 +17,7 @@ public abstract class ModelEditControll implements PropertyChangeListener {
 	
 	/**
 	 * This method tests all sensors 
-	 * @return a boolean that is false when some of the LACs' doesn't pass the test
+	 * @return a boolean that is false when some of the sensors doesn't pass the test
 	 */ 
 	public boolean testSensors() {
 		for (Sensor s : model.getSensors()) {
@@ -56,9 +56,6 @@ public abstract class ModelEditControll implements PropertyChangeListener {
 	public abstract int getNextSensorID(Sensor sensor) throws IOException;
 
 
-	public void deleteAllEvents(Sensor sensor) {
-		// TODO Auto-generated method stub
-		
-	}
+	public abstract void deleteAllEvents(Sensor sensor);
 
 }
