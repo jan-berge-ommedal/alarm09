@@ -67,7 +67,7 @@ public class MACrenderer extends DefaultListCellRenderer implements ListCellRend
 		
 		JLabel alarmstLabel = new JLabel();
 		
-		if(s.isAlarmState())
+		if(element.hasAlarm())
 			alarmstLabel.setBackground(((BlinkingList)list).isBlink() ? colorOn : colorOff);
 				else
 					alarmstLabel.setBackground(Color.GREEN);
