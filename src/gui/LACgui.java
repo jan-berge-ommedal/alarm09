@@ -40,6 +40,13 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	private Model model;
 	private JLabel adresse;
 	private JLabel id;
+	private JLabel sensorID;
+	private JLabel roomname;
+	private JLabel roomID;
+	private JLabel sensorStatus;
+	private JLabel batteryStatus;
+	private JLabel date;
+	
 	
 	private ModelEditControll controller;
 	
@@ -120,6 +127,14 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		adresse.setFont(f);
 		adresse.setVisible(true);
 		sensors.setVisible(true);
+		
+		//overskriftslabels for lista
+		JLabel sensorID = new JLabel("Sensor ID");
+		JLabel roomname = new JLabel("Room name");
+		JLabel roomID = new JLabel("Room ID");
+		JLabel sensorStatus = new JLabel("Sensor Status");
+		JLabel batteryStatus = new JLabel("Battery Status");
+		JLabel date = new JLabel("Date & time");
 	
 		pane.setLayout(null);
 		pane.add(installSensor);
@@ -129,12 +144,22 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		pane.add(returnMAC);
 		pane.add(adresse);
 		pane.add(editSensor);
+		pane.add(sensorID);
+		pane.add(roomname);
+		pane.add(roomID);
+		pane.add(sensorStatus);
+		pane.add(batteryStatus);
+		pane.add(date);
 		installSensor.setBounds(LEFT_SPACE, TOP_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		//saveLog.setBounds(LEFT_SPACE + BUTTON_WIDTH + DEFAULT_SPACE, TOP_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		sensors.setBounds(LEFT_SPACE, TOP_SPACE + BUTTON_HEIGHT + 2*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		checkSensors.setBounds(LEFT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT);
 		returnMAC.setBounds(LEFT_SPACE + BUTTON_WIDTH + DEFAULT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT);
 		editSensor.setBounds(LEFT_SPACE, 700 - TOP_SPACE - 5*BUTTON_HEIGHT - 4*DEFAULT_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
+		sensorID.setBounds(LEFT_SPACE, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
+		roomname.setBounds(LEFT_SPACE + LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
+		roomID.setBounds(LEFT_SPACE + 2*LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
+		date.setBounds(LEFT_SPACE + 4*LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		
 		/*
 		 * Initialiserer JListen
@@ -156,7 +181,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		sensorList.setVisibleRowCount(7); 
 		sensorList.setVisible(true);
 		pane.add(sensorList);
-		sensorList.setBounds(LEFT_SPACE, TOP_SPACE + BUTTON_HEIGHT + 3*DEFAULT_SPACE + LABEL_HEIGHT, LIST_WIDTH, LIST_HEIGHT);
+		sensorList.setBounds(LEFT_SPACE, TOP_SPACE + BUTTON_HEIGHT + 5*DEFAULT_SPACE + 3*LABEL_HEIGHT, LIST_WIDTH, LIST_HEIGHT);
 		sensorList.setFixedCellWidth(LIST_ELEMENT_WIDTH);
 		sensorList.setFixedCellHeight(LIST_ELEMENT_HEIGHT);
 	}
@@ -494,14 +519,14 @@ public class LACgui extends JPanel implements Values, ActionListener {
 				sensorAttributeError(true);
 			}
 			try {
-				// opprett room = new Room(romNUMMER, romTYPE, romINFO, lac.getModel());
+				room = new Room(romNUMMER, romTYPE, romINFO, this.mec.getModel());
 			}
 			catch (NullPointerException npe) {
 				//trenger ikke gjøre noe;
 			}
 			Sensor sensor;
 			try {
-				sensor = new Sensor(this.mec, room); //hvordan skal dette ordnes når jeg ikke får ha lac? :(
+				sensor = new Sensor(this.mec, room);
 				room.addSensor(sensor);
 				if (sensor.getRoom() != null) {
 					this.mec.getModel().addRoom(room);
