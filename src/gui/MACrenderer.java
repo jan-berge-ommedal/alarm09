@@ -87,12 +87,12 @@ public class MACrenderer extends DefaultListCellRenderer implements ListCellRend
 				
 		} else {
 
-			JLabel SensorID = new JLabel("SensorID: "+adapter.getID());
-			SensorID.setBounds(0, 0, lacIDSIZE, CELLHEIGHT);
+			JLabel LACID = new JLabel("LAC ID: "+adapter.getID());
+			LACID.setBounds(0, 0, lacIDSIZE, CELLHEIGHT);
 			ConnectionStatusPanel ConnectionStatus = new ConnectionStatusPanel(adapter.getConnectionStatusWrapper());
 			ConnectionStatus.setBounds(lacNAMESIZE, 0, 200, CELLHEIGHT);
 			
-			panel.add(SensorID);
+			panel.add(LACID);
 			panel.add(ConnectionStatus);
 			
 		}
