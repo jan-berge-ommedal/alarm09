@@ -22,7 +22,6 @@ public class ConnectionStatusPanel extends JLabel implements ConnectionStatusLis
 		connectionStatusChanged(wrapper.getConnectionStatus());
 	}
 	
-	@Override
 	public void connectionStatusChanged(ConnectionStatus newStatus) {
 		
 		this.setText(newStatus.toString());

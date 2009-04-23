@@ -361,8 +361,23 @@ public class Database {
 
 
 	public int[] getIDs() {
-		return new int[]{0,1,2,3,5};
+		int[] ids = null;
+		try {
+			ResultSet rows = executeQuery("SELECT COUNT(ID) AS ids FROM LAC GROUP BY NULL"); 
+			rows.next();
+			ids = new int[rows.getInt("ids")];
+			
+			int pointer = 0;
+			ResultSet lacs = executeQuery("SELECT ID FROM LAC");
+			while(lacs.next()) {
+				ids[pointer] = lacs.getInt("ID");
+				pointer++;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		
+		return ids;
 	}
 	
 }

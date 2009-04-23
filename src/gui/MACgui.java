@@ -4,6 +4,8 @@ import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -21,7 +23,7 @@ import apps.MAC.LACAdaper;
  * denne klassen håndterer vinduet som presenteres fra en LAC maskin
  *
  */
-public class MACgui extends JPanel implements Values, ActionListener {
+public class MACgui extends JPanel implements Values, ActionListener, PropertyChangeListener {
 	
 	private JButton writeSiteSummary;
 	private JButton viewLog;
@@ -35,6 +37,7 @@ public class MACgui extends JPanel implements Values, ActionListener {
 	
 	public MACgui(MAC mac) {
 		this.mac=mac;
+		mac.addAdapterListListener(this);
 		Insets asdf = new Insets(0,0,0,0);
 		JPanel pane = new JPanel();
 		JFrame frame = new JFrame("MAC");
@@ -79,11 +82,15 @@ public class MACgui extends JPanel implements Values, ActionListener {
 		updateAll.setBounds(LEFT_SPACE + 2*BUTTON_LONG_WIDTH + 2*DEFAULT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_LONG_WIDTH, BUTTON_HEIGHT);
 		
 		lacList = new JList();
+		pane.add(lacList);
+		setupList();
+	}
+	
+	private void setupList() {
 		lacList.setModel(mac.getLACAdapterList());
 		lacList.setCellRenderer(new MACrenderer());
 		lacList.setVisibleRowCount(7); 
 		lacList.setVisible(true);
-		pane.add(lacList);
 		lacList.setBounds(LEFT_SPACE, TOP_SPACE + BUTTON_HEIGHT + 3*DEFAULT_SPACE + LABEL_HEIGHT, LIST_WIDTH, LIST_HEIGHT);
 		lacList.setFixedCellWidth(LIST_ELEMENT_WIDTH);
 		lacList.setFixedCellHeight(LIST_ELEMENT_HEIGHT);
@@ -112,7 +119,6 @@ public class MACgui extends JPanel implements Values, ActionListener {
 	}
 	
 
-	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == viewLog) {
 			viewLog(); //opprett og vis en liste over events, sortert etter dato
@@ -160,4 +166,10 @@ public class MACgui extends JPanel implements Values, ActionListener {
 			panel.add(info);
 			panel.add(y);
 	}
+
+	public void propertyChange(PropertyChangeEvent evt) {
+		setupList();
+	}
+
+
 }

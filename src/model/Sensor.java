@@ -36,7 +36,7 @@ public class Sensor {
 	
 	/**
 	 * 
-	 * <strong>This constructor is used to load a predefined sensor(allready exists in storage)</strong>
+	 * <strong>This constructor is used to load a predefined sensor(already exists in storage)</strong>
 	 * <br>(Remember to add belonging Events after using this constructor)
 	 * 
 	 * @param id a predefined id
@@ -53,7 +53,6 @@ public class Sensor {
 		this.installationDate=installationDate;
 		this.room=r;
 		if(startSensor)startup();
-		
 	}
 	
 	/**

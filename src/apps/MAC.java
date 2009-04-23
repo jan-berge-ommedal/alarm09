@@ -3,6 +3,8 @@ package apps;
 import gui.MACgui;
 
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
@@ -48,6 +50,8 @@ public class MAC{
 	public static final int SERVERPORT = 666;
 	public static final String MACIP = "localhost";
 	
+	
+	
 	public MAC() {
 		gui = new MACgui(this);
 		try {
@@ -64,6 +68,12 @@ public class MAC{
 		}
 		
 		
+		
+		
+	}
+	
+	public void addAdapterListListener(PropertyChangeListener listener){
+		adapters.addAdapterListListener(listener);
 	}
 	
 	private void loadAdapters() {
@@ -80,7 +90,7 @@ public class MAC{
 		try {
 			macConnection = new TCPConnection(SERVERPORT);
 		} catch (IOException e2) {
-			//e2.printStackTrace();
+			e2.printStackTrace();
 		}
 		while(running){
 			Connection newConnection = null;
@@ -231,7 +241,6 @@ public class MAC{
 		}
 
 
-		@Override
 		public void propertyChange(PropertyChangeEvent arg0) {
 			System.err.println("Handle This");
 		}
@@ -287,34 +296,40 @@ public class MAC{
 	
 	class LacAdapterList implements ListModel{
 		private ArrayList<LACAdaper> lacAdapters = new ArrayList<LACAdaper>();
+		
+		private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
-		@Override
 		public void addListDataListener(ListDataListener l) {
 			// TODO Auto-generated method stub
 			
 		}
+		
+		public void addAdapterListListener(PropertyChangeListener listener){
+			pcs.addPropertyChangeListener(listener);
+		}
 
 		public void remove(LACAdaper adaper) {
+			int oldValue = lacAdapters.size();
 			lacAdapters.remove(adaper);
+			pcs.firePropertyChange("LACADAPTERS", oldValue, lacAdapters.size());
 			
 		}
 
 		public void add(LACAdaper adaper) {
+			int oldValue = lacAdapters.size();
 			lacAdapters.add(adaper);
+			pcs.firePropertyChange("LACADAPTERS", oldValue, lacAdapters.size());
 			
 		}
 
-		@Override
 		public Object getElementAt(int index) {
 			return lacAdapters.get(index);
 		}
 
-		@Override
 		public int getSize() {
 			return lacAdapters.size();
 		}
 
-		@Override
 		public void removeListDataListener(ListDataListener l) {
 			// TODO Auto-generated method stub
 			

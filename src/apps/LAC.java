@@ -141,7 +141,7 @@ public class LAC extends ModelEditControll{
 		return new Timestamp(System.currentTimeMillis());
 	}
 
-	@Override
+	// @Override
 	public void propertyChange(PropertyChangeEvent e) {
 		if(e.getSource() instanceof Sensor)
 			try {

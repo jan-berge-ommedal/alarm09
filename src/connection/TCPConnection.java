@@ -37,25 +37,22 @@ public class TCPConnection implements Connection{
 		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 	}
 
-	@Override
 	public Connection accept() throws IOException, SocketTimeoutException {
 		return new TCPConnection(server.accept());
 	}
 
-	@Override
 	public void close() throws IOException {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
+
 	public void connect(InetAddress remoteAddress, int remotePort)throws IOException, SocketTimeoutException {
 		socket = new Socket(remoteAddress,remotePort);
 		out = new DataOutputStream(socket.getOutputStream());
 		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 	}
 
-	@Override
 	public String receive() throws ConnectException, IOException {
 		while(true){
 			if(in.ready())
@@ -71,7 +68,6 @@ public class TCPConnection implements Connection{
 		}
 	}
 
-	@Override
 	public void send(String msg) throws ConnectException, IOException {
 		out.writeBytes(msg+"\n");
 	}

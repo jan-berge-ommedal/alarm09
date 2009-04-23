@@ -16,6 +16,7 @@ import model.Sensor;
 import connection.ModelEditControll;
 
 import apps.LAC;
+import apps.MAC.LACAdaper;
 
 /**
  * Klasse som skal lage listkomponenten til LACs som vises i MACvinduet. Hvert element
@@ -37,6 +38,8 @@ public class MACrenderer extends DefaultListCellRenderer implements ListCellRend
 	public Component getListCellRendererComponent(JList list, Object object,
 			int index, boolean selected, boolean hasCellFocus) {
 		
+		LACAdaper adapter = (LACAdaper)object;
+		
 		/*
 		 * Initialiserer komponenten som skal returneres som et panel med riktige mål
 		 */
@@ -48,7 +51,6 @@ public class MACrenderer extends DefaultListCellRenderer implements ListCellRend
 		ModelEditControll element = (ModelEditControll)object;
 		Model m = element.getModel();
 		
-		Sensor s = (Sensor)object;
 		
 		//Lager connectionstatuspanel
 		ConnectionStatusPanel connectionStatus = new ConnectionStatusPanel(element.getConnectionStatusWrapper());
@@ -57,38 +59,56 @@ public class MACrenderer extends DefaultListCellRenderer implements ListCellRend
 		/*
 		 * Initialiserer og legger til de JLabelene som skal være i JPanelet
 		 */
-		JLabel ID = new JLabel("ID");
-		JLabel LOC = new JLabel("Location");
-		JLabel ALARMst = new JLabel("Alarm Status");
+
 		
 		
-		
-		JLabel lacIDLabel = new JLabel("ID "+(index+1));
-		lacIDLabel.setBounds(0, 0, lacIDSIZE, CELLHEIGHT);
-		
-		JLabel LOCLabel = new JLabel(m.getAdresse());
-		LOCLabel.setBounds(lacNAMESIZE, 0, 100, CELLHEIGHT);
-		
-		JLabel alarmstLabel = new JLabel();
-		
-		//sjekker om alarm er ok
-		if(s.isAlarmState())
-			alarmstLabel.setBackground(((BlinkingList)list).isBlink() ? colorOn : colorOff);
-				else
-					alarmstLabel.setBackground(Color.GREEN);
-		alarmstLabel.setBounds(alarmSIZE, 1, LIST_ELEMENT_WIDTH, LIST_ELEMENT_HEIGHT);
-		
-		connectionStatus.setBounds(statuspanelSIZE, 1, LIST_ELEMENT_WIDTH, LIST_ELEMENT_HEIGHT);
-		
-		panel.add(ID);
-		panel.add(LOC);
-		panel.add(ALARMst);
-		panel.add(lacIDLabel);
-		panel.add(LOCLabel);
-		panel.add(alarmstLabel);
-		panel.add(connectionStatus);
-		
-		
+		if(m!=null){
+
+			JLabel ID = new JLabel(""+adapter.getModel().getID());
+			JLabel LOC = new JLabel(""+adapter.getModel().getAdresse());
+			JLabel ALARMst = new JLabel(""+adapter.hasAlarm());
+			
+			JLabel lacIDLabel = new JLabel("ID "+(index+1));
+			lacIDLabel.setBounds(0, 0, lacIDSIZE, CELLHEIGHT);
+
+			JLabel LOCLabel = new JLabel(m.getAdresse());
+			LOCLabel.setBounds(lacNAMESIZE, 0, 100, CELLHEIGHT);
+			
+			JLabel alarmstLabel = new JLabel();
+			
+			//sjekker om alarm er ok
+			if(adapter.hasAlarm())
+				alarmstLabel.setBackground(((BlinkingList)list).isBlink() ? colorOn : colorOff);
+			else
+				alarmstLabel.setBackground(Color.GREEN);
+			
+			alarmstLabel.setBounds(alarmSIZE, 1, LIST_ELEMENT_WIDTH, LIST_ELEMENT_HEIGHT);
+			connectionStatus.setBounds(statuspanelSIZE, 1, LIST_ELEMENT_WIDTH, LIST_ELEMENT_HEIGHT);
+
+			panel.add(ID);
+			panel.add(LOC);
+			panel.add(ALARMst);
+			panel.add(lacIDLabel);
+			panel.add(LOCLabel);
+			panel.add(alarmstLabel);
+			panel.add(connectionStatus);
+				
+		} else {
+
+			JLabel SensorID = new JLabel("SensorID: "+adapter.getID());
+			SensorID.setBounds(0, 0, lacIDSIZE, CELLHEIGHT);
+			ConnectionStatusPanel ConnectionStatus = new ConnectionStatusPanel(adapter.getConnectionStatusWrapper());
+			ConnectionStatus.setBounds(lacNAMESIZE, 0, 200, CELLHEIGHT);
+			
+			panel.add(SensorID);
+			panel.add(ConnectionStatus);
+			
+		}
+
+		if(selected)
+			panel.setBackground(Color.PINK);
+		else
+			panel.setBackground(Color.WHITE);
 		return panel;
 		
 		

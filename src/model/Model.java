@@ -103,7 +103,7 @@ public class Model implements ListModel, PropertyChangeListener {
 		
 	}
 
-	@Override
+	// @Override
 	public void propertyChange(PropertyChangeEvent e) {
 		for(PropertyChangeListener pcl : listeners){
 			pcl.propertyChange(e);
@@ -122,23 +122,23 @@ public class Model implements ListModel, PropertyChangeListener {
 		return list.toArray(new Sensor[list.size()]);
 	}
 
-	@Override
+	// @Override
 	public void addListDataListener(ListDataListener l) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
+	// @Override
 	public Object getElementAt(int index) {
 		return sensors.get(index);
 	}
 
-	@Override
+	// @Override
 	public int getSize() {
 		return sensors.size();
 	}
 
-	@Override
+	// @Override
 	public void removeListDataListener(ListDataListener l) {
 		// TODO Auto-generated method stub
 		
@@ -158,7 +158,7 @@ public class Model implements ListModel, PropertyChangeListener {
 	public static void main(String[] args) {
 		Model m = new Model();
 		m.addPropertyChangeListener(new PropertyChangeListener(){
-			@Override
+			
 			public void propertyChange(PropertyChangeEvent evt) {
 				System.out.println(evt.getPropertyName());
 			}

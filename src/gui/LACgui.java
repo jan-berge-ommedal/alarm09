@@ -491,7 +491,6 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		panel.add(y);
 	}
 
-	@Override
 	public void actionPerformed(ActionEvent evt) {
 		if (evt.getSource() == saveLog) {
 			logSaved(); //skulle vi lagt inn mulighet for feilmelding dersom loggen ikke lagres?
@@ -561,7 +560,6 @@ public class LACgui extends JPanel implements Values, ActionListener {
 			this.rominfo = rominfo;
 		}
 		
-		@Override
 		public void actionPerformed(ActionEvent e) {
 			int romNUMMER = -1;
 			String romTYPE = "";
