@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import apps.MAC;
 import apps.MAC.LACAdaper;
@@ -32,6 +33,9 @@ public class MACgui extends JPanel implements Values, ActionListener, PropertyCh
 	private JButton updateAll;
 	private JLabel lacs;
 	private JList lacList;
+	
+	private ConnectionStatusPanel databaseStatusPanel;
+	
 	private MAC mac;
 	
 	
@@ -81,17 +85,24 @@ public class MACgui extends JPanel implements Values, ActionListener, PropertyCh
 		updateMarked.setBounds(LEFT_SPACE + BUTTON_LONG_WIDTH + DEFAULT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_LONG_WIDTH, BUTTON_HEIGHT);
 		updateAll.setBounds(LEFT_SPACE + 2*BUTTON_LONG_WIDTH + 2*DEFAULT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_LONG_WIDTH, BUTTON_HEIGHT);
 		
+		
+		databaseStatusPanel = new ConnectionStatusPanel(mac.getDatabaseConnectionWrapper());
+		databaseStatusPanel.setBounds(500, 50, 200, 50);
+		pane.add(databaseStatusPanel);
+			
+		
 		lacList = new JList();
-		pane.add(lacList);
+		JScrollPane scrollpane = new JScrollPane(lacList,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollpane.setBounds(LEFT_SPACE, TOP_SPACE + BUTTON_HEIGHT + 3*DEFAULT_SPACE + LABEL_HEIGHT, LIST_WIDTH, LIST_HEIGHT);
 		setupList();
+		pane.add(scrollpane);
+		
 	}
 	
 	private void setupList() {
 		lacList.setModel(mac.getLACAdapterList());
 		lacList.setCellRenderer(new MACrenderer());
-		lacList.setVisibleRowCount(7); 
-		lacList.setVisible(true);
-		lacList.setBounds(LEFT_SPACE, TOP_SPACE + BUTTON_HEIGHT + 3*DEFAULT_SPACE + LABEL_HEIGHT, LIST_WIDTH, LIST_HEIGHT);
+		
 		lacList.setFixedCellWidth(LIST_ELEMENT_WIDTH);
 		lacList.setFixedCellHeight(LIST_ELEMENT_HEIGHT);
 	}

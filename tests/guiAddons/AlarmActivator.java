@@ -101,10 +101,8 @@ public class AlarmActivator extends JFrame implements Values{
 	
 	
 	public static void main(String[] args) {
-		LAC lac = new LAC();
-		Model m = AlarmHelp.getDefaultModel();
-		lac.setModel(m);
-		new AlarmActivator(m);
+		LAC lac = new LAC(1);
+		new AlarmActivator(lac.getModel());
 		
 	}
 

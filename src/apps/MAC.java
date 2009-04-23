@@ -45,8 +45,6 @@ public class MAC{
 	private MACgui gui;
 	private boolean running = true;
 	
-	private static int i = 0;
-	
 	public static final int SERVERPORT = 666;
 	public static final String MACIP = "localhost";
 	
@@ -59,13 +57,14 @@ public class MAC{
 			database = new Database("mysql.stud.ntnu.no","janberge_admin","1234","janberge_db");
 			databaseConnectionWrapper.setConnectionStatus(ConnectionStatus.CONNECTED);
 			loadAdapters();
-			
-			System.out.println("MAC is running");
-			startMAC();
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.err.println("Could not connect to database");
-		}
+		}	
+		
+		System.out.println("MAC is running");
+		startMAC();
+	
 		
 		
 		
@@ -80,6 +79,10 @@ public class MAC{
 		for(int id : database.getIDs()){
 			adapters.add(new LACAdaper(this, id));
 		}
+	}
+	
+	public ConnectionStatusWrapper getDatabaseConnectionWrapper(){
+		return databaseConnectionWrapper;
 	}
 
 	/**
@@ -104,8 +107,10 @@ public class MAC{
 					boolean found = false;
 					for (LACAdaper adapter : adapters.lacAdapters) {
 						if(adapter.getID()==LACid){
-							adapter.initializeConnection(newConnection);
-							found = true;
+							if(adapter.getConnectionStatusWrapper().getConnectionStatus() == ConnectionStatus.DISCONNECTED){
+								adapter.initializeConnection(newConnection);
+								found = true;
+							}
 							break;
 						}
 					}
@@ -263,7 +268,7 @@ public class MAC{
 		public LACAdapterThread(LACAdaper adapter, Connection connection) {
 			this.adapter=adapter;
 			this.connection=connection;
-			this.setName("Connection-"+(i++));
+			this.setName("LACAdapter-"+adapter.getID());
 			start();
 		}
 		

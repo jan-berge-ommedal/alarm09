@@ -15,7 +15,11 @@ import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.jar.JarInputStream;
+
+import javax.swing.JOptionPane;
 
 import com.mysql.jdbc.jdbc2.optional.ConnectionWrapper;
 
@@ -57,9 +61,7 @@ public class LAC extends ModelEditControll{
 	public LAC() {
 		gui = new LACgui(this);
 		try {
-			connectionWrapper.setConnectionStatus(ConnectionStatus.CONNECTING);
 			connect(5);
-			connectionWrapper.setConnectionStatus(ConnectionStatus.CONNECTED);
 			connection.send("NEW"+defaultAdres);
 			String reveiceID = connection.receive();
 			System.out.println(reveiceID);
@@ -85,21 +87,26 @@ public class LAC extends ModelEditControll{
 		try {
 			connect(5);
 			connection.send("ID"+id);
+			String ack = connection.receive();
+			System.out.println(ack);
 			setModel(LACProtocol.receiveCompleteModel(connection, id));
-			
 		} catch (IOException e) {
-			System.err.println("Reattempting to connect");
+			System.err.println("Could not Connect");
+		} catch (ParseException e) {
+			System.err.println("Could not load model");
 		}
 		
 	}
 	
 	private void connect(int i) throws IOException {
 		int port = STARTPORT;
+		connectionWrapper.setConnectionStatus(ConnectionStatus.CONNECTING);
 		while(i>0){
 			try {
 				connection = new TCPConnection(port);
 				connection.connect(InetAddress.getByName(MAC.MACIP), MAC.SERVERPORT);
 				System.out.println("Connected to the MAC");
+				connectionWrapper.setConnectionStatus(ConnectionStatus.CONNECTED);
 				return;
 			}catch (BindException e){
 				System.err.println("Port "+port+" in use, trying port "+(++port));
@@ -185,31 +192,20 @@ public class LAC extends ModelEditControll{
 	*/
 
 	public static void main(String[] args) {
-		new LAC();
-		//new LAC(1);
-		
-		/*
-		 if(args.length > 0){
-		 
-			for(String s : args){
-				File f = new File(s);
-				if(f.isFile()){
-					LAC lac;
-					try {
-						lac = LAC.parse(f);
-						if(lac==null)
-							System.err.println("Invalid LAC Format");		
-					} catch (NumberFormatException e) {
-						e.printStackTrace();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-							
-				}
+		boolean run = true;
+		while(run){
+			try{
+			String s = JOptionPane.showInputDialog("Skriv inn ID til LACen som skal startes. (-1 genererer ny LAC)");
+			int id = Integer.parseInt(s);
+			if(id<0)
+				new LAC();
+			else
+				new LAC(id);
+			run=false;
+			}catch(NumberFormatException e){
+				System.err.println("Kun tall!");
 			}
-		}else
-			new LAC();
-		*/
+		}
 	}
 
 	/* MODELCONTROLLER */

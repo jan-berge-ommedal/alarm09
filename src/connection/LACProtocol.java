@@ -3,6 +3,7 @@ package connection;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.sql.Timestamp;
+import java.text.ParseException;
 
 import com.sun.org.apache.xml.internal.serializer.ToXMLSAXHandler;
 
@@ -82,16 +83,14 @@ public class LACProtocol {
 	}
 	
 
-	public static Model receiveCompleteModel(Connection connection, int modelid) throws ConnectException, IOException {
+	public static Model receiveCompleteModel(Connection connection, int modelid) throws ConnectException, IOException, ParseException {
 		connection.send("GETMODEL"+modelid);
-		System.out.println("CREATED DEFAULT MODEL, but RECEIVED THIS:\n---------------------------------\n\n"+connection.receive());
-		return new Model();
+		return XmlSerializer.toModel(connection.receive());
 	}
 
 	public static int receiveNextModelID(Connection connection, String adress) throws ConnectException, IOException {
 		connection.send("GETNEXTID" + adress);
 		String s = connection.receive();
-		System.out.println(s);
 		return Integer.parseInt(s);
 	}
 
