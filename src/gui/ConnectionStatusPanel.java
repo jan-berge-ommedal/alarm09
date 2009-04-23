@@ -1,5 +1,12 @@
 package gui;
 
+/**
+ * This is a sick component imo.
+ * 
+ * @author SimonGrøndahl
+ *
+ */
+
 import javax.swing.*;
 
 import connection.ConnectionStatusListener;
