@@ -139,9 +139,8 @@ public class ConnectionImplementation extends AbstractConnection {
     	if(i != null) {
     		if(i.getFlag() == Flag.ACK) {
     			this.state = State.ESTABLISHED;
-    			Connection newconnection = this;
-    			this.state = State.CLOSED;
-    			return newconnection;
+    			
+    			return this;
     		}
     	}
     	else {
