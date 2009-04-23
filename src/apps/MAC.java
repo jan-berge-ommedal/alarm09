@@ -2,6 +2,7 @@ package apps;
 
 import gui.MACgui;
 
+import java.beans.PropertyChangeEvent;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
@@ -217,6 +218,12 @@ public class MAC{
 		@Override
 		public int getNextSensorID(Sensor sensor) throws IOException {
 			throw new IOException("Vet ikke hvordan dette skal gjøres enda");
+		}
+
+
+		@Override
+		public void propertyChange(PropertyChangeEvent arg0) {
+			System.err.println("Handle This");
 		}
 
 

@@ -1,5 +1,6 @@
 package connection;
 
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 
 import model.Model;
@@ -8,7 +9,7 @@ import model.Sensor;
 
 
 
-public abstract class ModelEditControll {
+public abstract class ModelEditControll implements PropertyChangeListener {
 	protected Model model;
 	
 	/**
@@ -25,6 +26,12 @@ public abstract class ModelEditControll {
 	
 	public Model getModel(){
 		return model;
+	}
+	
+	public void setModel(Model model){
+		if(this.model!=null)this.model.removePropertyChangeListener(this);
+		this.model = model;
+		if(model!=null)model.addPropertyChangeListener(this);
 	}
 	
 	/**

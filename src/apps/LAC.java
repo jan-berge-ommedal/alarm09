@@ -36,7 +36,7 @@ import no.ntnu.fp.net.co.Connection;
  */
 
 
-public class LAC extends ModelEditControll implements PropertyChangeListener{
+public class LAC extends ModelEditControll{
 	private Connection connection;
 	
 	private LACgui gui;
@@ -109,20 +109,16 @@ public class LAC extends ModelEditControll implements PropertyChangeListener{
 	 * Returns the datamodel of the LAC
 	 * @return the model
 	 */
-	public Model getModel() {
-		return model;
+	public void setModel(Model m){
+		super.setModel(m);
+		gui.setModel(model);
 	}
 	
 	/**
 	 * Sets the given parameter as the datamodel of the LAC, and add
 	 * @param model the new model
 	 */
-	public void setModel(Model model){
-		if(this.model!=null)this.model.removePropertyChangeListener(this);
-		this.model = model;
-		gui.setModel(model);
-		if(model!=null)model.addPropertyChangeListener(this);
-	}
+	
 	
 	
 
