@@ -169,7 +169,9 @@ public class MAC{
 		
 		
 		public void initializeConnection(Connection newConnection) {
-			thread = new LACAdapterThread(this,newConnection); 
+			thread = new LACAdapterThread(this,newConnection);
+			thread.start();
+			connectionWrapper.setConnectionStatus(ConnectionStatus.CONNECTED);
 		}
 
 

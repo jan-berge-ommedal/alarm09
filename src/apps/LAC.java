@@ -17,10 +17,14 @@ import java.net.UnknownHostException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
+import com.mysql.jdbc.jdbc2.optional.ConnectionWrapper;
+
 import connection.ConnectionImplementation;
+import connection.ConnectionStatusWrapper;
 import connection.LACProtocol;
 import connection.ModelEditControll;
 import connection.TCPConnection;
+import connection.ConnectionStatusWrapper.ConnectionStatus;
 
 import model.Event;
 import model.Model;
@@ -41,6 +45,7 @@ public class LAC extends ModelEditControll{
 	
 	private LACgui gui;
 	
+	
 	private static final int STARTPORT = 700;
 	private static String defaultAdres = "My Adresss";
 	
@@ -51,7 +56,9 @@ public class LAC extends ModelEditControll{
 	public LAC() {
 		gui = new LACgui(this);
 		try {
+			connectionWrapper.setConnectionStatus(ConnectionStatus.CONNECTING);
 			connect(5);
+			connectionWrapper.setConnectionStatus(ConnectionStatus.CONNECTED);
 			connection.send("NEW"+defaultAdres);
 			String reveiceID = connection.receive();
 			System.out.println(reveiceID);
@@ -61,6 +68,7 @@ public class LAC extends ModelEditControll{
 			Model m = new Model();
 			m.setID(modelID);
 			m.setAdresse(defaultAdres);
+			
 			this.setModel(m);
 		} catch (IOException e) {
 			System.err.println(e.getMessage());

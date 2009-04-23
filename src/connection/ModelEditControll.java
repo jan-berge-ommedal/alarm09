@@ -3,6 +3,8 @@ package connection;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 
+import connection.ConnectionStatusWrapper.ConnectionStatus;
+
 import model.Model;
 import model.Room;
 import model.Sensor;
@@ -11,6 +13,7 @@ import model.Sensor;
 
 public abstract class ModelEditControll implements PropertyChangeListener {
 	protected Model model;
+	protected ConnectionStatusWrapper connectionWrapper = new ConnectionStatusWrapper(ConnectionStatus.DISCONNECTED);
 	
 	/**
 	 * This method tests all sensors 
@@ -43,6 +46,10 @@ public abstract class ModelEditControll implements PropertyChangeListener {
 			if(s.isAlarmState())return true;
 		}	
 		return false;
+	}
+	
+	public ConnectionStatusWrapper getConnectionStatusWrapper(){
+		return connectionWrapper;
 	}
 	
 	public abstract int getNextRoomID(Room room) throws IOException;
