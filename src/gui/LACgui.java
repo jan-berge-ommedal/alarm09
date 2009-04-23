@@ -500,8 +500,8 @@ public class LACgui extends JPanel implements Values, ActionListener {
 			sensorAttributes(true, this.model);
 		}
 		else if (evt.getSource() == checkSensors) {
-			if (this.mec != null) {
-				//sensorsChecked(this.controller.testSensors()); //hva tenker jan her?
+			if (this.mec != null && this.sensorList.getModel().getSize() > 0) {
+				sensorsChecked(this.mec.testSensors());
 			}
 			else {
 				sensorsChecked();
