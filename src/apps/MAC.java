@@ -48,7 +48,7 @@ public class MAC{
 	public static final int SERVERPORT = 666;
 	
 	public MAC() {
-		//gui = new MACgui();
+		gui = new MACgui();
 		try {
 			databaseConnectionWrapper.setConnectionStatus(ConnectionStatus.CONNECTING);
 			database = new Database("mysql.stud.ntnu.no","janberge_admin","1234","janberge_db");
