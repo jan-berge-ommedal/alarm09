@@ -9,11 +9,14 @@ import java.util.ArrayList;
 
 import connection.ConnectionImplementation;
 import connection.MACProtocol;
+import connection.ModelEditControll;
 import connection.TCPConnection;
 
 import database.Database;
 
 import model.Model;
+import model.Room;
+import model.Sensor;
 import no.ntnu.fp.net.co.Connection;
 
 /**
@@ -24,11 +27,12 @@ import no.ntnu.fp.net.co.Connection;
  *
  */
 
-public class MAC {
+public class MAC{
 	private Connection macConnection;
 	private ArrayList<LACAdaper> adapters = new ArrayList<LACAdaper>();	
 	private Database database;
 	private MACgui gui;
+	private boolean running = true;
 	
 	private static int i = 0;
 	
@@ -37,18 +41,48 @@ public class MAC {
 		try {
 			database = new Database("mysql.stud.ntnu.no","janberge_admin","1234","janberge_db");
 			macConnection = new TCPConnection(666);
-			createNewLACAdaper();
+			loadAdapters();
+			startMAC();
 		} catch (Exception e) {
 			System.err.println("Could not connect to database");
 		}
 	}
 	
+	private void loadAdapters() {
+		for(int id : database.getIDs()){
+			adapters.add(new LACAdaper(this, id));
+		}
+		
+	}
+
 	/**
 	 * This method is used to create a new {@link LACAdaper} and add it to the MAC
 	 * 
 	 */
-	private void createNewLACAdaper(){
-		adapters.add(new LACAdaper(this));
+	private void startMAC(){
+		while(running){
+			Connection newConnection;
+			try {
+				newConnection = macConnection.accept();
+			
+			String idString = newConnection.receive();
+			int LACid = Integer.parseInt(idString);
+			
+			boolean found = false;
+			for (LACAdaper adapter : adapters) {
+				if(adapter.getID()==LACid){
+					adapter.initializeConnection(newConnection);
+					found = true;
+					break;
+				}
+			}
+			newConnection.send((found ? "OK" :"NAK"));
+			} catch (SocketTimeoutException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	
@@ -75,56 +109,44 @@ public class MAC {
 	 * @author Jan Berge Ommedal
 	 *
 	 */
-	public class LACAdaper extends Thread{
-		private Connection connection;
+	public class LACAdaper extends ModelEditControll{
 		private MAC mac;
-		private Model model;
-		private boolean running;
+		private LACAdapterThread thread;
 		
-		public LACAdaper(MAC mac) {
+		private int LACid;
+		
+		public LACAdaper(MAC mac, int id) {
 			this.mac = mac;
-			running = true;
-			this.setName("Connection-"+(i++));
-			start();
+			this.LACid=id;
 		}
 		
-		/**
-		 * The tread will wait for an incomming connection. When the adapter is connected to a LAC, it will first open a new adapter and then begin listening to the Connection until stopped by the stop()-method  
-		 * 
-		 */
-		public void run(){
-			try {
-				connection = mac.getMainConnection().accept();
-				mac.createNewLACAdaper();
-				while(running){
-					String msg = connection.receive();
-					MACProtocol.handleMSG(this,msg);
-					System.out.println("asdfsadf");
-				}
-			} catch (SocketTimeoutException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
 		
+		public void initializeConnection(Connection newConnection) {
+			thread = new LACAdapterThread(this,newConnection); 
+		}
+
+
+		public int getID() {
+			return LACid;
+		}
+
+
 		/**
 		 * Stops the adapter, and removes it from the MAC   
 		 * 
 		 */
 		public void stopAdapter(){
-			running=false;
 			try {
-				connection.close();
+				thread.closeConnection();
+				thread.stop();
+				adapters.remove(this);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			this.stop();
-			adapters.remove(this);
 		}
 		
 		public Connection getConnection(){
-			return connection;
+			return thread.getConnection();
 		}
 
 		public MAC getMAC() {
@@ -139,10 +161,58 @@ public class MAC {
 			this.model=model;
 		}
 		
-		public Model getModel() {
-			return model;
+	
+
+		@Override
+		public int getNextRoomID(Room room) throws IOException {
+			throw new IOException("Vet ikke hvordan dette skal gjøres enda");
 		}
 
+		@Override
+		public int getNextSensorID(Sensor sensor) throws IOException {
+			throw new IOException("Vet ikke hvordan dette skal gjøres enda");
+		}
+
+
+
+	}
+	
+	class LACAdapterThread extends Thread{
+		private Connection connection;
+		private LACAdaper adapter;
+		
+		public LACAdapterThread(LACAdaper adapter, Connection connection) {
+			this.adapter=adapter;
+			this.connection=connection;
+			this.setName("Connection-"+(i++));
+			start();
+		}
+		
+		public Connection getConnection() {
+			return connection;
+		}
+
+		public void closeConnection() throws IOException {
+			connection.close();
+		}
+
+		/**
+		 * The tread will wait for an incomming connection. When the adapter is connected to a LAC, it will first open a new adapter and then begin listening to the Connection until stopped by the stop()-method  
+		 * 
+		 */
+		public void run(){
+			try {
+				while(true){
+					String msg = connection.receive();
+					MACProtocol.handleMSG(adapter,msg);
+				}
+			} catch (SocketTimeoutException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
 	}
 
 	

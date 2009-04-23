@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 import connection.ConnectionImplementation;
 import connection.LACProtocol;
+import connection.ModelEditControll;
 import connection.TCPConnection;
 
 import model.Event;
@@ -35,8 +36,7 @@ import no.ntnu.fp.net.co.Connection;
  */
 
 
-public class LAC implements PropertyChangeListener {
-	private Model model;
+public class LAC extends ModelEditControll implements PropertyChangeListener{
 	private Connection connection;
 	
 	private LACgui gui;
@@ -120,27 +120,7 @@ public class LAC implements PropertyChangeListener {
 	}
 	
 	
-	/**
-	 * This method checks if some sensors has an alarm 
-	 * @return a boolean that is true when some of the LACs' sensors have an alarm
-	 */ 
-	public boolean checkAlarm() {
-		for (Sensor s : model.getSensors()) {
-			if(s.isAlarmState())return true;
-		}	
-		return false;
-	}
-	
-	/**
-	 * This method tests all sensors 
-	 * @return a boolean that is false when some of the LACs' doesn't pass the test
-	 */ 
-	public boolean testSensors() {
-		for (Sensor s : model.getSensors()) {
-			if(!s.testSensor())return false;
-		}	
-		return true;
-	}
+
 	
 
 	/**
@@ -222,6 +202,8 @@ public class LAC implements PropertyChangeListener {
 		*/
 	}
 
+	/* MODELCONTROLLER */
+
 	public int getNextRoomID(Room room) throws IOException {
 		return LACProtocol.insertRoom(connection, room);
 	}
@@ -234,7 +216,14 @@ public class LAC implements PropertyChangeListener {
 		return LACProtocol.insertEvent(connection, event);
 	}
 
+	public boolean hasAlarm() {
+		for (Sensor s : model.getSensors()) {
+			if(s.isAlarmState())return true;
+		}	
+		return false;
+	}
 	
+
 
 	
 	

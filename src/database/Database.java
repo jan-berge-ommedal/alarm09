@@ -333,5 +333,11 @@ public class Database {
 		}
 		
 	}
+
+
+	public int[] getIDs() {
+		return new int[]{0,1,2,3,5};
+		
+	}
 	
 }
