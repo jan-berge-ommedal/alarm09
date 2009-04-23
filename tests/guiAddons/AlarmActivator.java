@@ -39,7 +39,9 @@ public class AlarmActivator extends JFrame implements Values, ActionListener{
 	private Model model;
 	private JLabel status;
 	private JLabel statusFelt;
-
+	
+	
+	
 	public AlarmActivator(Model model){
 		this.model = model;
 		JPanel pane = new JPanel();
