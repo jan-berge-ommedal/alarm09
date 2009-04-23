@@ -30,8 +30,9 @@ public class ModelTests extends TestCase implements PropertyChangeListener {
 	public void testModelListening(){
 		Model m = new Model();
 		Room r = new Room(0,5,"TYPE","INFO",m);
-		Sensor s1 = new Sensor(r);
-		Sensor s2 = new Sensor(r);
+		
+		Sensor s1 = new Sensor(0,false,50,LAC.getTime(),r,false);
+		Sensor s2 = new Sensor(1,false,50,LAC.getTime(),r,false);
 		
 		m.addPropertyChangeListener(this);
 		m.setID(5);
@@ -68,7 +69,7 @@ public class ModelTests extends TestCase implements PropertyChangeListener {
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		lastEvent = evt;
-		
+		System.out.println("CHANGE-EVENT ("+evt.getPropertyName()+"):\n----------------------------\n"+evt);
 	}
 	
 	

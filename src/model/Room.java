@@ -112,7 +112,7 @@ public class Room {
 	public void setRomInfo(String romInfo) {
 		String oldValue = this.romInfo;
 		this.romInfo = romInfo;
-		pcs.firePropertyChange("ROMINFO", oldValue, romInfo);
+		pcs.firePropertyChange("ROOMINFO", oldValue, romInfo);
 	}
 
 	public ArrayList<Sensor> getSensorer() {
@@ -165,6 +165,10 @@ public class Room {
 		
 		return s;
 		
+	}
+
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		pcs.removePropertyChangeListener(listener);
 	}
 	
 	

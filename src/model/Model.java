@@ -58,7 +58,7 @@ public class Model implements ListModel, PropertyChangeListener {
 	public void setAdresse(String adresse) {
 		String oldValue = this.adress;
 		this.adress = adresse;		
-		pcs.firePropertyChange("LACID", oldValue, adresse);
+		pcs.firePropertyChange("ADDRESS", oldValue, adresse);
 	}
 	
 	
@@ -71,6 +71,7 @@ public class Model implements ListModel, PropertyChangeListener {
 	}
 	
 	public void removeRoom(Room r){
+		r.removePropertyChangeListener(this);
 		rooms.remove(this);
 	}
 
@@ -110,14 +111,14 @@ public class Model implements ListModel, PropertyChangeListener {
 		
 	}
 
-	public ArrayList<Sensor> getSensors() {
+	public Sensor[] getSensors() {
 		ArrayList<Sensor> list = new ArrayList<Sensor>();
 		for(Room r : getRooms()){
 			for(Sensor s : r.getSensorer()){
 				list.add(s);
 			}
 		}
-		return list;
+		return list.toArray(new Sensor[list.size()]);
 	}
 
 	@Override
@@ -153,7 +154,12 @@ public class Model implements ListModel, PropertyChangeListener {
 	}
 
 
-
+	public static void main(String[] args) {
+		Model m = new Model();
+		Room r = new Room(0,51,"sdf","sdfsd",m);
+		m.addRoom(r);
+		
+	}
 
 	
 	

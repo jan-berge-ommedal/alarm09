@@ -9,6 +9,9 @@ import java.net.SocketTimeoutException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import javax.swing.ListModel;
+import javax.swing.event.ListDataListener;
+
 import connection.ConnectionImplementation;
 import connection.ConnectionStatusWrapper;
 import connection.MACProtocol;
@@ -33,7 +36,7 @@ import no.ntnu.fp.net.co.Connection;
 
 public class MAC{
 	private Connection macConnection;
-	private ArrayList<LACAdaper> adapters = new ArrayList<LACAdaper>();	
+	private LacAdapterList adapters;	
 	private Database database;
 	private ConnectionStatusWrapper databaseConnectionWrapper = new ConnectionStatusWrapper(ConnectionStatus.DISCONNECTED);
 	
@@ -90,7 +93,7 @@ public class MAC{
 				if(idString.startsWith("ID")){
 					int LACid = Integer.parseInt(idString.substring(2));
 					boolean found = false;
-					for (LACAdaper adapter : adapters) {
+					for (LACAdaper adapter : adapters.lacAdapters) {
 						if(adapter.getID()==LACid){
 							adapter.initializeConnection(newConnection);
 							found = true;
@@ -145,8 +148,8 @@ public class MAC{
 		return database;
 	}
 	
-	public ArrayList<LACAdaper> getLACAdapters(){
-		return adapters;
+	public LACAdaper[] getLACAdapters(){
+		return adapters.lacAdapters.toArray(new LACAdaper[adapters.getSize()]);
 	}
 	
 
@@ -269,10 +272,49 @@ public class MAC{
 		}
 		
 	}
+	
+	class LacAdapterList implements ListModel{
+		private ArrayList<LACAdaper> lacAdapters = new ArrayList<LACAdaper>();
+
+		@Override
+		public void addListDataListener(ListDataListener l) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		public void remove(LACAdaper adaper) {
+			lacAdapters.remove(adaper);
+			
+		}
+
+		public void add(LACAdaper adaper) {
+			lacAdapters.add(adaper);
+			
+		}
+
+		@Override
+		public Object getElementAt(int index) {
+			return lacAdapters.get(index);
+		}
+
+		@Override
+		public int getSize() {
+			return lacAdapters.size();
+		}
+
+		@Override
+		public void removeListDataListener(ListDataListener l) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
 
 	
 	public static void main(String[] args) {
 		new MAC();
 	}
+	
+	
 }
  
