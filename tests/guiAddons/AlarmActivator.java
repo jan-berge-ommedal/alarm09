@@ -52,19 +52,19 @@ public class AlarmActivator extends JFrame implements Values{
 	public AlarmActivator(Model model){
 		this.model = model;
 		JPanel pane = new JPanel();
-		this.setSize(700, 700);
+		this.setSize(300, 300);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setContentPane(pane);
 		this.setVisible(true);
 		
 		
 		sensors = new JLabel("Sensors");
-		sensors.setBounds(DEFAULT_SPACE, DEFAULT_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
+		sensors.setBounds(DEFAULT_SPACE+10, DEFAULT_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		status = new JLabel("Status");
 	
 		
 		statusFelt = new JLabel("Alarmstatus");
-		statusFelt.setBounds(DEFAULT_SPACE+BUTTON_WIDTH+DEFAULT_SPACE, DEFAULT_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
+		statusFelt.setBounds(DEFAULT_SPACE+BUTTON_WIDTH+DEFAULT_SPACE+10, DEFAULT_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		
 		pane.setLayout(null);
 		pane.add(sensors);
@@ -87,7 +87,7 @@ public class AlarmActivator extends JFrame implements Values{
 			
 			elementPanel.add(label);
 			elementPanel.add(alarmButton);
-			elementPanel.setBounds(8, 50+i*30, 200, 30);
+			elementPanel.setBounds(18, 50+i*30, 200, 30);
 			this.add(elementPanel);
 			
 			
