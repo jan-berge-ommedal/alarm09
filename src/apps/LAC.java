@@ -97,7 +97,7 @@ public class LAC extends ModelEditControll{
 		int port = STARTPORT;
 		while(i>0){
 			try {
-				connection = new TCPConnection(port);
+				connection = new ConnectionImplementation(port);
 				connection.connect(InetAddress.getByName(MAC.MACIP), MAC.SERVERPORT);
 				System.out.println("Connected to the MAC");
 				return;

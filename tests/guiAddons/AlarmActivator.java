@@ -39,15 +39,9 @@ public class AlarmActivator extends JFrame implements Values, ActionListener{
 	private Model model;
 	private JLabel status;
 	private JLabel statusFelt;
-	
-	
-	
-	public AlarmActivator(Model model) {
+
+	public AlarmActivator(Model model){
 		this.model = model;
-		
-	}
-	
-	public AlarmActivator(){
 		JPanel pane = new JPanel();
 		JFrame frame = new JFrame("Alarm check");
 		frame.setSize(700, 700);
@@ -88,7 +82,6 @@ public class AlarmActivator extends JFrame implements Values, ActionListener{
 	
 	
 	public static void main(String[] args) {
-		MAC mac = new MAC();
 		LAC lac = new LAC();
 		Model m = AlarmHelp.getDefaultModel();
 		lac.setModel(m);
