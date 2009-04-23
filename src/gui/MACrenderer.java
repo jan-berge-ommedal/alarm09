@@ -28,7 +28,7 @@ public class MACrenderer extends DefaultListCellRenderer implements ListCellRend
 	private static final int lacIDSIZE = 50;
 	private static final int lacNAMESIZE = 100;
 	private static final int alarmSIZE = 50;
-	private ConnectionStatusPanel csp;
+	private static final int statuspanelSIZE = 50;
 	
 	private static final Color colorOn = Color.RED;
 	private static final Color colorOff = new Color(255,150,150);
@@ -47,6 +47,9 @@ public class MACrenderer extends DefaultListCellRenderer implements ListCellRend
 		
 		ModelEditControll element = (ModelEditControll)object;
 		Model m = element.getModel();
+		
+		//Lager connectionstatuspanel
+		ConnectionStatusPanel connectionStatus = new ConnectionStatusPanel(element.getConnectionStatusWrapper());
 				
 		
 		/*
@@ -66,13 +69,14 @@ public class MACrenderer extends DefaultListCellRenderer implements ListCellRend
 		
 		JLabel alarmstLabel = new JLabel();
 		
+		//sjekker om alarm er ok
 		if(element.hasAlarm())
 			alarmstLabel.setBackground(((BlinkingList)list).isBlink() ? colorOn : colorOff);
 				else
 					alarmstLabel.setBackground(Color.GREEN);
 		alarmstLabel.setBounds(alarmSIZE, 1, LIST_ELEMENT_WIDTH, LIST_ELEMENT_HEIGHT);
 		
-		csp = new ConnectionStatusPanel()
+		connectionStatus.setBounds(statuspanelSIZE, 25, LIST_ELEMENT_WIDTH, LIST_ELEMENT_HEIGHT);
 		
 		panel.add(ID);
 		panel.add(LOC);
@@ -80,6 +84,7 @@ public class MACrenderer extends DefaultListCellRenderer implements ListCellRend
 		panel.add(lacIDLabel);
 		panel.add(LOCLabel);
 		panel.add(alarmstLabel);
+		panel.add(connectionStatus);
 		
 		
 		return panel;
