@@ -235,7 +235,7 @@ public class LAC extends ModelEditControll{
 
 	@Override
 	public void deleteAllEvents(Sensor sensor) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	
