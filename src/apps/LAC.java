@@ -72,7 +72,7 @@ public class LAC extends ModelEditControll implements PropertyChangeListener{
 	 * @param id an int, the stored id of the LAC
 	 */
 	public LAC(int id) {
-		gui = new LACgui();
+		gui = new LACgui(this);
 		try {
 			connect(5);
 			connection.send("ID"+id);
