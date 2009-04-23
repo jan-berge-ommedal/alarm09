@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import connection.ModelEditControll;
+
 import apps.LAC;
 
 /**
@@ -60,14 +62,14 @@ public class Room {
 	 * @throws IOException 
 	 */
 
-	public Room(LAC lac, int romNR, String romType, String romInfo) throws IOException {
-		this.model = lac.getModel();
+	public Room(ModelEditControll control, int romNR, String romType, String romInfo) throws IOException {
+		this.model = control.getModel();
 		this.romNR = romNR;
 		this.romType = romType;
 		this.romInfo = romInfo;
 		
 		
-		this.id = lac.getNextRoomID(this);
+		this.id = control.getNextRoomID(this);
 		
 	}
 	

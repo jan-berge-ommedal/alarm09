@@ -7,6 +7,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 
+import connection.ModelEditControll;
+
 import apps.LAC;
 
 /**
@@ -64,13 +66,13 @@ public class Sensor {
 	 * @throws IOException 
 	 */
 	
-	public Sensor(LAC lac, Room room) throws IOException{
+	public Sensor(ModelEditControll control, Room room) throws IOException{
 		alarmState=false;
 		battery=100;
 		installationDate = LAC.getTime();
 		this.room=room;
 		
-		this.id = lac.getNextSensorID(this);
+		this.id = control.getNextSensorID(this);
 		startup();
 	}
 	
