@@ -6,6 +6,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
+import java.net.BindException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.sql.SQLException;
@@ -90,16 +91,13 @@ public class MAC{
 	 * 
 	 */
 	private void startMAC(){
-		try {
-			macConnection = new TCPConnection(SERVERPORT);
-		} catch (IOException e2) {
-			e2.printStackTrace();
-		}
+		macConnection = new TCPConnection(SERVERPORT);
+	
 		while(running){
 			Connection newConnection = null;
 	
 			try {
-					newConnection = macConnection.accept();
+				newConnection = macConnection.accept();
 				
 				String idString = newConnection.receive();
 				if(idString.startsWith("ID")){
@@ -115,7 +113,7 @@ public class MAC{
 						}
 					}
 					try {
-						newConnection.send((found ? "OK" :"NAK"));
+						newConnection.send((found ? "ACK" :"NAK"));
 					} catch (ConnectException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -142,7 +140,9 @@ public class MAC{
 						e.printStackTrace();
 					}
 				}
-			
+			}catch (BindException e) {
+				System.err.println("Port in use. Exiting");
+				System.exit(0);
 			}catch (SocketTimeoutException e1) {
 					// TODO Auto-generated catch block
 				e1.printStackTrace();

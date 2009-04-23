@@ -364,8 +364,10 @@ public class Database {
 		int[] ids = null;
 		try {
 			ResultSet rows = executeQuery("SELECT COUNT(ID) AS ids FROM LAC GROUP BY NULL"); 
-			rows.next();
-			ids = new int[rows.getInt("ids")];
+			int nrOfIds = 0;
+			if(rows.next())nrOfIds = rows.getInt("ids");
+				
+			ids = new int[nrOfIds];
 			
 			int pointer = 0;
 			ResultSet lacs = executeQuery("SELECT ID FROM LAC");

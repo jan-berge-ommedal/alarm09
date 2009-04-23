@@ -64,17 +64,12 @@ public class MACrenderer extends DefaultListCellRenderer implements ListCellRend
 		
 		if(m!=null){
 
-			JLabel ID = new JLabel(""+adapter.getModel().getID());
-			JLabel LOC = new JLabel(""+adapter.getModel().getAdresse());
-			JLabel ALARMst = new JLabel(""+adapter.hasAlarm());
+			JLabel adressLabel = new JLabel(""+adapter.getModel().getAdresse());
 			
 			JLabel lacIDLabel = new JLabel("ID "+(index+1));
 			lacIDLabel.setBounds(0, 0, lacIDSIZE, CELLHEIGHT);
-
-			JLabel LOCLabel = new JLabel(m.getAdresse());
-			LOCLabel.setBounds(lacNAMESIZE, 0, 100, CELLHEIGHT);
 			
-			JLabel alarmstLabel = new JLabel();
+			JPanel alarmstLabel = new JPanel();
 			
 			//sjekker om alarm er ok
 			if(adapter.hasAlarm())
@@ -82,14 +77,11 @@ public class MACrenderer extends DefaultListCellRenderer implements ListCellRend
 			else
 				alarmstLabel.setBackground(Color.GREEN);
 			
-			alarmstLabel.setBounds(alarmSIZE, 1, LIST_ELEMENT_WIDTH, LIST_ELEMENT_HEIGHT);
-			connectionStatus.setBounds(statuspanelSIZE, 1, LIST_ELEMENT_WIDTH, LIST_ELEMENT_HEIGHT);
+			alarmstLabel.setBounds(alarmSIZE*3, 1, LIST_ELEMENT_WIDTH, LIST_ELEMENT_HEIGHT);
+			connectionStatus.setBounds(statuspanelSIZE, 1, 2*LIST_ELEMENT_WIDTH, LIST_ELEMENT_HEIGHT);
 
-			panel.add(ID);
-			panel.add(LOC);
-			panel.add(ALARMst);
+			panel.add(adressLabel);
 			panel.add(lacIDLabel);
-			panel.add(LOCLabel);
 			panel.add(alarmstLabel);
 			panel.add(connectionStatus);
 				

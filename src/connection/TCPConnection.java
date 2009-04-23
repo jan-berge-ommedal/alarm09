@@ -27,17 +27,23 @@ public class TCPConnection implements Connection{
 	private DataOutputStream out;
 	private BufferedReader in;
 	
-	public TCPConnection(int port) throws IOException{
-		server = new ServerSocket(port);
-	}
+	private int port;
 	
-	public TCPConnection(Socket socket) throws IOException{
-		this.socket=socket;
+	public TCPConnection(int port){
+		this.port = port;
+	}
+
+	private TCPConnection(Socket socket) throws IOException {
+		this.socket = socket;
 		out = new DataOutputStream(socket.getOutputStream());
 		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 	}
 
+	private void setupSocket(Socket socket2) throws IOException {
+	}
+
 	public Connection accept() throws IOException, SocketTimeoutException {
+		if(server==null)server = new ServerSocket(port);
 		return new TCPConnection(server.accept());
 	}
 
@@ -48,6 +54,7 @@ public class TCPConnection implements Connection{
 
 
 	public void connect(InetAddress remoteAddress, int remotePort)throws IOException, SocketTimeoutException {
+		if(server!=null)throw new IOException("This is a host");
 		socket = new Socket(remoteAddress,remotePort);
 		out = new DataOutputStream(socket.getOutputStream());
 		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));

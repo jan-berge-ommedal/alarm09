@@ -60,22 +60,27 @@ public class LAC extends ModelEditControll{
 	 */
 	public LAC() {
 		gui = new LACgui(this);
+		connection = new TCPConnection(STARTPORT);
+		connectWithRetry();
+		
 		try {
-			connect(5);
-			connection.send("NEW"+defaultAdres);
-			String reveiceID = connection.receive();
-			System.out.println(reveiceID);
-			
-			int modelID = Integer.parseInt(reveiceID);
-			
-			Model m = new Model();
-			m.setID(modelID);
-			m.setAdresse(defaultAdres);
-			
-			this.setModel(m);
+			createNewLAC();
+		} catch (ConnectException e) {
+			e.printStackTrace();
 		} catch (IOException e) {
-			System.err.println(e.getMessage());
+			e.printStackTrace();
 		}
+	}
+
+	private void createNewLAC() throws ConnectException, IOException {
+		connection.send("NEW"+defaultAdres);
+		String reveiceID = connection.receive();
+		System.out.println(reveiceID);
+		int modelID = Integer.parseInt(reveiceID);
+		Model m = new Model();
+		m.setID(modelID);
+		m.setAdresse(defaultAdres);
+		this.setModel(m);
 	}
 	
 	/**
@@ -84,35 +89,58 @@ public class LAC extends ModelEditControll{
 	 */
 	public LAC(int id) {
 		gui = new LACgui(this);
+		connectWithRetry();
+
+		
 		try {
-			connect(5);
 			connection.send("ID"+id);
 			String ack = connection.receive();
-			System.out.println(ack);
+			if(!ack.equals("ACK")){
+				System.err.println("Refused by the MAC. Exiting");
+				System.exit(0);
+			}
 			setModel(LACProtocol.receiveCompleteModel(connection, id));
-		} catch (IOException e) {
-			System.err.println("Could not Connect");
 		} catch (ParseException e) {
 			System.err.println("Could not load model");
+		} catch (ConnectException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 	}
 	
+
+	private void connectWithRetry() {
+		boolean connected = false;
+		while(!connected){
+			try{
+				connect(5);
+				connected = true;
+			}catch(IOException e) {
+				//Try to reconnect
+				try {
+					this.connectionWrapper.setConnectionStatus(ConnectionStatus.DISCONNECTED);
+					Thread.sleep(5000);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+			}
+		}
+	}
+
 	private void connect(int i) throws IOException {
-		int port = STARTPORT;
+		if(connection==null)connection = new TCPConnection(STARTPORT);	
 		connectionWrapper.setConnectionStatus(ConnectionStatus.CONNECTING);
 		while(i>0){
 			try {
-				connection = new TCPConnection(port);
 				connection.connect(InetAddress.getByName(MAC.MACIP), MAC.SERVERPORT);
-				System.out.println("Connected to the MAC");
 				connectionWrapper.setConnectionStatus(ConnectionStatus.CONNECTED);
 				return;
-			}catch (BindException e){
-				System.err.println("Port "+port+" in use, trying port "+(++port));
 			}catch (IOException e) {
-				System.err.println("Reattempting to connect ("+i+" retries left)");
-			}finally{
+				System.err.println("Reattempting to connect ("+(i-1)+" retries left)");
 				i--;
 			}
 		}
