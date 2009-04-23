@@ -93,19 +93,19 @@ public class ModelTests extends TestCase implements PropertyChangeListener {
 		long expected = 50000;
 		assertEquals(s.computeMTTF(), -1);
 		
-		Event e1 = new Event(2,EventType.ALARM,currentTimeTimestamp, s);
+		Event e1 = new Event(2,EventType.FALSEALARM,currentTimeTimestamp, s);
 		s.addEvent(e1);
-		assertEquals(true, checkNearness(s.computeMTTF(),expected ));
+		assertEquals("MTTF wrong",true,checkNearness(s.computeMTTF(),expected ));
 		
-		Event e2 = new Event(3,EventType.ALARM,currentTimeTimestamp, s);
+		Event e2 = new Event(3,EventType.FALSEALARM,currentTimeTimestamp, s);
 		s.addEvent(e2);
 		expected = 25000;
-		assertEquals(true, checkNearness(s.computeMTTF(),expected ));
+		assertEquals("MTTF wrong", true, checkNearness(s.computeMTTF(),expected ));
 		
-		Event e3 = new Event(4,EventType.ALARM,currentTimeTimestamp, s);
+		Event e3 = new Event(4,EventType.FALSEALARM,currentTimeTimestamp, s);
 		s.addEvent(e2);
 		expected = 16667;
-		assertEquals(true, checkNearness(s.computeMTTF(),expected ));
+		assertEquals("MTTF wrong", true, checkNearness(s.computeMTTF(),expected ));
 	}
 
 	private boolean checkNearness(long computeMTTF, long expected) {

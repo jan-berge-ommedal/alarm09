@@ -236,7 +236,8 @@ public class Sensor {
 	public long computeMTTF() {
 		int nrOfFailures = computeNumberOfFailures();
 		if(nrOfFailures==0)return -1;
-		return (System.currentTimeMillis()-Timestamp.parse(installationDate.toString()))/nrOfFailures;
+		Timestamp t;
+		return (System.currentTimeMillis()-installationDate.getTime())/nrOfFailures;
 	}
 	
 	/**
