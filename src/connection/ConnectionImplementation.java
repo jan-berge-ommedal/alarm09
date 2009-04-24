@@ -51,7 +51,8 @@ public class ConnectionImplementation extends AbstractConnection {
 	public ConnectionImplementation(int myPort) {
 		super();
 		this.myPort = myPort;
-		this.myAddress = this.getIPv4Address();
+		this.myAddress = "192.168.1.104";
+		//this.myAddress = this.getIPv4Address();
 		//usedPorts.put(0, true);
 	}
 
@@ -79,7 +80,7 @@ public class ConnectionImplementation extends AbstractConnection {
 	 */
 	public void connect(InetAddress remoteAddress, int remotePort) throws IOException,
 	SocketTimeoutException {
-		System.out.println("Connecting!");
+
 		this.remoteAddress = remoteAddress.getHostAddress();
 		this.remotePort = remotePort;
 
@@ -89,7 +90,6 @@ public class ConnectionImplementation extends AbstractConnection {
 		}
 		usedPorts.put(connectionPort, true);
 		this.myPort = connectionPort;
-		System.out.println("Made port " + this.myPort);
 
 		KtnDatagram d = this.constructInternalPacket(Flag.SYN);
 
@@ -101,10 +101,18 @@ public class ConnectionImplementation extends AbstractConnection {
 		} catch (ClException e) {
 			e.printStackTrace();
 		}
-		if(this.receiveAck() == null) {
+		KtnDatagram b = this.receiveAck();
+		if(b == null) {
 			throw new SocketTimeoutException("Timeout");
 		}
-		this.state = State.ESTABLISHED;
+		else if(b.getFlag() == Flag.SYN_ACK) {
+			this.remoteAddress = b.getSrc_addr();
+			this.remotePort = b.getSrc_port();
+			this.state = State.ESTABLISHED;
+			this.sendAck(b, false);
+		}
+		else this.state = State.CLOSED;
+
 	}
 
 
@@ -116,19 +124,19 @@ public class ConnectionImplementation extends AbstractConnection {
 	 * @see Connection#accept()
 	 */
 	public Connection accept() throws IOException, SocketTimeoutException {
-		System.out.println("Accept started");
+
 		this.state = State.LISTEN;
-		KtnDatagram h = this.receivePacket(false);
-		System.out.println("Packet recieved");
+		KtnDatagram h = this.receivePacket(true);
+
 		if (h != null) {
 			if(h.getFlag() == Flag.SYN) {
+				
 				int connectionPort = (int)(Math.random()*60000);
 				while(usedPorts.containsKey(connectionPort) || connectionPort <= 1024) {
 					connectionPort = (int)(Math.random()*60000);
 				}
 				usedPorts.put(connectionPort, true);
 				this.myPort = connectionPort;
-				System.out.println("Lagde port " + this.myPort);
 
 				this.remoteAddress = h.getSrc_addr();
 				this.remotePort = h.getSrc_port();
@@ -136,23 +144,26 @@ public class ConnectionImplementation extends AbstractConnection {
 
 				this.state = State.SYN_RCVD;
 				this.sendAck(h, true);
-
-				KtnDatagram i = this.receiveAck();
-				this.lastValidPacketReceived  = i;
-				if(i != null) {
-					if(i.getFlag() == Flag.ACK) {
-						this.state = State.ESTABLISHED;
-						return this;
-					}
-				}
-				else {
-					this.state = State.CLOSED;
-					throw new IOException("ACK not recieved");
-				}
+			}
+			else {
+				this.state = State.CLOSED;
+				throw new IOException("ACK not recieved");
 			}
 		}
+		
+		KtnDatagram i = this.receiveAck();
+		this.lastValidPacketReceived  = i;
+		
+		if(i != null) {
+			if(i.getFlag() == Flag.ACK) {
+				this.remoteAddress = i.getSrc_addr();
+				this.remotePort = i.getSrc_port();
+				this.state = State.ESTABLISHED;
+				return this;
+			}
+			else throw new IOException("No ACK recieved");
+		}
 		else throw new IOException("No SYN recieved");
-		return null;
 	}
 
 	/**
@@ -172,7 +183,6 @@ public class ConnectionImplementation extends AbstractConnection {
 			throw new ConnectException("No connection established");
 		}
 		KtnDatagram f  = this.constructDataPacket(msg);
-		this.lastDataPacketSent = f;
 		this.sendDataPacketWithRetransmit(f);
 	}
 
