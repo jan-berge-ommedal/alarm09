@@ -79,7 +79,23 @@ public class LACProtocol {
 				sensor.setInstallationDate(XmlSerializer.makeTimestamp(s[3]));
 				sensor.setBattery(Integer.parseInt(s[4]));
 			}
+			
+			else if(s[0].equals("DELETEALLEVENTS")){
+				for (Sensor se : lac.getModel().getSensors()) {
+					// Er sensorID unik innad i rommet eller innad i LACen? Hvis den ikke er unik innad i LAC må denne endres.
+					if(se.getId() == Integer.parseInt(s[1])){
+						se.deleteAllEvents();
+						break;
+					}
+				}
+			}
 		
+	}
+	
+	public static boolean connectionCheck(Connection connection){
+		
+		
+		return true;
 	}
 	
 
