@@ -112,32 +112,42 @@ public class LACProtocol {
 
 	public static void updateLAC(Connection connection, LAC lac) throws ConnectException, IOException {
 		connection.send("UPDATELAC" + " " + Integer.toString(lac.getModel().getID()) + " " + lac.getModel().getAdresse());
+		receiveACK();
 	}
 
 	public static void updateRoom(Connection connection, Room room) throws ConnectException, IOException {
 		connection.send("UPDATEROOM" + XmlSerializer.toXmlRoom(room));
-		
+		receiveACK();
 	}
 	
 	public static void updateSensor(Connection connection, Sensor sensor) throws ConnectException, IOException {
 		connection.send("UPDATESENSOR" + XmlSerializer.toXmlSensor(sensor));
+		receiveACK();
 	}
 	
+
 	public static int insertRoom(Connection connection, Room room) throws ConnectException, IOException {
 		connection.send("INSERTROOM" + XmlSerializer.toXmlRoom(room));
+		receiveACK();
 		return Integer.parseInt(connection.receive());
 	}
 	
 	public static int insertSensor(Connection connection, Sensor sensor) throws ConnectException, IOException {
 		connection.send("INSERTSENSOR" + XmlSerializer.toXmlSensor(sensor));
+		receiveACK();
 		return Integer.parseInt(connection.receive());
 	}
 	
 	public static int insertEvent(Connection connection, Event event) throws ConnectException, IOException {
 		connection.send("INSERTEVENT" + XmlSerializer.toXmlEvent(event));
+		receiveACK();
 		return Integer.parseInt(connection.receive());
 	}
-
+	
+	private static void receiveACK() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 
 }
