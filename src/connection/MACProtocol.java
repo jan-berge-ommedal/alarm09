@@ -18,91 +18,66 @@ import apps.MAC.LACAdaper;
 public class MACProtocol {
 
 	public static void handleMSG(LACAdaper adaper, String receive) {
-		if(receive.startsWith("GETMODEL")){
+
 			try {
-				if(!adaper.hasModel()){
-					Model m = adaper.getMAC().getDatabase().getLACModel(Integer.parseInt(receive.substring(8)));
-					adaper.setModel(m);
+				if(receive.startsWith("GETMODEL")){
+					if(!adaper.hasModel()){
+						Model m = adaper.getMAC().getDatabase().getLACModel(Integer.parseInt(receive.substring(8)));
+						adaper.setModel(m);
+					}
+					adaper.getConnection().send(XmlSerializer.toXml(adaper.getModel()));
 				}
-				adaper.getConnection().send(XmlSerializer.toXml(adaper.getModel()));
-			
-			} catch (ConnectException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}else if(receive.substring(0, 9).equals("GETNEXTID")){
-			try {
-				adaper.getConnection().send(""+adaper.getMAC().getDatabase().insertLAC(receive.substring(9)));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		else if(receive.substring(0, 9).equals("UPDATELAC")){
-			try{
-				String[] s = receive.split(" ");
-				adaper.getMAC().getDatabase().updateLAC(Integer.parseInt(s[1]), s[2]);
-			} 
-			catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		else if(receive.substring(0, 10).equals("UPDATEROOM")){
-			try{
-				String[] s = receive.split(" ");
-				adaper.getMAC().getDatabase().updateRoom(Integer.parseInt(s[1]), Integer.parseInt(s[2]), s[3], s[4]);
-			} 
-			catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		else if(receive.substring(0, 12).equals("UPDATESENSOR")){
-			try{
-				String[] s = receive.split(" ");
-				boolean b = (s[2].equals("true")) ? true : false;
-				adaper.getMAC().getDatabase().updateSensor(Integer.parseInt(s[1]), b, Integer.parseInt(s[3]), XmlSerializer.makeTimestamp(s[4]));
-			} 
-			catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		else if(receive.substring(0, 10).equals("INSERTROOM")){
-			try{
-				String[] s = receive.split(" ");
-				int roomID = adaper.getMAC().getDatabase().insertRoom(Integer.parseInt(s[5]), Integer.parseInt(s[2]), s[3], s[4]);
-				adaper.getConnection().send(Integer.toString(roomID));
+				else if(receive.substring(0, 9).equals("GETNEXTID")){
+					adaper.getConnection().send(""+adaper.getMAC().getDatabase().insertLAC(receive.substring(9)));
+				}
+				else if(receive.substring(0, 9).equals("UPDATELAC")){
+					String[] s = receive.split(" ");
+					adaper.getMAC().getDatabase().updateLAC(Integer.parseInt(s[1]), s[2]);
+				}
+				else if(receive.substring(0, 10).equals("UPDATEROOM")){
+					String[] s = receive.split(" ");
+					adaper.getMAC().getDatabase().updateRoom(Integer.parseInt(s[1]), Integer.parseInt(s[2]), s[3], s[4]);
+				}
+				else if(receive.substring(0, 12).equals("UPDATESENSOR")){
+					String[] s = receive.split(" ");
+					boolean b = (s[2].equals("true")) ? true : false;
+					adaper.getMAC().getDatabase().updateSensor(Integer.parseInt(s[1]), b, Integer.parseInt(s[3]), XmlSerializer.makeTimestamp(s[4]));
+				}
+				else if(receive.substring(0, 10).equals("INSERTROOM")){
+					String[] s = receive.split(" ");
+					int roomID = adaper.getMAC().getDatabase().insertRoom(Integer.parseInt(s[5]), Integer.parseInt(s[2]), s[3], s[4]);
+					adaper.getConnection().send(Integer.toString(roomID));
+				}
+				else if(receive.substring(0, 12).equals("INSERTSENSOR")){
+					String[] s = receive.split(" ");
+					boolean b = (s[2].equals("true")) ? true : false;
+					int sensorID = adaper.getMAC().getDatabase().insertSensor(Integer.parseInt(s[1]), b, Integer.parseInt(s[5]));
+					adaper.getConnection().send(Integer.toString(sensorID));
+				}
+				else if(receive.substring(0, 11).equals("INSERTEVENT")){
+					String[] s = receive.split(" ");
+					EventType et = null;
+					for(EventType e : EventType.values()){
+						if(s[2].equals(e.toString()))
+							et = e;
+					}
+					int eventID = adaper.getMAC().getDatabase().insertEvent(Integer.parseInt(s[1]), et);
+					adaper.getConnection().send(Integer.toString(eventID));
+				}
 				
-			} 
-			catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		else if(receive.substring(0, 12).equals("INSERTSENSOR")){
-			try{
-				String[] s = receive.split(" ");
-				boolean b = (s[2].equals("true")) ? true : false;
-				int sensorID = adaper.getMAC().getDatabase().insertSensor(Integer.parseInt(s[1]), b, Integer.parseInt(s[5]));
-				adaper.getConnection().send(Integer.toString(sensorID));
-			} 
-			catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		else if(receive.substring(0, 11).equals("INSERTEVENT")){
-			try{
-				String[] s = receive.split(" ");
-				EventType et = null;
-				for(EventType e : EventType.values()){
-					if(s[2].equals(e.toString()))
-						et = e;
+			} catch (Exception e) {
+				// e.printStackTrace();
+				try {
+					adaper.getConnection().send("Failed at MAC");
+				} catch (ConnectException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				}
-				int eventID = adaper.getMAC().getDatabase().insertEvent(Integer.parseInt(s[1]), et);
-				adaper.getConnection().send(Integer.toString(eventID));
-			} 
-			catch (Exception e) {
-				e.printStackTrace();
 			}
-		}
+		
 	}
 	public static void newRoom(Room r, Connection c) throws IOException{
 		String s = "NEWROOM" + " " + r.getID() + " " + r.getRomNR() + " " + r.getRomType() + " " + r.getRomInfo();
