@@ -103,7 +103,7 @@ public class ConnectionImplementation extends AbstractConnection {
 		}
 		KtnDatagram b = this.receiveAck();
 		if(b == null) {
-			throw new SocketTimeoutException("Timeout");
+			throw new SocketTimeoutException("Timeout in connect");
 		}
 		else if(b.getFlag() == Flag.SYN_ACK) {
 			this.remoteAddress = b.getSrc_addr();
@@ -130,7 +130,7 @@ public class ConnectionImplementation extends AbstractConnection {
 
 		if (h != null) {
 			if(h.getFlag() == Flag.SYN) {
-				
+
 				int connectionPort = (int)(Math.random()*60000);
 				while(usedPorts.containsKey(connectionPort) || connectionPort <= 1024) {
 					connectionPort = (int)(Math.random()*60000);
@@ -147,23 +147,28 @@ public class ConnectionImplementation extends AbstractConnection {
 			}
 			else {
 				this.state = State.CLOSED;
-				throw new IOException("ACK not recieved");
+				throw new IOException("SYN not recieved");
 			}
 		}
-		
+		else throw new IOException("ACK not recieved");
+
 		KtnDatagram i = this.receiveAck();
 		this.lastValidPacketReceived  = i;
-		
+
 		if(i != null) {
 			if(i.getFlag() == Flag.ACK) {
-				this.remoteAddress = i.getSrc_addr();
-				this.remotePort = i.getSrc_port();
-				this.state = State.ESTABLISHED;
-				return this;
+				ConnectionImplementation temp = new ConnectionImplementation(this.myPort);
+				temp.remoteAddress = i.getSrc_addr();
+				temp.remotePort = i.getSrc_port();
+				temp.state = State.ESTABLISHED;
+				this.myPort = 4444;
+				this.state = State.CLOSED;
+				return temp;
+
 			}
 			else throw new IOException("No ACK recieved");
 		}
-		else throw new IOException("No SYN recieved");
+		else throw new IOException("No ACK recieved");
 	}
 
 	/**
@@ -179,11 +184,16 @@ public class ConnectionImplementation extends AbstractConnection {
 	 * @see no.ntnu.fp.net.co.Connection#send(String)
 	 */
 	public void send(String msg) throws ConnectException, IOException {
-		if(this.state != State.ESTABLISHED) {
-			throw new ConnectException("No connection established");
+		if(this.state == State.ESTABLISHED) {
+			KtnDatagram f  = this.constructDataPacket(msg);
+			KtnDatagram ack = this.sendDataPacketWithRetransmit(f);
+			if(ack == null) {
+				throw new IOException("No ACK Recieved in send()");
+			}
+			else {
+				 this.lastValidPacketReceived = ack;
+			}
 		}
-		KtnDatagram f  = this.constructDataPacket(msg);
-		this.sendDataPacketWithRetransmit(f);
 	}
 
 	/**
@@ -198,6 +208,7 @@ public class ConnectionImplementation extends AbstractConnection {
 		if(this.state == State.ESTABLISHED) {
 			KtnDatagram h = this.receivePacket(false);
 			this.sendAck(h, false);
+			this.lastValidPacketReceived = h;
 			return h.getPayload().toString();
 		}
 		else throw new ConnectException("No connection established");
