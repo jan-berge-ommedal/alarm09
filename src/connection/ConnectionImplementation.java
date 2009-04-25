@@ -206,10 +206,9 @@ public class ConnectionImplementation extends AbstractConnection {
 			if(ack == null) {
 				throw new IOException("No ACK recieved in send()");
 			}
-			else if (ack.getAck() != f.getSeq_nr()) {
+			if (!this.isValid(ack)) {
 				throw new IOException("Wrong ACK recieved");
 			}
-				
 		}
 		else throw new ConnectException("There is no connection");
 	}
@@ -228,11 +227,12 @@ public class ConnectionImplementation extends AbstractConnection {
 			if(h == null) {
 				throw new IOException("No packet recieved in recieve()");
 			}
-
+			if(!this.isValid(h)) {
+				throw new IOException("Invalid packet recieved");
+			}
 			this.sendAck(h, false);
 			this.lastValidPacketReceived = h;
-			return h.getPayload().toString();
-
+			return h.getPayload().toString(); 
 		}
 		else throw new ConnectException("No connection established");
 	}
@@ -296,12 +296,12 @@ public class ConnectionImplementation extends AbstractConnection {
 			if(packet.calculateChecksum() != packet.getChecksum()) return false;
 			if(!packet.getSrc_addr().equals(this.remoteAddress)) return false;
 			if(this.remotePort != packet.getSrc_port()) return false;
-			if(this.lastValidPacketReceived.getSeq_nr() == packet.getSeq_nr()) return false;
-			if(this.lastValidPacketReceived.getFlag() != Flag.SYN_ACK) {
-				if((packet.getSeq_nr() - 1) != this.lastValidPacketReceived.getSeq_nr()) return false;
+			//if(this.lastValidPacketReceived.getSeq_nr() != (packet.getSeq_nr() + 1)) return false;
+			if(packet.getFlag() == Flag.ACK) {
+				if(this.lastDataPacketSent.getSeq_nr() != packet.getAck()) return false;
 			}
 			return true;
 		}
-		return true;
+		else return false;
 	}
 }
