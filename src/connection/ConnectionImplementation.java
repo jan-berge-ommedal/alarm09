@@ -95,7 +95,7 @@ public class ConnectionImplementation extends AbstractConnection {
 
 		try {
 			this.state = State.SYN_SENT;
-			this.lastDataPacketSent = d;
+			//this.lastDataPacketSent = d;
 			this.simplySendPacket(d);
 
 		} catch (ClException e) {
@@ -103,16 +103,20 @@ public class ConnectionImplementation extends AbstractConnection {
 		}
 		KtnDatagram b = this.receiveAck();
 		if(b == null) {
-			throw new SocketTimeoutException("Timeout in connect");
+			this.state = State.CLOSED;
+			throw new SocketTimeoutException("ACK not recieved in connect");
 		}
 		else if(b.getFlag() == Flag.SYN_ACK) {
+			this.lastValidPacketReceived = b;
 			this.remoteAddress = b.getSrc_addr();
 			this.remotePort = b.getSrc_port();
 			this.state = State.ESTABLISHED;
 			this.sendAck(b, false);
 		}
-		else this.state = State.CLOSED;
-
+		else {
+			this.state = State.CLOSED;
+			throw new IOException("Wrong flag in Connect");
+		}
 	}
 
 
@@ -147,28 +151,40 @@ public class ConnectionImplementation extends AbstractConnection {
 			}
 			else {
 				this.state = State.CLOSED;
-				throw new IOException("SYN not recieved");
+				throw new SocketTimeoutException("SYN not recieved in accept()");
 			}
 		}
-		else throw new IOException("ACK not recieved");
+		else {
+			this.state = State.CLOSED;
+			throw new IOException("No packet recieved in accept()");
+		}
 
 		KtnDatagram i = this.receiveAck();
-		this.lastValidPacketReceived  = i;
+		//this.lastValidPacketReceived  = i;
 
 		if(i != null) {
 			if(i.getFlag() == Flag.ACK) {
+				this.lastValidPacketReceived = i;
 				ConnectionImplementation temp = new ConnectionImplementation(this.myPort);
 				temp.remoteAddress = i.getSrc_addr();
 				temp.remotePort = i.getSrc_port();
 				temp.state = State.ESTABLISHED;
+				temp.nextSequenceNo = this.nextSequenceNo;
+				temp.lastValidPacketReceived = this.lastValidPacketReceived;
 				this.myPort = 4444;
 				this.state = State.CLOSED;
 				return temp;
 
 			}
-			else throw new IOException("No ACK recieved");
+			else {
+				this.state = State.CLOSED;
+				throw new IOException("Wrong Flag recieved in accept()");
+			}
 		}
-		else throw new IOException("No ACK recieved");
+		else {
+			this.state = State.CLOSED;
+			throw new SocketTimeoutException("No ACK recieved in accept()");
+		}
 	}
 
 	/**
@@ -188,12 +204,14 @@ public class ConnectionImplementation extends AbstractConnection {
 			KtnDatagram f  = this.constructDataPacket(msg);
 			KtnDatagram ack = this.sendDataPacketWithRetransmit(f);
 			if(ack == null) {
-				throw new IOException("No ACK Recieved in send()");
+				throw new IOException("No ACK recieved in send()");
 			}
-			else {
-				 this.lastValidPacketReceived = ack;
+			else if (ack.getAck() != f.getSeq_nr()) {
+				throw new IOException("Wrong ACK recieved");
 			}
+				
 		}
+		else throw new ConnectException("There is no connection");
 	}
 
 	/**
@@ -207,9 +225,14 @@ public class ConnectionImplementation extends AbstractConnection {
 	public String receive() throws ConnectException, IOException {
 		if(this.state == State.ESTABLISHED) {
 			KtnDatagram h = this.receivePacket(false);
+			if(h == null) {
+				throw new IOException("No packet recieved in recieve()");
+			}
+
 			this.sendAck(h, false);
 			this.lastValidPacketReceived = h;
 			return h.getPayload().toString();
+
 		}
 		else throw new ConnectException("No connection established");
 	}
