@@ -33,7 +33,7 @@ public class ChatClient {
 
     private int port_to_server = 4444;
 
-    private String addressServer = "localhost";
+    private String addressServer = "192.168.1.104";
 
     private int thisPort = 5555;
 
@@ -41,7 +41,7 @@ public class ChatClient {
 
     private Connection connection;
 
-    private static boolean SIMPLE_CONNECTION = true;
+    private static boolean SIMPLE_CONNECTION = false;
 
     public ChatClient(String address, int port) {
         port_to_server = port;
@@ -147,8 +147,8 @@ public class ChatClient {
         int port;
         Log.setLogName("Klienten");
         Settings settings = new Settings();
-        address = settings.getServerAddress();
-        port = settings.getServerPort();
+        address = "192.168.1.104";
+        port = 4444;
         SIMPLE_CONNECTION = settings.useSimpleConnection();
         
         if (SIMPLE_CONNECTION){

@@ -36,7 +36,7 @@ public class ChatServer extends JFrame {
 
     private Connection server;
 
-    private String addressServer = "localhost";
+    private String addressServer = "192.168.1.104";
 
     private ArrayList users;
 
@@ -172,10 +172,12 @@ public class ChatServer extends JFrame {
         }
         users = new ArrayList();
 
-        if (SIMPLE_CONNECTION)
+        if (SIMPLE_CONNECTION) {
             server = new SimpleConnection(listenPort);
-        else
+        }
+        else {
             server = new ConnectionImplementation(listenPort);
+        }
 
         Thread listener = new Thread() {
 
@@ -232,7 +234,7 @@ public class ChatServer extends JFrame {
         int port;
         Log.setLogName("Server");
         Settings settings = new Settings();
-        port = settings.getServerPort();
+        port = 4444;
         SIMPLE_CONNECTION = settings.useSimpleConnection();
         if (SIMPLE_CONNECTION){
             DBG("Using SimpleConnection");
