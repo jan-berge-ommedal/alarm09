@@ -35,7 +35,7 @@ public class ChatClient {
 
     private String addressServer = "192.168.1.106";
 
-    private int thisPort = 5555;
+    private int thisPort = 5560;
 
     private RecieveThread recieveThread;
 
