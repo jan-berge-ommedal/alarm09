@@ -293,11 +293,26 @@ public class ConnectionImplementation extends AbstractConnection {
 	 */
 	protected boolean isValid(KtnDatagram packet) {
 		if(this.state == State.ESTABLISHED) {
-			if(packet.calculateChecksum() != packet.getChecksum()) return false;
-			if(!packet.getSrc_addr().equals(this.remoteAddress)) return false;
-			if(this.remotePort != packet.getSrc_port()) return false;
-			//if(this.lastValidPacketReceived.getSeq_nr() != (packet.getSeq_nr() + 1)) return false;
+			if(packet.calculateChecksum() != packet.getChecksum()){
+				System.out.println("Wrong checksum");
+				return false;
+			}
+			if(!packet.getSrc_addr().equals(this.remoteAddress)){
+				System.out.println("GhostPacket address");
+				return false;
+			}
+			if(this.remotePort != packet.getSrc_port()){
+				System.out.println("GhostPacket port");
+				return false;
+			}
+			if(packet.getFlag() == Flag.NONE) {
+				if(this.lastValidPacketReceived.getSeq_nr() != (packet.getSeq_nr() + 1)){
+					System.out.println("Wrong sequencenumber");
+					return false;
+				}
+			}
 			if(packet.getFlag() == Flag.ACK) {
+				System.out.println("Wrong ACK");
 				if(this.lastDataPacketSent.getSeq_nr() != packet.getAck()) return false;
 			}
 			return true;
