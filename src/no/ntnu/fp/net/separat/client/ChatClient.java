@@ -33,7 +33,7 @@ public class ChatClient {
 
     private int port_to_server = 4444;
 
-    private String addressServer = "192.168.1.104";
+    private String addressServer = "192.168.1.106";
 
     private int thisPort = 5555;
 
@@ -147,7 +147,7 @@ public class ChatClient {
         int port;
         Log.setLogName("Klienten");
         Settings settings = new Settings();
-        address = "192.168.1.104";
+        address = getIPv4Address();
         port = 4444;
         SIMPLE_CONNECTION = settings.useSimpleConnection();
         
@@ -164,4 +164,13 @@ public class ChatClient {
     public void setUsername(String username) {
         this.username = username;
     }
+    
+	private static String getIPv4Address() {
+		try {
+			return InetAddress.getLocalHost().getHostAddress();
+		}
+		catch (UnknownHostException e) {
+			return "127.0.0.1";
+		}
+	}
 }
