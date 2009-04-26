@@ -51,8 +51,6 @@ public class ConnectionImplementation extends AbstractConnection {
 	public ConnectionImplementation(int myPort) {
 		super();
 		this.myPort = myPort;
-		//this.myAddress = "192.168.1.104";
-		//System.out.println(this.getIPv4Address());
 		this.myAddress = this.getIPv4Address();
 	}
 
@@ -83,9 +81,10 @@ public class ConnectionImplementation extends AbstractConnection {
 
 		this.remoteAddress = remoteAddress.getHostAddress();
 		this.remotePort = remotePort;
-
-		this.myPort = this.createPort();
-		usedPorts.put(this.myPort, true);
+		
+		//Creates a new port for this connection
+		//this.myPort = this.createPort();
+		//usedPorts.put(this.myPort, true);
 
 		KtnDatagram d = this.constructInternalPacket(Flag.SYN);
 
@@ -102,7 +101,6 @@ public class ConnectionImplementation extends AbstractConnection {
 			throw new SocketTimeoutException("No packet received in connect(), expected SYN_ACK");
 		}
 		else if(b.getFlag() == Flag.SYN_ACK) {
-			//this.lastValidPacketReceived = b;
 			this.remoteAddress = b.getSrc_addr();
 			this.remotePort = b.getSrc_port();
 			this.state = State.ESTABLISHED;
@@ -130,13 +128,13 @@ public class ConnectionImplementation extends AbstractConnection {
 		if (h != null) {
 			if(h.getFlag() == Flag.SYN) {
 				
+				//Create a new port for this connection
 				this.myPort = this.createPort();
 				usedPorts.put(this.myPort, true);
 
 				
 				this.remoteAddress = h.getSrc_addr();
 				this.remotePort = h.getSrc_port();
-				//this.lastValidPacketReceived = h;
 
 				this.state = State.SYN_RCVD;
 				this.sendAck(h, true);
@@ -152,17 +150,14 @@ public class ConnectionImplementation extends AbstractConnection {
 		}
 
 		KtnDatagram i = this.receiveAck();
-		//this.lastValidPacketReceived  = i;
 
 		if(i != null) {
 			if(i.getFlag() == Flag.ACK) {
-				//this.lastValidPacketReceived = i;
 				ConnectionImplementation temp = new ConnectionImplementation(this.myPort);
 				temp.remoteAddress = i.getSrc_addr();
 				temp.remotePort = i.getSrc_port();
 				temp.state = State.ESTABLISHED;
 				temp.nextSequenceNo = this.nextSequenceNo;
-				//temp.lastValidPacketReceived = this.lastValidPacketReceived;
 				this.myPort = 4444;
 				this.state = State.CLOSED;
 				return temp;
@@ -326,7 +321,10 @@ public class ConnectionImplementation extends AbstractConnection {
 		}
 		else return false;
 	}
+	
+	
 	private int createPort() {
+		//Here you can set the parameters from which the class chooses new ports
 		int connectionPort = (int)(Math.random()*60000);
 		while(usedPorts.containsKey(connectionPort) || connectionPort <= 1024) {
 			connectionPort = (int)(Math.random()*60000);
