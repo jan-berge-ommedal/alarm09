@@ -51,10 +51,9 @@ public class ConnectionImplementation extends AbstractConnection {
 	public ConnectionImplementation(int myPort) {
 		super();
 		this.myPort = myPort;
-		this.myAddress = "192.168.1.104";
-		System.out.println(this.getIPv4Address());
-		//this.myAddress = this.getIPv4Address();
-		//usedPorts.put(0, true);
+		//this.myAddress = "192.168.1.104";
+		//System.out.println(this.getIPv4Address());
+		this.myAddress = this.getIPv4Address();
 	}
 
 	private String getIPv4Address() {
@@ -85,18 +84,13 @@ public class ConnectionImplementation extends AbstractConnection {
 		this.remoteAddress = remoteAddress.getHostAddress();
 		this.remotePort = remotePort;
 
-		int connectionPort = (int)(Math.random()*60000);
-		while(usedPorts.containsKey(connectionPort) || connectionPort <= 1024) {
-			connectionPort = (int)(Math.random()*60000);
-		}
-		usedPorts.put(connectionPort, true);
-		this.myPort = connectionPort;
+		this.myPort = this.createPort();
+		usedPorts.put(this.myPort, true);
 
 		KtnDatagram d = this.constructInternalPacket(Flag.SYN);
 
 		try {
 			this.state = State.SYN_SENT;
-			//this.lastDataPacketSent = d;
 			this.simplySendPacket(d);
 
 		} catch (ClException e) {
@@ -105,10 +99,10 @@ public class ConnectionImplementation extends AbstractConnection {
 		KtnDatagram b = this.receiveAck();
 		if(b == null) {
 			this.state = State.CLOSED;
-			throw new SocketTimeoutException("ACK not recieved in connect");
+			throw new SocketTimeoutException("No packet received in connect(), expected SYN_ACK");
 		}
 		else if(b.getFlag() == Flag.SYN_ACK) {
-			this.lastValidPacketReceived = b;
+			//this.lastValidPacketReceived = b;
 			this.remoteAddress = b.getSrc_addr();
 			this.remotePort = b.getSrc_port();
 			this.state = State.ESTABLISHED;
@@ -116,7 +110,7 @@ public class ConnectionImplementation extends AbstractConnection {
 		}
 		else {
 			this.state = State.CLOSED;
-			throw new IOException("Wrong flag in Connect");
+			throw new IOException("No SYN_ACK flag in packet received connect()");
 		}
 	}
 
@@ -135,17 +129,14 @@ public class ConnectionImplementation extends AbstractConnection {
 
 		if (h != null) {
 			if(h.getFlag() == Flag.SYN) {
+				
+				this.myPort = this.createPort();
+				usedPorts.put(this.myPort, true);
 
-				int connectionPort = (int)(Math.random()*60000);
-				while(usedPorts.containsKey(connectionPort) || connectionPort <= 1024) {
-					connectionPort = (int)(Math.random()*60000);
-				}
-				usedPorts.put(connectionPort, true);
-				this.myPort = connectionPort;
-
+				
 				this.remoteAddress = h.getSrc_addr();
 				this.remotePort = h.getSrc_port();
-				this.lastValidPacketReceived = h;
+				//this.lastValidPacketReceived = h;
 
 				this.state = State.SYN_RCVD;
 				this.sendAck(h, true);
@@ -165,13 +156,13 @@ public class ConnectionImplementation extends AbstractConnection {
 
 		if(i != null) {
 			if(i.getFlag() == Flag.ACK) {
-				this.lastValidPacketReceived = i;
+				//this.lastValidPacketReceived = i;
 				ConnectionImplementation temp = new ConnectionImplementation(this.myPort);
 				temp.remoteAddress = i.getSrc_addr();
 				temp.remotePort = i.getSrc_port();
 				temp.state = State.ESTABLISHED;
 				temp.nextSequenceNo = this.nextSequenceNo;
-				temp.lastValidPacketReceived = this.lastValidPacketReceived;
+				//temp.lastValidPacketReceived = this.lastValidPacketReceived;
 				this.myPort = 4444;
 				this.state = State.CLOSED;
 				return temp;
@@ -207,8 +198,10 @@ public class ConnectionImplementation extends AbstractConnection {
 			if(ack == null) {
 				throw new IOException("No ACK recieved in send()");
 			}
-			if (f.getSeq_nr() != ack.getAck()) {
-				throw new IOException("Wrong ACK recieved");
+			else if(ack.getFlag() == Flag.ACK) {
+				if(this.isValid(ack)) {
+					this.lastValidPacketReceived = ack;
+				}
 			}
 		}
 		else throw new ConnectException("There is no connection");
@@ -229,8 +222,11 @@ public class ConnectionImplementation extends AbstractConnection {
 				throw new IOException("No packet recieved in recieve()");
 			}
 			this.sendAck(h, false);
-			this.lastValidPacketReceived = h;
-			return h.getPayload().toString(); 
+			if(this.isValid(h)) {
+				this.lastValidPacketReceived = h;
+				return h.getPayload().toString();
+			}
+			else throw new IOException("Invalid packet recieved");
 		}
 		else throw new ConnectException("No connection established");
 	}
@@ -241,43 +237,60 @@ public class ConnectionImplementation extends AbstractConnection {
 	 * @see Connection#close()
 	 */
 	public void close() throws IOException {
-		if(this.state == State.ESTABLISHED) {
-			KtnDatagram h = this.constructInternalPacket(Flag.FIN);
-			KtnDatagram ack = this.sendDataPacketWithRetransmit(h);
-			this.state = State.FIN_WAIT_1;
-			if(ack != null) {
-				if(ack.getFlag() == Flag.ACK) {
-					this.state = State.FIN_WAIT_2;
-				}
+		if(this.disconnectRequest != null) {
+			if(this.disconnectRequest.getFlag() == Flag.FIN) {
+				this.state = State.CLOSE_WAIT;
 			}
-			else throw new IOException("No ACK recieved");
 		}
-		if(this.state == State.FIN_WAIT_2) {
-			KtnDatagram g = this.receivePacket(true);
-			if(g != null) {
-				if(g.getFlag() == Flag.FIN) {
-					this.sendAck(g, true);
+		if(this.state == State.ESTABLISHED) {
+			System.out.println("Client closing");
+			KtnDatagram f = this.constructInternalPacket(Flag.FIN);
+			try {
+				this.simplySendPacket(f);
+				this.state = State.FIN_WAIT_1;
+			}
+			catch (ClException e) {
+			}
+			KtnDatagram ack = this.receiveAck();
+			if(ack == null) throw new IOException("No ACK received in close()");
+			if(ack.getFlag() == Flag.ACK) {
+				this.state = State.FIN_WAIT_2;
+			}
+			else throw new IOException("No ACK reveived in close()");
+			KtnDatagram fin = this.receivePacket(true);
+			if(fin != null) {
+				if(fin.getFlag() == Flag.FIN) {
+					this.sendAck(fin, false);
 					usedPorts.remove(this.myPort);
 					this.state = State.CLOSED;
+					System.out.println("Connection to server " + fin.getDest_addr() +" is closed");
 				}
-				else throw new IOException("No FIN recieved");
+				else throw new IOException("No FIN received in close()");
 			}
-			else throw new IOException("No FIN recieved");
+			else throw new IOException("No FIN received in close()");
 		}
-		else if (this.state == State.CLOSE_WAIT) {
+
+		else if(this.state == State.CLOSE_WAIT) {
+			System.out.println("Server closing");
 			this.state = State.LAST_ACK;
-			KtnDatagram l = this.constructInternalPacket(Flag.FIN);
-			KtnDatagram n = this.sendDataPacketWithRetransmit(l);
-			if(this.state == State.LAST_ACK) {
-				if(n != null) {
-					if(n.getFlag() == Flag.ACK) {
-						usedPorts.remove(this.myPort);
-						this.state = State.CLOSED;
-					}
-					else throw new IOException("No ACK recieved");
-				}
+			this.sendAck(this.disconnectRequest, false);
+			KtnDatagram fin = this.constructInternalPacket(Flag.FIN);
+			try {
+				this.simplySendPacket(fin);
 			}
-			else throw new IOException("No ACK");
+			catch (ClException e) {
+
+			}
+			KtnDatagram ack = this.receiveAck();
+			if(ack != null) {
+				if(ack.getFlag() == Flag.ACK) {
+					usedPorts.remove(this.myPort);
+					this.state = State.CLOSED;
+					System.out.println("Connection to client " + ack.getDest_addr() +" is closed");
+				}
+				else throw new IOException("No ACK recieved in close()");
+			}
+			else throw new IOException("No ACK recieved in close()");
 		}
 	}
 
@@ -292,29 +305,32 @@ public class ConnectionImplementation extends AbstractConnection {
 	protected boolean isValid(KtnDatagram packet) {
 		if(this.state == State.ESTABLISHED) {
 			if(packet.calculateChecksum() != packet.getChecksum()){
-				System.out.println("Wrong checksum");
+				System.out.println("Checksum error!");
 				return false;
 			}
 			if(!packet.getSrc_addr().equals(this.remoteAddress)){
-				System.out.println("GhostPacket address");
+				System.out.println("Ghostpacket error! Wrong address");
 				return false;
 			}
 			if(this.remotePort != packet.getSrc_port()){
-				System.out.println("GhostPacket port");
+				System.out.println("Ghostpacket error! Wrong port");
 				return false;
 			}
-			if(packet.getSeq_nr() == this.lastValidPacketReceived.getSeq_nr()){
-				System.out.println("Duplicate");
-				return false;
-			}
-			if(this.lastValidPacketReceived.getFlag() != Flag.SYN_ACK) {
-				if(packet.getSeq_nr() != (this.lastValidPacketReceived.getSeq_nr() +1)){
-					System.out.println("Not next SeqNo");
+			if(this.lastValidPacketReceived != null) {
+				if(packet.getSeq_nr() != (this.lastValidPacketReceived.getSeq_nr() +1)) {
+					System.out.println("Wrong sequence number [Expected: " + packet.getSeq_nr() + "] [Recieved: " + (this.lastValidPacketReceived.getSeq_nr() +1) + "]");
 					return false;
 				}
 			}
 			return true;
 		}
 		else return false;
+	}
+	private int createPort() {
+		int connectionPort = (int)(Math.random()*60000);
+		while(usedPorts.containsKey(connectionPort) || connectionPort <= 1024) {
+			connectionPort = (int)(Math.random()*60000);
+		}
+		return connectionPort;
 	}
 }
