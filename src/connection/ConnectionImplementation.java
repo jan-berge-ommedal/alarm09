@@ -51,7 +51,8 @@ public class ConnectionImplementation extends AbstractConnection {
 	public ConnectionImplementation(int myPort) {
 		super();
 		this.myPort = myPort;
-		this.myAddress = "192.168.1.106";
+		this.myAddress = "192.168.1.104";
+		System.out.println(this.getIPv4Address());
 		//this.myAddress = this.getIPv4Address();
 		//usedPorts.put(0, true);
 	}
@@ -206,7 +207,7 @@ public class ConnectionImplementation extends AbstractConnection {
 			if(ack == null) {
 				throw new IOException("No ACK recieved in send()");
 			}
-			if (!this.isValid(ack)) {
+			if (f.getSeq_nr() != ack.getAck()) {
 				throw new IOException("Wrong ACK recieved");
 			}
 		}
@@ -226,9 +227,6 @@ public class ConnectionImplementation extends AbstractConnection {
 			KtnDatagram h = this.receivePacket(false);
 			if(h == null) {
 				throw new IOException("No packet recieved in recieve()");
-			}
-			if(!this.isValid(h)) {
-				throw new IOException("Invalid packet recieved");
 			}
 			this.sendAck(h, false);
 			this.lastValidPacketReceived = h;
@@ -292,32 +290,31 @@ public class ConnectionImplementation extends AbstractConnection {
 	 * @return true if packet is free of errors, false otherwise.
 	 */
 	protected boolean isValid(KtnDatagram packet) {
-		return true;
-//		if(this.state == State.ESTABLISHED) {
-//			if(packet.calculateChecksum() != packet.getChecksum()){
-//				System.out.println("Wrong checksum");
-//				return false;
-//			}
-//			if(!packet.getSrc_addr().equals(this.remoteAddress)){
-//				System.out.println("GhostPacket address");
-//				return false;
-//			}
-//			if(this.remotePort != packet.getSrc_port()){
-//				System.out.println("GhostPacket port");
-//				return false;
-//			}
-//			if(packet.getFlag() == Flag.NONE) {
-//				if(this.lastValidPacketReceived.getSeq_nr() != (packet.getSeq_nr() + 1)){
-//					System.out.println("Wrong sequencenumber");
-//					return false;
-//				}
-//			}
-//			if(packet.getFlag() == Flag.ACK) {
-//				System.out.println("Wrong ACK");
-//				if(this.lastDataPacketSent.getSeq_nr() != packet.getAck()) return false;
-//			}
-//			return true;
-//		}
-//		else return false;
+		if(this.state == State.ESTABLISHED) {
+			if(packet.calculateChecksum() != packet.getChecksum()){
+				System.out.println("Wrong checksum");
+				return false;
+			}
+			if(!packet.getSrc_addr().equals(this.remoteAddress)){
+				System.out.println("GhostPacket address");
+				return false;
+			}
+			if(this.remotePort != packet.getSrc_port()){
+				System.out.println("GhostPacket port");
+				return false;
+			}
+			if(packet.getSeq_nr() == this.lastValidPacketReceived.getSeq_nr()){
+				System.out.println("Duplicate");
+				return false;
+			}
+			if(this.lastValidPacketReceived.getFlag() != Flag.SYN_ACK) {
+				if(packet.getSeq_nr() != (this.lastValidPacketReceived.getSeq_nr() +1)){
+					System.out.println("Not next SeqNo");
+					return false;
+				}
+			}
+			return true;
+		}
+		else return false;
 	}
 }
