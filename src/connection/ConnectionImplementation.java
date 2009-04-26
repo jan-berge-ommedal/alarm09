@@ -51,7 +51,7 @@ public class ConnectionImplementation extends AbstractConnection {
 	public ConnectionImplementation(int myPort) {
 		super();
 		this.myPort = myPort;
-		this.myAddress = "192.168.1.104";
+		this.myAddress = "192.168.1.106";
 		//this.myAddress = this.getIPv4Address();
 		//usedPorts.put(0, true);
 	}
@@ -292,31 +292,32 @@ public class ConnectionImplementation extends AbstractConnection {
 	 * @return true if packet is free of errors, false otherwise.
 	 */
 	protected boolean isValid(KtnDatagram packet) {
-		if(this.state == State.ESTABLISHED) {
-			if(packet.calculateChecksum() != packet.getChecksum()){
-				System.out.println("Wrong checksum");
-				return false;
-			}
-			if(!packet.getSrc_addr().equals(this.remoteAddress)){
-				System.out.println("GhostPacket address");
-				return false;
-			}
-			if(this.remotePort != packet.getSrc_port()){
-				System.out.println("GhostPacket port");
-				return false;
-			}
-			if(packet.getFlag() == Flag.NONE) {
-				if(this.lastValidPacketReceived.getSeq_nr() != (packet.getSeq_nr() + 1)){
-					System.out.println("Wrong sequencenumber");
-					return false;
-				}
-			}
-			if(packet.getFlag() == Flag.ACK) {
-				System.out.println("Wrong ACK");
-				if(this.lastDataPacketSent.getSeq_nr() != packet.getAck()) return false;
-			}
-			return true;
-		}
-		else return false;
+		return true;
+//		if(this.state == State.ESTABLISHED) {
+//			if(packet.calculateChecksum() != packet.getChecksum()){
+//				System.out.println("Wrong checksum");
+//				return false;
+//			}
+//			if(!packet.getSrc_addr().equals(this.remoteAddress)){
+//				System.out.println("GhostPacket address");
+//				return false;
+//			}
+//			if(this.remotePort != packet.getSrc_port()){
+//				System.out.println("GhostPacket port");
+//				return false;
+//			}
+//			if(packet.getFlag() == Flag.NONE) {
+//				if(this.lastValidPacketReceived.getSeq_nr() != (packet.getSeq_nr() + 1)){
+//					System.out.println("Wrong sequencenumber");
+//					return false;
+//				}
+//			}
+//			if(packet.getFlag() == Flag.ACK) {
+//				System.out.println("Wrong ACK");
+//				if(this.lastDataPacketSent.getSeq_nr() != packet.getAck()) return false;
+//			}
+//			return true;
+//		}
+//		else return false;
 	}
 }
