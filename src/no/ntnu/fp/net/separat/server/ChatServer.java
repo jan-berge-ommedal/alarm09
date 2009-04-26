@@ -36,7 +36,7 @@ public class ChatServer extends JFrame {
 
     private Connection server;
 
-    private String addressServer = "192.168.1.104";
+    private String addressServer = this.getIPv4Address();
 
     private ArrayList users;
 
@@ -248,4 +248,12 @@ public class ChatServer extends JFrame {
     if (debug)
       System.out.println("ChatServer: " + msg);
   }
+	private String getIPv4Address() {
+		try {
+			return InetAddress.getLocalHost().getHostAddress();
+		}
+		catch (UnknownHostException e) {
+			return "127.0.0.1";
+		}
+	}
 }
