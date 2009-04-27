@@ -81,11 +81,15 @@ public class LACProtocol {
 			}
 			
 			else if(s[0].equals("DELETEALLEVENTS")){
-				for (Sensor se : lac.getModel().getSensors()) {
-					// Er sensorID unik innad i rommet eller innad i LACen? Hvis den ikke er unik innad i LAC må denne endres.
+				Room room = null;
+				for (Room r : lac.getModel().getRooms()) {
+					if (r.getID() == Integer.parseInt(s[2])){
+						room = r;
+					}
+				}
+				for(Sensor se : room.getSensorer()){
 					if(se.getId() == Integer.parseInt(s[1])){
 						se.deleteAllEvents();
-						break;
 					}
 				}
 			}

@@ -104,7 +104,7 @@ public class MACProtocol {
 		c.send(st);
 	}
 	public static void deleteAllEvents(Connection c, Sensor sensor) throws IOException{
-		String s = "DELETEALLEVENTS " + sensor.getId();
+		String s = "DELETEALLEVENTS " + sensor.getId() + " " + sensor.getRoom().getID();
 		c.send(s);
 	}
 
