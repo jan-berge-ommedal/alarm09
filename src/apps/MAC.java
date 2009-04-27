@@ -60,6 +60,7 @@ public class MAC{
 				database = new Database("mysql.stud.ntnu.no","janberge_admin","1234","janberge_db");
 				databaseConnectionWrapper.setConnectionStatus(ConnectionStatus.CONNECTED);
 				loadAdapters();
+				connectedToDatabase=true;
 			} catch (Exception e) {
 				System.err.println("Could not connect to database");
 				databaseConnectionWrapper.setConnectionStatus(ConnectionStatus.DISCONNECTED);
@@ -260,7 +261,11 @@ public class MAC{
 		public void deleteAllEvents(Sensor sensor) {
 			database.removeSensorsEvents(sensor.getId());
 			sensor.deleteAllEvents();
-			MACProtocol.deleteAllEvents(thread.connection,sensor);
+			try {
+				MACProtocol.deleteAllEvents(thread.connection,sensor);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 
 
