@@ -28,11 +28,7 @@ import apps.MAC.LACAdaper;
  */
 public class MACgui extends JPanel implements Values, ActionListener, PropertyChangeListener {
 	
-	private JButton writeSiteSummary;
-	private JButton viewLog;
 	private JButton checkMarked;
-	private JButton updateMarked;
-	private JButton updateAll;
 	private JButton openLac;
 	private JLabel lacs;
 	private JList lacList;
@@ -43,7 +39,7 @@ public class MACgui extends JPanel implements Values, ActionListener, PropertyCh
 	
 	
 	public MACgui(MAC mac) {
-		this.mac=mac;
+		this.mac = mac;
 		mac.addAdapterListListener(this);
 		Insets asdf = new Insets(0,0,0,0);
 		JPanel pane = new JPanel();
@@ -54,22 +50,9 @@ public class MACgui extends JPanel implements Values, ActionListener, PropertyCh
 		frame.setVisible(true);
 		
 		// Knappene
-		writeSiteSummary = new JButton("Write Site Summary");
-		writeSiteSummary.addActionListener(this);
-		writeSiteSummary.setMargin(asdf);
-		viewLog = new JButton("View Log");
-		viewLog.addActionListener(this);
-		viewLog.setMargin(asdf);
 		checkMarked = new JButton("Check Marked LACs");
 		checkMarked.addActionListener(this);
 		checkMarked.setMargin(asdf);
-		updateMarked = new JButton("Update Marked LACs");
-		updateMarked.addActionListener(this);
-		updateMarked.setMargin(asdf);
-		updateAll = new JButton("Update all LACs");
-		updateAll.addActionListener(this);
-		updateAll.setMargin(asdf);
-		
 		openLac = new JButton("Open LAC view");
 		openLac.addActionListener(this);
 		openLac.setMargin(asdf);
@@ -80,19 +63,11 @@ public class MACgui extends JPanel implements Values, ActionListener, PropertyCh
 		lacs.setVisible(true);
 	
 		pane.setLayout(null);
-		pane.add(writeSiteSummary);
-		pane.add(viewLog);
 		pane.add(checkMarked);
 		pane.add(lacs);
-		pane.add(updateMarked);
-		pane.add(updateAll);
 		pane.add(openLac);
-		writeSiteSummary.setBounds(LEFT_SPACE, TOP_SPACE, BUTTON_LONG_WIDTH, BUTTON_HEIGHT);
-		viewLog.setBounds(LEFT_SPACE + BUTTON_LONG_WIDTH + DEFAULT_SPACE, TOP_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		lacs.setBounds(LEFT_SPACE, TOP_SPACE + BUTTON_HEIGHT + 2*DEFAULT_SPACE, 100, 20);
 		checkMarked.setBounds(LEFT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_LONG_WIDTH, BUTTON_HEIGHT);
-		updateMarked.setBounds(LEFT_SPACE + BUTTON_LONG_WIDTH + DEFAULT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_LONG_WIDTH, BUTTON_HEIGHT);
-		updateAll.setBounds(LEFT_SPACE + 2*BUTTON_LONG_WIDTH + 2*DEFAULT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_LONG_WIDTH, BUTTON_HEIGHT);
 		openLac.setBounds(LEFT_SPACE + 3*BUTTON_LONG_WIDTH + 3*DEFAULT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_LONG_WIDTH, BUTTON_HEIGHT);
 		
 		databaseStatusPanel = new ConnectionStatusPanel(mac.getDatabaseConnectionWrapper());
@@ -140,11 +115,7 @@ public class MACgui extends JPanel implements Values, ActionListener, PropertyCh
 	
 
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == viewLog) {
-			viewLog(); //opprett og vis en liste over events, sortert etter dato
-		}
-		else if (e.getSource() == checkMarked) {
-			
+		if (e.getSource() == checkMarked) {
 			for (Object o : lacList.getSelectedValues()) {
 				LACAdaper adaper = (LACAdaper)o;
 				if(!adaper.testSensors()){
@@ -152,21 +123,13 @@ public class MACgui extends JPanel implements Values, ActionListener, PropertyCh
 				}
 			}
 		}
-		else if (e.getSource() == updateMarked) {
-			//oppdater alle markerte lacs - metodekall med markerte elementer
-			//TODO: Her m� vi ha noe mere
-			int[] selected = lacList.getSelectedIndices();
-			for (int i = 0; i < selected.length; i++) {
-				//TODO: Her m� vi ha noe mere
-			}
-		}
-		else if (e.getSource() == updateAll) {
-			//updater alle lacs - metodekall
-		}	
 		else if (e.getSource() == openLac) {
 			ModelEditControll temp = (ModelEditControll)lacList.getSelectedValue();
 			if(temp != null) {
 				new LACgui(temp);
+			}
+			else {
+				LACgui.noElementSelected();
 			}
 		}
 	}

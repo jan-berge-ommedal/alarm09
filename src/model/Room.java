@@ -151,6 +151,7 @@ public class Room {
 		pcs.addPropertyChangeListener(listener);
 	}
 
+	@SuppressWarnings("unchecked")
 	public Iterator iterator() {
 		return sensorer.iterator();
 	}
