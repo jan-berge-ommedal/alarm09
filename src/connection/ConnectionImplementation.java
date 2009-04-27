@@ -326,7 +326,7 @@ public class ConnectionImplementation extends AbstractConnection {
 	private int createPort() {
 		//Here you can set the parameters from which the class chooses new ports
 		int connectionPort = (int)(Math.random()*60000);
-		while(usedPorts.containsKey(connectionPort) || connectionPort <= 1024) {
+		while(usedPorts.containsKey(connectionPort) || connectionPort > 55000 || connectionPort < 40000) {
 			connectionPort = (int)(Math.random()*60000);
 		}
 		return connectionPort;
