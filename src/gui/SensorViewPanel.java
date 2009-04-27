@@ -30,11 +30,12 @@ public class SensorViewPanel {
 			
 		}
 		);
-		Event[] events = new Event[sensor.getEvents().size()];
+		model.Event[] events = new model.Event[sensor.getEvents().size()];
 		for (int i = 0; i < events.length; i++) {
-			//endre navn på eventklassen pliz, casting blir lol!
+			events[i] = sensor.getEvents().get(i);
 		}
 		JList eventList = new JList(events);
+		panel.add(eventList);
 		panel.add(ok);
 		
 	}

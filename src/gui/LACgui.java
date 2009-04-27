@@ -369,10 +369,10 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		
 		JLabel info = new JLabel();
 		if (numbers) {
-			info.setText("Please insert integers l0lzcak0r");
+			info.setText("Skriv tall i stedet for bokstaver");
 		}
 		else {
-			info.setText("herreguuud sett stats før save mb?!??!?!??!");
+			info.setText("Nullpointer - finner ikke sensorobjekt som info skal lagres til");
 		}
 		JButton y = new JButton("OK");
 		y.addActionListener(new ActionListener() {
@@ -493,7 +493,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 
 	public void actionPerformed(ActionEvent evt) {
 		if (evt.getSource() == saveLog) {
-			logSaved(); //skulle vi lagt inn mulighet for feilmelding dersom loggen ikke lagres?
+			logSaved(); //TODO skulle vi lagt inn mulighet for feilmelding dersom loggen ikke lagres?
 		}
 		else if (evt.getSource() == installSensor) {
 			sensorAttributes(true, this.model);
@@ -577,7 +577,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 			catch (NumberFormatException nfe) {
 				sensorAttributeError(true);
 			}catch (NullPointerException npe) {
-				sensorAttributeError(false);
+				sensorAttributeError(false); //TODO fiks sensorobjekt
 			}catch (IOException ioe) {
 				System.err.println("Could not create Room due to an IO-error");
 			}
