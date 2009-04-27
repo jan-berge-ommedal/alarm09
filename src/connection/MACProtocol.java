@@ -17,7 +17,7 @@ import apps.MAC.LACAdaper;
 
 public class MACProtocol {
 
-	public static void handleMSG(LACAdaper adaper, String receive) {
+	public static void handleMSG(LACAdaper adaper, String receive) throws ConnectException, IOException {
 
 			try {
 				if(receive.startsWith("CHECK")){
@@ -69,15 +69,11 @@ public class MACProtocol {
 				}
 				
 			} catch (Exception e) {
-				// e.printStackTrace();
-				try {
-					adaper.getConnection().send("Failed at MAC");
-				} catch (ConnectException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+				if(receive.startsWith("INSERT")){
+					adaper.getConnection().send(Integer.toString(-1));
+				}
+				else{
+					adaper.getConnection().send("NAK");
 				}
 			}
 		
@@ -85,30 +81,48 @@ public class MACProtocol {
 	public static void newRoom(Room r, Connection c) throws IOException{
 		String s = "NEWROOM" + " " + r.getID() + " " + r.getRomNR() + " " + r.getRomType() + " " + r.getRomInfo();
 		c.send(s);
+		if(c.receive().equals("NAK")){
+			throw new IOException("Received a NAK in MACProtocol");
+		}
 	}
 	
 	public static void newSensor(Sensor s, Connection c) throws IOException{
 		String st = "NEWSENSOR" + " " + s.getId() + " " + s.isAlarmState() + " " + s.getInstallationDate().toString() + " " + s.getBattery() + " " + s.getRoom().getID();
 		c.send(st);
+		if(c.receive().equals("NAK")){
+			throw new IOException("Received a NAK in MACProtocol");
+		}
 	}
 	
 	public static void newEvent(Event e, Connection c) throws IOException{
 		String s = "NEWEVENT" + " " + e.getID() + " " + e.getEventType().toString() + " " + e.getTime().toString() + " " +  e.getSensor().getRoom().getID() + " " + e.getSensor().getId();
 		c.send(s);
+		if(c.receive().equals("NAK")){
+			throw new IOException("Received a NAK in MACProtocol");
+		}
 	}
 	
 	public static void updateRoom(Room r, Connection c) throws IOException{
 		String s = "UPDATEROOM" + " " + r.getID() + " " + r.getRomNR() + " " + r.getRomType() + " " + r.getRomInfo();
 		c.send(s);
+		if(c.receive().equals("NAK")){
+			throw new IOException("Received a NAK in MACProtocol");
+		}
 	}
 	
 	public static void updateSensor(Sensor s, Connection c) throws IOException{
 		String st = "UPDATESENSOR" + " " + s.getId() + " " + s.isAlarmState() + " " + s.getInstallationDate().toString() + " " + s.getBattery();
 		c.send(st);
+		if(c.receive().equals("NAK")){
+			throw new IOException("Received a NAK in MACProtocol");
+		}
 	}
 	public static void deleteAllEvents(Connection c, Sensor sensor) throws IOException{
 		String s = "DELETEALLEVENTS " + sensor.getId() + " " + sensor.getRoom().getID();
 		c.send(s);
+		if(c.receive().equals("NAK")){
+			throw new IOException("Received a NAK in MACProtocol");
+		}
 	}
 
 }
