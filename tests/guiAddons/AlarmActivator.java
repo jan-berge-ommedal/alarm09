@@ -1,26 +1,17 @@
 package guiAddons;
 
-import java.awt.Color;
-import java.awt.Component;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.ListCellRenderer;
-import javax.swing.ListModel;
-import javax.swing.event.ListDataListener;
 
-import gui.BlinkingList;
-import gui.LACrenderer;
 import gui.Values;
-import help.AlarmHelp;
 import apps.LAC;
-import apps.MAC;
 import model.Model;
 import model.Sensor;
 
@@ -40,9 +31,7 @@ import model.Sensor;
 
 public class AlarmActivator extends JFrame implements Values{
 
-	private JButton checkAlarm;
 	private JLabel sensors;
-	private JList sensorList;
 	private Model model;
 	private JLabel status;
 	private JLabel statusFelt;
