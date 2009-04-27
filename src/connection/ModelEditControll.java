@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import connection.ConnectionStatusWrapper.ConnectionStatus;
 
+import model.Event;
 import model.Model;
 import model.Room;
 import model.Sensor;
@@ -57,5 +58,8 @@ public abstract class ModelEditControll implements PropertyChangeListener {
 
 
 	public abstract void deleteAllEvents(Sensor sensor);
+
+
+	public abstract int getNextLACID(Event event) throws IOException;
 
 }

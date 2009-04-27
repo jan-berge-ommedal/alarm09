@@ -3,6 +3,8 @@ package model;
 import java.io.IOException;
 import java.sql.Timestamp;
 
+import connection.ModelEditControll;
+
 import apps.LAC;
 
 /**
@@ -32,13 +34,13 @@ public class Event {
 	 * @throws IOException 
 	 */
 
-	public Event(LAC lac, EventType eventType, Timestamp time,Sensor s) throws IOException {
+	public Event(ModelEditControll mec, EventType eventType, Timestamp time,Sensor s) throws IOException {
 		this.eventType = eventType;
 		this.time = time;
 		this.sensor=sensor;
 		
 		
-		this.id = lac.getNextLACID(this);
+		this.id = mec.getNextLACID(this);
 		
 	
 		

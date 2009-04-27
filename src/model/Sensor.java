@@ -11,6 +11,8 @@ import java.util.Date;
 
 import javax.swing.Timer;
 
+import model.Event.EventType;
+
 import connection.ModelEditControll;
 
 import apps.LAC;
@@ -98,7 +100,7 @@ public class Sensor {
 			*/
 			public void run(){
 				while(true){
-					if(getBattery()>0)setBattery(getBattery()-1);
+					if(getBattery()>0)battery=getBattery()-1;
 					try {
 						Thread.currentThread().sleep(1000);
 					} catch (InterruptedException e) {
@@ -208,11 +210,13 @@ public class Sensor {
 	/**
 	 * 
 	 * @param batteryRemaining remaining battery - and int between 0 and 100
+	 * @throws IOException 
 	 */
-	public void setBattery(int batteryRemaining) {
+	public void replaceBattery(ModelEditControll mec) throws IOException {
 		int oldValue = this.battery;
-		this.battery=batteryRemaining;
-		pcs.firePropertyChange("SENSORS", oldValue, batteryRemaining);
+		this.battery=100;
+		this.addEvent(new Event(mec,EventType.BATTERYREPLACEMENT,LAC.getTime(),this));
+		pcs.firePropertyChange("SENSORS", oldValue, this.battery);
 	}
 	
 	
@@ -276,6 +280,12 @@ public class Sensor {
 		int oldValue = events.size();
 		events.removeAll(events);
 		pcs.firePropertyChange("EVENTS", oldValue, 0);
+	}
+
+	public void setBattery(int battery) {
+		int oldValue = this.battery;
+		this.battery=battery;
+		pcs.firePropertyChange("SENSORS", oldValue, this.battery);
 	}
 }
  

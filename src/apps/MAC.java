@@ -24,6 +24,7 @@ import connection.ConnectionStatusWrapper.ConnectionStatus;
 
 import database.Database;
 
+import model.Event;
 import model.Model;
 import model.Room;
 import model.Sensor;
@@ -266,6 +267,13 @@ public class MAC{
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		}
+
+
+		@Override
+		public int getNextLACID(Event event) throws IOException {
+			// TODO Auto-generated method stub
+			return 0;
 		}
 
 

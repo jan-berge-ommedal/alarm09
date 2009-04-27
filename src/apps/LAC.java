@@ -48,6 +48,8 @@ public class LAC extends ModelEditControll{
 	private Connection connection;
 	
 	private LACgui gui;
+
+	private boolean running = true;
 	
 	
 	
@@ -69,6 +71,30 @@ public class LAC extends ModelEditControll{
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+		run();
+	}
+
+	private void run() {
+		ListenThread thread = new ListenThread();
+		while(running){
+			if(!LACProtocol.connectionCheck(connection)){
+				try {
+					connection.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				connectionWrapper.setConnectionStatus(ConnectionStatus.DISCONNECTED);
+				connectWithRetry();
+			}else{
+				try {
+					Thread.sleep(10000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			
+				
 		}
 	}
 
@@ -245,6 +271,13 @@ public class LAC extends ModelEditControll{
 
 	
 
+	class ListenThread extends Thread{
+		
+		public void run(){
+			
+			String receivedMSG = connection.receive();
+		}
+	}
 
 	
 	
