@@ -37,7 +37,6 @@ public class MACgui extends JPanel implements Values, ActionListener, PropertyCh
 	
 	private MAC mac;
 	
-	
 	public MACgui(MAC mac) {
 		this.mac = mac;
 		mac.addAdapterListListener(this);
@@ -68,19 +67,17 @@ public class MACgui extends JPanel implements Values, ActionListener, PropertyCh
 		pane.add(openLac);
 		lacs.setBounds(LEFT_SPACE, TOP_SPACE + BUTTON_HEIGHT + 2*DEFAULT_SPACE, 100, 20);
 		checkMarked.setBounds(LEFT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_LONG_WIDTH, BUTTON_HEIGHT);
-		openLac.setBounds(LEFT_SPACE + 3*BUTTON_LONG_WIDTH + 3*DEFAULT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_LONG_WIDTH, BUTTON_HEIGHT);
+		openLac.setBounds(LEFT_SPACE + BUTTON_LONG_WIDTH + DEFAULT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_LONG_WIDTH, BUTTON_HEIGHT);
 		
 		databaseStatusPanel = new ConnectionStatusPanel(mac.getDatabaseConnectionWrapper());
 		databaseStatusPanel.setBounds(500, 50, 200, 50);
 		pane.add(databaseStatusPanel);
 			
-		
 		lacList = new BlinkingList();
 		JScrollPane scrollpane = new JScrollPane(lacList,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollpane.setBounds(LEFT_SPACE, TOP_SPACE + BUTTON_HEIGHT + 3*DEFAULT_SPACE + LABEL_HEIGHT, LIST_WIDTH, LIST_HEIGHT);
 		setupList();
 		pane.add(scrollpane);
-		
 	}
 	
 	private void setupList() {
@@ -116,12 +113,18 @@ public class MACgui extends JPanel implements Values, ActionListener, PropertyCh
 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == checkMarked) {
-			for (Object o : lacList.getSelectedValues()) {
-				LACAdaper adaper = (LACAdaper)o;
-				if(!adaper.testSensors()){
-					checkFailed(adaper.getModel().getID(), adaper.getModel().getAdresse());
+			if (lacList.getSelectedIndex() != -1) {
+				for (Object o : lacList.getSelectedValues()) {
+					LACAdaper adaper = (LACAdaper)o;
+					if(!adaper.testSensors()){
+						checkFailed(adaper.getModel().getID(), adaper.getModel().getAdresse());
+					}
 				}
 			}
+			else {
+				LACgui.noElementSelected();
+			}
+			
 		}
 		else if (e.getSource() == openLac) {
 			ModelEditControll temp = (ModelEditControll)lacList.getSelectedValue();
