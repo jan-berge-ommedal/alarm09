@@ -12,6 +12,10 @@ import model.Sensor;
 
 public class SensorViewPanel implements Values {
 	
+	/**
+	 * Statisk metode som genererer et vindu med sensorlogg - dvs en liste av events
+	 * @param sensor
+	 */
 	public static void viewSensorEvents(Sensor sensor) {
 		final JFrame frame = new JFrame("Sensor Events");
 		JPanel panel = new JPanel();
@@ -36,7 +40,9 @@ public class SensorViewPanel implements Values {
 				events[i] = sensor.getEvents().get(i);
 			}
 			eventList.setListData(events);
-			
+		}
+		else {
+			System.err.println("Sensor var null, why?");
 		}
 		eventList.setBounds(LEFT_SPACE, TOP_SPACE, 200, 200);
 		ok.setBounds(2*LEFT_SPACE, 300, BUTTON_WIDTH, BUTTON_HEIGHT);
