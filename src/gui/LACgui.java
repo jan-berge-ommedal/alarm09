@@ -11,6 +11,7 @@ import model.Event.EventType;
 import apps.LAC;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -229,67 +230,59 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	 * Kalles når en sensor skal innstalleres og lukker vinduet samt åpner vinduet for sensorinnstallering
 	 */
 	public void sensorAttributes(boolean install, Model model) {
-		final JFrame frame = new JFrame("Sensor attributes");
-		JPanel panel  = new JPanel();
-		panel.setLayout(null);
 		
-		//pakker frame etc
-		frame.setSize(400, 400);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setContentPane(panel);
-		frame.setVisible(true);
-		
-		JLabel header = new JLabel();
-		if (install) {
-			header.setText("New Sensor");
-		}
-		else {
-			header.setText("Edit Sensor");
-		}
-		header.setBounds(2*LEFT_SPACE, TOP_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
-		//forskjellige tekstfelter og labels
-		JLabel ROOMna = new JLabel("Room info:");
-		JLabel ROOMty = new JLabel("Room type:");
-		JLabel ROOMnu = new JLabel("Room number:");
-		final JTextField name = new JTextField();
-		final JTextField type = new JTextField();
-		final JTextField number = new JTextField();
-		if (!install && model != null) { //den skal editeres, feltene skal ha info
-			name.setText("lol"); //må hente ut sensorinfo her. how?
-			type.setText("owned");
-			number.setText("omg");
-		}
-		ROOMna.setBounds(LEFT_SPACE, TOP_SPACE + 2*LABEL_HEIGHT + 2*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
-		ROOMty.setBounds(LEFT_SPACE, TOP_SPACE + 3*LABEL_HEIGHT + 3*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
-		ROOMnu.setBounds(LEFT_SPACE, TOP_SPACE + 4*LABEL_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
-		name.setBounds(LEFT_SPACE + LABEL_WIDTH + DEFAULT_SPACE, TOP_SPACE + 2*LABEL_HEIGHT + 2*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
-		type.setBounds(LEFT_SPACE + LABEL_WIDTH + DEFAULT_SPACE, TOP_SPACE + 3*LABEL_HEIGHT + 3*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
-		number.setBounds(LEFT_SPACE + LABEL_WIDTH + DEFAULT_SPACE, TOP_SPACE + 4*LABEL_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
-		
-		//knappene
-		JButton save = new JButton("Save");
-		save.addActionListener(new SensorAttributesListener(frame, this.mec, number, type, name));
-		JButton cancel = new JButton("Return");
-		cancel.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				frame.setVisible(false);
+		if (install) { //ny sensor skal installeres
+			Room[] rooms = new Room[model.getRooms().size()];
+			for (int i = 0; i < rooms.length; i++) {
+				rooms[i] = model.getRooms().get(i);
 			}
-		}
-		);
-		save.setBounds(LEFT_SPACE, SMALL_WINDOW_HEIGHT-TOP_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
-		cancel.setBounds(LEFT_SPACE + DEFAULT_SPACE + BUTTON_WIDTH, SMALL_WINDOW_HEIGHT-TOP_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
+			JComboBox roomsList = new JComboBox(rooms);
+			
+			//oppretter frame etc
+			final JFrame frame = new JFrame("Sensor attributes");
+			JPanel panel  = new JPanel();
+			panel.setLayout(null);
+			
+			//pakker frame etc
+			frame.setSize(400, 400);
+			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			frame.setContentPane(panel);
+			frame.setVisible(true);
+			
+			//overskrift - viser om det er ny 
+			JLabel header = new JLabel();
+			if (install) {
+				header.setText("New Sensor");
+			}
+			else {
+				header.setText("Edit Sensor");
+			}
+			header.setBounds(2*LEFT_SPACE, TOP_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
+			
+			JLabel chooseRoom = new JLabel("Choose room:");
+			JButton save = new JButton("Save");
+			save.addActionListener(new SensorAttributesListener(frame, this.mec));
+			JButton cancel = new JButton("Return");
+			cancel.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					frame.setVisible(false);
+				}
+			}
+			);
 		
-		//legger til elementene på jpanel
-		panel.add(header);
-		panel.add(ROOMna);
-		panel.add(ROOMty);
-		panel.add(ROOMnu);
-		panel.add(name);
-		panel.add(type);
-		panel.add(number);
-		panel.add(save);
-		panel.add(cancel);
-		frame.repaint();
+			save.setBounds(LEFT_SPACE, SMALL_WINDOW_HEIGHT - TOP_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
+			cancel.setBounds(LEFT_SPACE + DEFAULT_SPACE + BUTTON_WIDTH, SMALL_WINDOW_HEIGHT-TOP_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
+			roomsList.setBounds(LEFT_SPACE + DEFAULT_SPACE + LABEL_WIDTH, TOP_SPACE + 5*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT); //sett plassering til romma
+			chooseRoom.setBounds(LEFT_SPACE, TOP_SPACE + 5*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
+			
+			//legger til elementene i panel
+			panel.add(header);
+			panel.add(save);
+			panel.add(cancel);
+			panel.add(roomsList);
+			panel.add(chooseRoom);
+			frame.repaint();
+		}
 	}
 	
 	/**
@@ -540,45 +533,29 @@ public class LACgui extends JPanel implements Values, ActionListener {
 				noElementSelected();
 			}
 		}
-		
 	}
 	
 	class SensorAttributesListener implements ActionListener{
 		private ModelEditControll mec;
-		private JTextField romid;
-		private JTextField romnummer;
-		private JTextField romtype;
-		private JTextField rominfo;
 		private JFrame frame;
 		
-		public SensorAttributesListener(JFrame frame, ModelEditControll mec, JTextField romnummer, JTextField romtype, JTextField rominfo) {
+		public SensorAttributesListener(JFrame frame, ModelEditControll mec) {
 			this.frame = frame;
 			this.mec = mec; 
-			this.romnummer = romnummer;
-			this.romtype = romtype;
-			this.rominfo = rominfo;
 		}
 		
 		public void actionPerformed(ActionEvent e) {
-			int romNUMMER = -1;
-			String romTYPE = "";
-			String romINFO = "";
 			Room room = null;
 		
 			boolean didCreateRoom = false;
 			try {
-				romNUMMER = Integer.parseInt(romnummer.getText());			
-				romTYPE = romtype.getText();
-				romINFO = rominfo.getText();
-				room = new Room(this.mec, romNUMMER, romTYPE, romINFO);
-				didCreateRoom=true;
+				//mekk et rom
+			
 			}
 			catch (NumberFormatException nfe) {
 				sensorAttributeError(true);
 			}catch (NullPointerException npe) {
-				sensorAttributeError(false); //TODO fiks sensorobjekt
-			}catch (IOException ioe) {
-				System.err.println("Could not create Room due to an IO-error");
+				sensorAttributeError(false); 
 			}
 			if(didCreateRoom){
 				Sensor sensor;
