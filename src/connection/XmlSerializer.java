@@ -231,7 +231,8 @@ public class XmlSerializer {
 	public static String toXmlEvent(Event event) {
 		String a = Integer.toString(event.getSensor().getId());
 		String b = event.getEventType().toString();
-		return " " + a + " " + b;
+		String c = Integer.toString(event.getSensor().getRoom().getID());
+		return " " + a + " " + b + " " + c;
 	}
 
 
