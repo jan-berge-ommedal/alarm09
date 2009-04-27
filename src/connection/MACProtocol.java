@@ -48,8 +48,17 @@ public class MACProtocol {
 				}
 				else if(receive.substring(0, 10).equals("INSERTROOM")){
 					String[] s = receive.split(" ");
-					int roomID = adaper.getMAC().getDatabase().insertRoom(Integer.parseInt(s[5]), Integer.parseInt(s[2]), s[3], s[4]);
+					int lacID = Integer.parseInt(s[5]);
+					int romNr = Integer.parseInt(s[2]);
+					String romType = s[3];
+					String romInfo = s[4];
+					// Insert into database and receive ID
+					int roomID = adaper.getMAC().getDatabase().insertRoom(lacID, romNr,romType , romInfo);
+					// Send ID to LAC
 					adaper.getConnection().send(Integer.toString(roomID));
+					// IF no error occured, add the room to the adapter' model
+					adaper.getModel().addRoom(new Room(roomID,romNr,romType,romInfo,adaper.getModel()));
+					
 				}
 				else if(receive.substring(0, 12).equals("INSERTSENSOR")){
 					String[] s = receive.split(" ");
