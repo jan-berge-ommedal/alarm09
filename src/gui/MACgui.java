@@ -14,6 +14,8 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import connection.ModelEditControll;
+
 import apps.MAC;
 import apps.MAC.LACAdaper;
 
@@ -21,7 +23,7 @@ import apps.MAC.LACAdaper;
  * 
  * @author Olannon
  * 
- * denne klassen håndterer vinduet som presenteres fra en LAC maskin
+ * denne klassen hï¿½ndterer vinduet som presenteres fra en LAC maskin
  *
  */
 public class MACgui extends JPanel implements Values, ActionListener, PropertyChangeListener {
@@ -31,6 +33,7 @@ public class MACgui extends JPanel implements Values, ActionListener, PropertyCh
 	private JButton checkMarked;
 	private JButton updateMarked;
 	private JButton updateAll;
+	private JButton openLac;
 	private JLabel lacs;
 	private JList lacList;
 	
@@ -66,6 +69,11 @@ public class MACgui extends JPanel implements Values, ActionListener, PropertyCh
 		updateAll = new JButton("Update all LACs");
 		updateAll.addActionListener(this);
 		updateAll.setMargin(asdf);
+		
+		openLac = new JButton("Open LAC view");
+		openLac.addActionListener(this);
+		openLac.setMargin(asdf);
+		
 		lacs = new JLabel("LACs");
 		Font f = new Font("Dialog", Font.PLAIN, 20);
 		lacs.setFont(f);
@@ -78,13 +86,14 @@ public class MACgui extends JPanel implements Values, ActionListener, PropertyCh
 		pane.add(lacs);
 		pane.add(updateMarked);
 		pane.add(updateAll);
+		pane.add(openLac);
 		writeSiteSummary.setBounds(LEFT_SPACE, TOP_SPACE, BUTTON_LONG_WIDTH, BUTTON_HEIGHT);
 		viewLog.setBounds(LEFT_SPACE + BUTTON_LONG_WIDTH + DEFAULT_SPACE, TOP_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		lacs.setBounds(LEFT_SPACE, TOP_SPACE + BUTTON_HEIGHT + 2*DEFAULT_SPACE, 100, 20);
 		checkMarked.setBounds(LEFT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_LONG_WIDTH, BUTTON_HEIGHT);
 		updateMarked.setBounds(LEFT_SPACE + BUTTON_LONG_WIDTH + DEFAULT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_LONG_WIDTH, BUTTON_HEIGHT);
 		updateAll.setBounds(LEFT_SPACE + 2*BUTTON_LONG_WIDTH + 2*DEFAULT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_LONG_WIDTH, BUTTON_HEIGHT);
-		
+		openLac.setBounds(LEFT_SPACE + 3*BUTTON_LONG_WIDTH + 3*DEFAULT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_LONG_WIDTH, BUTTON_HEIGHT);
 		
 		databaseStatusPanel = new ConnectionStatusPanel(mac.getDatabaseConnectionWrapper());
 		databaseStatusPanel.setBounds(500, 50, 200, 50);
@@ -145,15 +154,21 @@ public class MACgui extends JPanel implements Values, ActionListener, PropertyCh
 		}
 		else if (e.getSource() == updateMarked) {
 			//oppdater alle markerte lacs - metodekall med markerte elementer
-			//TODO: Her må vi ha noe mere
+			//TODO: Her mï¿½ vi ha noe mere
 			int[] selected = lacList.getSelectedIndices();
 			for (int i = 0; i < selected.length; i++) {
-				//TODO: Her må vi ha noe mere
+				//TODO: Her mï¿½ vi ha noe mere
 			}
 		}
 		else if (e.getSource() == updateAll) {
 			//updater alle lacs - metodekall
 		}	
+		else if (e.getSource() == openLac) {
+			ModelEditControll temp = (ModelEditControll)lacList.getSelectedValue();
+			if(temp != null) {
+				new LACgui(temp);
+			}
+		}
 	}
 
 	private void checkFailed(int id, String adress) {
