@@ -246,7 +246,7 @@ public class Sensor {
 	 * @return a boolean that is true if battery is good and no alarm
 	 */
 	public boolean testSensor() {
-		return getBattery()>10 && isAlarmState();
+		return getBattery()>10 && !isAlarmState();
 	}
 	
 	/**

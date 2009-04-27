@@ -38,7 +38,6 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	private JButton saveLog;
 	private JButton checkSensors;
 	private JButton returnMAC;
-	private JButton sensorView;
 	private JLabel sensors;
 	private JList sensorList;
 	private Model model;
@@ -104,10 +103,6 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		checkSensors.setMargin(asdf);
 		
 		//knapper som kun gjelder dersom et listelement er valgt
-		sensorView = new JButton("View Sensor");
-		sensorView.addActionListener(this);
-		sensorView.setMargin(asdf);
-		sensorView.setVisible(true);
 		replaceSensor = new JButton("Replace Sensor");
 		replaceSensor.addActionListener(this);
 		replaceSensor.setMargin(asdf);
@@ -158,7 +153,6 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		pane.add(sensors);
 		pane.add(returnMAC);
 		pane.add(adresse);
-		pane.add(sensorView);
 		pane.add(sensorID);
 		pane.add(roomname);
 		pane.add(roomNUMBER);
@@ -174,10 +168,9 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		sensors.setBounds(LEFT_SPACE, TOP_SPACE + BUTTON_HEIGHT + 2*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		checkSensors.setBounds(LEFT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT);
 		returnMAC.setBounds(LEFT_SPACE + BUTTON_WIDTH + DEFAULT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT);
-		sensorView.setBounds(LEFT_SPACE, 700 - TOP_SPACE - 4*BUTTON_HEIGHT - 3*DEFAULT_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
+		viewSensor.setBounds(LEFT_SPACE, 700 - TOP_SPACE - 4*BUTTON_HEIGHT - 3*DEFAULT_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		replaceSensor.setBounds(LEFT_SPACE + DEFAULT_SPACE + BUTTON_WIDTH, 700 - TOP_SPACE - 4*BUTTON_HEIGHT - 3*DEFAULT_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		changeBattery.setBounds(LEFT_SPACE + 2*DEFAULT_SPACE + 2*BUTTON_WIDTH, 700 - TOP_SPACE - 4*BUTTON_HEIGHT - 3*DEFAULT_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
-		viewSensor.setBounds(LEFT_SPACE + 3*DEFAULT_SPACE + 3*BUTTON_WIDTH, 700- TOP_SPACE - 4*BUTTON_HEIGHT - 3*DEFAULT_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		sensorID.setBounds(LEFT_SPACE, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		roomname.setBounds(LEFT_SPACE + LIST_LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		roomNUMBER.setBounds(LEFT_SPACE + 2*LIST_LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
@@ -513,16 +506,6 @@ public class LACgui extends JPanel implements Values, ActionListener {
 			else {
 				sensorsChecked();
 			}
-		}
-		else if (evt.getSource() == sensorView) {
-			if (this.sensorList.getSelectedIndex() != -1) { //sjekk om jlist har selected item
-				//sensorvindu med events dukker opp
-				
-			}
-			else { //liste har ikke selected item
-				noElementSelected();
-			}
-			
 		}
 		else if (evt.getSource() == replaceSensor) {
 			if (this.sensorList.getSelectedIndex() != -1) { //sjekk om jlist har selected item

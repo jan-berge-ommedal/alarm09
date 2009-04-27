@@ -19,7 +19,7 @@ public class SensorViewPanel implements Values {
 	public static void viewSensorEvents(Sensor sensor) {
 		final JFrame frame = new JFrame("Sensor Events");
 		JPanel panel = new JPanel();
-		frame.setSize(300, 400);
+		frame.setSize(500, 400);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setContentPane(panel);
 		frame.setVisible(true);
@@ -44,8 +44,8 @@ public class SensorViewPanel implements Values {
 		else {
 			System.err.println("Sensor var null, why?");
 		}
-		eventList.setBounds(LEFT_SPACE, TOP_SPACE, 200, 200);
-		ok.setBounds(2*LEFT_SPACE, 300, BUTTON_WIDTH, BUTTON_HEIGHT);
+		eventList.setBounds(LEFT_SPACE, TOP_SPACE, 400, 200);
+		ok.setBounds(LEFT_SPACE + 500/3, 300, BUTTON_WIDTH, BUTTON_HEIGHT);
 		ok.setVisible(true);
 		eventList.setVisible(true);
 		panel.setLayout(null);
