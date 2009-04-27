@@ -33,7 +33,7 @@ public class ChatClient {
 
     private int port_to_server = 4444;
 
-    private String addressServer = "192.168.1.106";
+    private String addressServer = "localhost";
 
     private int thisPort = 5560;
 
