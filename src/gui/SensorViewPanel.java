@@ -1,6 +1,5 @@
 package gui;
 
-import java.awt.Event;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -11,12 +10,12 @@ import javax.swing.JPanel;
 
 import model.Sensor;
 
-public class SensorViewPanel {
+public class SensorViewPanel implements Values {
 	
 	public static void viewSensorEvents(Sensor sensor) {
 		final JFrame frame = new JFrame("Sensor Events");
 		JPanel panel = new JPanel();
-		frame.setSize(400, 400);
+		frame.setSize(300, 400);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setContentPane(panel);
 		frame.setVisible(true);
@@ -30,14 +29,32 @@ public class SensorViewPanel {
 			
 		}
 		);
-		model.Event[] events = new model.Event[sensor.getEvents().size()];
-		for (int i = 0; i < events.length; i++) {
-			events[i] = sensor.getEvents().get(i);
+		JList eventList = new JList();
+		if (sensor != null) {
+			model.Event[] events = new model.Event[sensor.getEvents().size()];
+			for (int i = 0; i < events.length; i++) {
+				events[i] = sensor.getEvents().get(i);
+			}
+			eventList.setListData(events);
+			
 		}
-		JList eventList = new JList(events);
+		eventList.setBounds(LEFT_SPACE, TOP_SPACE, 200, 200);
+		ok.setBounds(2*LEFT_SPACE, 300, BUTTON_WIDTH, BUTTON_HEIGHT);
+		ok.setVisible(true);
+		eventList.setVisible(true);
+		panel.setLayout(null);
 		panel.add(eventList);
 		panel.add(ok);
+		frame.repaint();
 		
+	}
+	
+	/**
+	 * main for testing av sensorviewpanel
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		viewSensorEvents(null);
 	}
 
 }
