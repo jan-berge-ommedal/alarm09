@@ -274,8 +274,15 @@ public class LAC extends ModelEditControll{
 	class ListenThread extends Thread{
 		
 		public void run(){
-			
-			String receivedMSG = connection.receive();
+			try {
+				String receivedMSG = connection.receive();
+			} catch (ConnectException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 

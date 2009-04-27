@@ -102,7 +102,7 @@ public class Room {
 	public void setRomType(String romType) {
 		String oldValue = this.romType;
 		this.romType = romType;
-		pcs.firePropertyChange("ROMTYPE", oldValue, romType);
+		pcs.firePropertyChange("SENSORADDED", oldValue, romType);
 	}
 
 	public String getRomInfo() {

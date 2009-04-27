@@ -30,7 +30,6 @@ public class Model implements ListModel, PropertyChangeListener {
 	
 	
 	private ArrayList<Room> rooms = new ArrayList<Room>();
-	private ArrayList<Sensor> sensors = new ArrayList<Sensor>();
 	private ArrayList<PropertyChangeListener> listeners = new ArrayList<PropertyChangeListener>();
 	
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
@@ -65,9 +64,6 @@ public class Model implements ListModel, PropertyChangeListener {
 	public void addRoom(Room r){
 		r.addPropertyChangeListener(this);
 		rooms.add(r);
-		for(Sensor s : r.getSensorer()){
-			sensors.add(s);
-		}
 	}
 	
 	public void removeRoom(Room r){
@@ -130,12 +126,20 @@ public class Model implements ListModel, PropertyChangeListener {
 
 	// @Override
 	public Object getElementAt(int index) {
-		return sensors.get(index);
+		return generateSensorList()[index];
 	}
 
 	// @Override
 	public int getSize() {
-		return sensors.size();
+		return generateSensorList().length;
+	}
+	
+	private Sensor[] generateSensorList(){
+		ArrayList<Sensor> result = new ArrayList<Sensor>();
+		for(Room r : this.rooms){
+			result.addAll(r.getSensorer());
+		}
+		return result.toArray(new Sensor[result.size()]);
 	}
 
 	// @Override
