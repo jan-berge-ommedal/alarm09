@@ -87,7 +87,7 @@ public class AlarmActivator extends JFrame implements Values{
 			
 			elementPanel.add(label);
 			elementPanel.add(alarmButton);
-			elementPanel.setBounds(18, 50+i*30, 200, 30);
+			elementPanel.setBounds(15, 50+i*30, 200, 30);
 			this.add(elementPanel);
 			
 			
