@@ -216,8 +216,8 @@ public class ConnectionImplementation extends AbstractConnection {
 			if(h == null) {
 				throw new IOException("No packet recieved in recieve()");
 			}
-			this.sendAck(h, false);
 			if(this.isValid(h)) {
+				this.sendAck(h, false);
 				this.lastValidPacketReceived = h;
 				return h.getPayload().toString();
 			}
