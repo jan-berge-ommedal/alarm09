@@ -26,8 +26,7 @@ import help.AlarmHelp;
  * 
  * @author Olannon
  * 
- * denne klassen håndterer vinduet som presenteres fra en LAC maskin og
- * inneholder mainmetoden som skal brukes for å teste guienhetene
+ * denne klassen håndterer vinduet som presenteres fra en LAC maskin
  *
  */
 @SuppressWarnings("serial")
@@ -187,8 +186,8 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		 */
 		sensorList = new BlinkingList();
 		if (model) { //hvis initialize kalles med en model settes listen til å være med elementene
-			sensorList.setModel(this.model);
-			String id = "LAC ID:  " + this.model.getID();
+			sensorList.setModel(this.mec.getModel());
+			String id = "LAC ID:  " + this.mec.getModel().getID();
 			this.id = new JLabel(id);
 			this.id.setFont(f);
 		}

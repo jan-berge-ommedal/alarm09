@@ -13,6 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
 
 import connection.ModelEditControll;
 
@@ -86,7 +87,7 @@ public class MACgui extends JPanel implements Values, ActionListener, PropertyCh
 	private void setupList() {
 		lacList.setModel(mac.getLACAdapterList());
 		lacList.setCellRenderer(new MACrenderer());
-		
+		lacList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		lacList.setFixedCellWidth(LIST_ELEMENT_WIDTH);
 		lacList.setFixedCellHeight(LIST_ELEMENT_HEIGHT);
 	}
