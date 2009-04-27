@@ -32,6 +32,9 @@ public class MACgui extends JPanel implements Values, ActionListener, PropertyCh
 	private JButton openLac;
 	private JLabel lacs;
 	private JList lacList;
+	//private JButton 'Generate and print an event report for one or more sensors for all LACs or a set of LACs'
+	//private JButton Generate error report...
+	//private JButton 'Hent ut log info fra en LAC
 	
 	private ConnectionStatusPanel databaseStatusPanel;
 	
