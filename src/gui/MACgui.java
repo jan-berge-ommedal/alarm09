@@ -27,6 +27,7 @@ import apps.MAC.LACAdaper;
  * denne klassen h�ndterer vinduet som presenteres fra en LAC maskin
  *
  */
+@SuppressWarnings("serial")
 public class MACgui extends JPanel implements Values, ActionListener, PropertyChangeListener {
 	
 	private JButton checkMarked;
