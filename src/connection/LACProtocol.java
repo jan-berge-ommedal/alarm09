@@ -96,10 +96,12 @@ public class LACProtocol {
 		
 	}
 	
-	public static boolean connectionCheck(Connection connection){
-		
-		
-		return true;
+	public static boolean connectionCheck(Connection connection) throws ConnectException, IOException{
+		connection.send("CHECK");
+		if(connection.receive().equals("CHECK")){
+			return true;
+		}
+		return false;
 	}
 	
 

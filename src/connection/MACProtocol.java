@@ -20,7 +20,10 @@ public class MACProtocol {
 	public static void handleMSG(LACAdaper adaper, String receive) {
 
 			try {
-				if(receive.startsWith("GETMODEL")){
+				if(receive.startsWith("CHECK")){
+					adaper.getConnection().send("CHECK");
+				}
+				else if(receive.startsWith("GETMODEL")){
 					if(!adaper.hasModel()){
 						Model m = adaper.getMAC().getDatabase().getLACModel(Integer.parseInt(receive.substring(8)));
 						adaper.setModel(m);
