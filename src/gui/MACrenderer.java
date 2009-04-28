@@ -65,7 +65,7 @@ public class MACrenderer extends DefaultListCellRenderer implements ListCellRend
 		if(m!=null){
 
 			JLabel adressLabel = new JLabel(""+adapter.getModel().getAdresse());
-			adressLabel.setBounds(statuspanelSIZE+statuspanelSIZE, 1, LIST_ELEMENT_WIDTH, LIST_ELEMENT_HEIGHT);
+			adressLabel.setBounds(statuspanelSIZE*4, 1, LIST_ELEMENT_WIDTH, LIST_ELEMENT_HEIGHT);
 			
 			JLabel lacIDLabel = new JLabel("ID "+(index+1));
 			lacIDLabel.setBounds(0, 0, lacIDSIZE, CELLHEIGHT);
