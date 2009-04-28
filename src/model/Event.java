@@ -63,7 +63,7 @@ public class Event {
 
 
 	public enum EventType{
-		FALSEALARM, ALARM, STARTUP, BATTERYREPLACEMENT
+		FALSEALARM, ALARM, STARTUP, BATTERYREPLACEMENT, DETECTED
 	}
 	
 	public String toString(){

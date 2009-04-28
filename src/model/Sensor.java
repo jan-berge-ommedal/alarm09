@@ -127,6 +127,12 @@ public class Sensor {
 	public boolean isAlarmState() {
 		return alarmState;
 	}
+	/**
+	 * 
+	 * 
+	 * 
+	 * @param alarmState true = confirmed alarmed, null= nonconfirmed alarm, false = no alarm
+	 */
 
 	public void setAlarmState(Boolean alarmState) {
 		if(this.alarmState!=alarmState){
@@ -144,7 +150,8 @@ public class Sensor {
 			Boolean oldValue = this.alarmState;
 			this.alarmState = alarmState;
 			// TODO FIX THIS
-			this.events.add(new Event(0,EventType.ALARM,LAC.getTime(),this));
+			EventType type = (alarmState==null ? EventType.DETECTED : (alarmState ? EventType.ALARM : EventType.FALSEALARM));
+			this.events.add(new Event(0,type,LAC.getTime(),this));
 			pcs.firePropertyChange("INSTALLATIONDATE", oldValue, alarmState);
 		}
 	}
