@@ -78,7 +78,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	
 	public void setModel(Model model) {
 		this.model = model;
-		this.sensorList.setModel(model);
+		this.sensorList.setModel(new ModelListAdapter(model));
 		this.frame.dispose();
 		this.initialize(true);
 	}
@@ -198,7 +198,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		 */
 		sensorList = new BlinkingList();
 		if (model) { //hvis initialize kalles med en model settes listen til å være med elementene
-			sensorList.setModel(this.mec.getModel());
+			sensorList.setModel(new ModelListAdapter(this.model));
 			String id = "LAC ID:  " + this.mec.getModel().getID();
 			this.id = new JLabel(id);
 			this.id.setFont(f);

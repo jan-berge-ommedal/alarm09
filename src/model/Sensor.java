@@ -104,12 +104,11 @@ public class Sensor extends AbstractPropertyChangeBean{
 	 * This method is used when the sensor is replaced
 	 * 
 	 * @param installationDate a Timestamp representing when the replacement was performed
-	 * @param notifyListeners true if listeners should be notified
 	 */
-	public void setInstallationDate(Timestamp installationDate, boolean notifyListeners) {
+	public void setInstallationDate(Timestamp installationDate) {
 		Timestamp oldValue = this.installationDate;	
 		this.installationDate = installationDate;
-		if(notifyListeners)pcs.firePropertyChange("INSTALLATIONDATE", oldValue, installationDate);
+		pcs.firePropertyChange("INSTALLATIONDATE", oldValue, installationDate);
 	}
 	/**
 	 * 
