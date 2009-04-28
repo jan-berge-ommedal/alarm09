@@ -244,7 +244,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 			
 			//pakker frame etc
 			frame.setSize(400, 400);
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			frame.setContentPane(panel);
 			frame.setVisible(true);
 			
@@ -264,7 +264,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 			JButton cancel = new JButton("Return");
 			cancel.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					frame.setVisible(false);
+					frame.dispose();
 				}
 			}
 			);
@@ -295,7 +295,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		
 		//pakker frame etc
 		frame.setSize(450, 135);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setContentPane(panel);
 		frame.setVisible(true);
 		
@@ -303,7 +303,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		JButton y = new JButton("Yes");
 		y.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.setVisible(false);
+				frame.dispose();
 				fireFightConfirmed();
 			}
 		}
@@ -311,7 +311,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		JButton n = new JButton("No");
 		n.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.setVisible(false);
+				frame.dispose();
 			}
 		}
 		);
@@ -330,7 +330,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		
 		//pakker frame etc
 		frame.setSize(350, 110);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setContentPane(panel);
 		frame.setVisible(true);
 		
@@ -338,7 +338,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		JButton y = new JButton("OK");
 		y.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.setVisible(false);
+				frame.dispose();
 			}
 		}
 		);
@@ -356,7 +356,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		
 		//pakker frame etc
 		frame.setSize(350, 110);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setContentPane(panel);
 		frame.setVisible(true);
 		
@@ -370,7 +370,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		JButton y = new JButton("OK");
 		y.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.setVisible(false);
+				frame.dispose();
 			}
 		}
 		);
@@ -387,7 +387,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		
 		//pakker frame etc
 		frame.setSize(300, 110);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setContentPane(panel);
 		frame.setVisible(true);
 		
@@ -395,7 +395,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		JButton y = new JButton("OK");
 		y.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.setVisible(false);
+				frame.dispose();
 			}
 		}
 		);
@@ -413,7 +413,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		
 		//pakker frame etc
 		frame.setSize(100, 110);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setContentPane(panel);
 		frame.setVisible(true);
 		
@@ -427,7 +427,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		JButton y = new JButton("OK");
 		y.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.setVisible(false);
+				frame.dispose();
 			}
 		}
 		);
@@ -441,7 +441,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		
 		//pakker frame etc
 		frame.setSize(170, 110);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setContentPane(panel);
 		frame.setVisible(true);
 		
@@ -450,7 +450,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		JButton y = new JButton("OK");
 		y.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.setVisible(false);
+				frame.dispose();
 			}
 		}
 		);
@@ -467,7 +467,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		
 		//pakker frame etc
 		frame.setSize(170, 110);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setContentPane(panel);
 		frame.setVisible(true);
 		
@@ -476,7 +476,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		JButton y = new JButton("OK");
 		y.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				frame.setVisible(false);
+				frame.dispose();
 			}
 		}
 		);
@@ -557,20 +557,13 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		
 		public void actionPerformed(ActionEvent e) {
 			try {
-				//lagre sensor
-			}
-			catch (NumberFormatException nfe) {
-				sensorAttributeError(true);
-			}catch (NullPointerException npe) {
-				sensorAttributeError(false); 
-			}
-			Sensor sensor;
-			try {
-				sensor = new Sensor(this.mec, room);
-				room.addSensor(sensor);
+				mec.insertSensor(room.getID(), false, 100);
 				this.frame.dispose();
 			} catch (IOException e1) {
 				System.err.println("Could not create Sensor due to an IO-error");
+			}
+			finally {
+				//do nada
 			}
 		}
 	}
