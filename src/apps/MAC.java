@@ -259,10 +259,9 @@ public class MAC{
 
 
 		@Override
-		public Room insertRoom(int modelID, int roomNr, String roomType,
-				String roomInfo) throws IOException {
-			// TODO Auto-generated method stub
-			return null;
+		public Room insertRoom(int modelID, int roomNr, String roomType, String roomInfo) throws IOException {
+			int roomID = database.insertRoom(modelID, roomNr, roomType, roomInfo);
+			return new Room(roomID,roomNr,roomType,roomInfo, this.getModel());
 		}
 
 
