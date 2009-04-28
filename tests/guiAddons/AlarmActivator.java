@@ -88,7 +88,8 @@ public class AlarmActivator extends JFrame implements Values{
 	}
 	
 	public static void main(String[] args) {
-		LAC lac = new LAC(1);
+		LAC mac = new LAC(1,false);
+		LAC lac = new LAC(1,true);
 		new AlarmActivator(lac.getModel());
 	}
 	

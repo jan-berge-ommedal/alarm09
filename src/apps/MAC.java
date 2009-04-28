@@ -56,8 +56,8 @@ public class MAC{
 	
 	
 	
-	public MAC() {
-		gui = new MACgui(this);
+	public MAC(boolean useGUI) {
+		if(useGUI)gui = new MACgui(this);
 		boolean connectedToDatabase=false;
 		while(!connectedToDatabase){
 			try {
@@ -77,7 +77,9 @@ public class MAC{
 				
 			}
 		}
-		startMAC();
+		macConnection = new TCPConnection(SERVERPORT);
+		RunThread thread = new RunThread(this);
+		thread.start();
 	}
 	
 	public void addAdapterListListener(PropertyChangeListener listener){
@@ -94,78 +96,6 @@ public class MAC{
 		return databaseConnectionWrapper;
 	}
 
-	/**
-	 * This method is used to create a new {@link LACAdapter} and add it to the MAC
-	 * 
-	 */
-	private void startMAC(){
-		macConnection = new TCPConnection(SERVERPORT);
-	
-		while(running){
-			Connection newConnection = null;
-	
-			try {
-				newConnection = macConnection.accept();
-				
-				String idString = newConnection.receive();
-				if(idString.startsWith("ID")){
-					// THE LAC REQUESTED TO LOAD MODEL FROM DB
-					int LACid = Integer.parseInt(idString.substring(2));
-					boolean found = false;
-					for (LACAdapter adapter : adapters.lacAdapters) {
-						if(adapter.getModel().getID()==LACid){
-							if(adapter.getConnectionStatusWrapper().getConnectionStatus() == ConnectionStatus.DISCONNECTED){
-								adapter.initializeConnection(newConnection);
-								found = true;
-							}
-							break;
-						}
-					}
-					try {
-						//IF THE GIVEN ID FOUND AND FREE, RETURN "ACK" ELSE RETURN "NAK"
-						newConnection.send((found ? "ACK" :"NAK"));
-					} catch (ConnectException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}else if(idString.startsWith("NEW")){//NY LAC, ber om ID
-					//THE LAC CREATE A NEW MODEL IN DB
-					String adress = idString.substring(3);
-					int returnid = database.insertLAC(adress);
-					try {
-						newConnection.send(""+returnid);
-						Model m = new Model();
-						m.setID(returnid);
-						LACAdapter adapter = new LACAdapter(this,returnid);
-						adapter.setModel(m);
-						adapter.initializeConnection(newConnection);
-						adapters.add(adapter);
-					} catch (ConnectException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}catch (BindException e) {
-				System.err.println("Port in use. Exiting");
-				System.exit(0);
-			}catch (SocketTimeoutException e1) {
-					// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-			}
-			
-					
-			
-		}
-	}
 	
 	
 	/**
@@ -251,46 +181,6 @@ public class MAC{
 			}
 		}
 
-
-		@Override
-		public Sensor insertSensor(int roomID, boolean alarmState, int batteryStatus) throws IOException {
-			Room r = null;
-			for(Room room : model.getRooms()){
-				if(room.getID()==roomID)r = room;
-			}
-			if(r==null)throw new IOException("Could not find room");
-			int newSensorID = database.insertSensor(roomID, alarmState, batteryStatus);
-			return new Sensor(newSensorID,alarmState,batteryStatus,this.getTime(),r,false);
-		}
-
-
-
-		@Override
-		public Room insertRoom(int modelID, int roomNr, String roomType, String roomInfo) throws IOException {
-			int roomID = database.insertRoom(modelID, roomNr, roomType, roomInfo);
-			Room room = new Room(roomID,roomNr,roomType,roomInfo, this.getModel());
-			this.getModel().addRoom(room);
-			return room;
-		}
-
-
-		@Override
-		public Event insertEvent(int roomID, int sensorID, EventType eventType) throws IOException {
-			Room r = null;
-			for(Room room : model.getRooms()){
-				if(room.getID()==roomID)r = room;
-			}
-			if(r==null)throw new IOException("Could not find room");
-			Sensor s = null;
-			for(Sensor sensor : r.getSensorer()){
-				if(sensor.getID()==sensorID)s = sensor;
-			}
-			if(s==null)throw new IOException("Could not find sensor");
-			int id = database.insertEvent(sensorID,eventType);
-			return new Event(id,eventType,this.getTime(),s);
-		}
-
-
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			if(arg0.getSource()==timer){
@@ -357,7 +247,7 @@ public class MAC{
 		
 	}
 	
-	class LacAdapterList implements ListModel{
+	public class LacAdapterList implements ListModel{
 		private ArrayList<LACAdapter> lacAdapters = new ArrayList<LACAdapter>();
 		
 		private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
@@ -388,6 +278,10 @@ public class MAC{
 		public Object getElementAt(int index) {
 			return lacAdapters.get(index);
 		}
+		
+		public LACAdapter getElementLACAdapterAt(int index) {
+			return lacAdapters.get(index);
+		}
 
 		public int getSize() {
 			return lacAdapters.size();
@@ -399,10 +293,88 @@ public class MAC{
 		}
 		
 	}
+	
+	class RunThread extends Thread{
+		public MAC mac;
+		
+		
+		
+			
+		public RunThread(MAC mac) {
+			this.mac = mac;
+		}
+
+
+		public void run(){
+			while(running){
+				Connection newConnection = null;
+		
+				try {
+					newConnection = macConnection.accept();
+					
+					String idString = newConnection.receive();
+					if(idString.startsWith("ID")){
+						// THE LAC REQUESTED TO LOAD MODEL FROM DB
+						int LACid = Integer.parseInt(idString.substring(2));
+						boolean found = false;
+						for (LACAdapter adapter : adapters.lacAdapters) {
+							if(adapter.getModel().getID()==LACid){
+								if(adapter.getConnectionStatusWrapper().getConnectionStatus() == ConnectionStatus.DISCONNECTED){
+									adapter.initializeConnection(newConnection);
+									found = true;
+								}
+								break;
+							}
+						}
+						try {
+							//IF THE GIVEN ID FOUND AND FREE, RETURN "ACK" ELSE RETURN "NAK"
+							newConnection.send((found ? "ACK" :"NAK"));
+						} catch (ConnectException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}else if(idString.startsWith("NEW")){//NY LAC, ber om ID
+						//THE LAC CREATE A NEW MODEL IN DB
+						String adress = idString.substring(3);
+						int returnid = database.insertLAC(adress);
+						try {
+							newConnection.send(""+returnid);
+							Model m = new Model();
+							m.setID(returnid);
+							LACAdapter adapter = new LACAdapter(mac,returnid);
+							adapter.setModel(m);
+							adapter.initializeConnection(newConnection);
+							adapters.add(adapter);
+						} catch (ConnectException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}catch (BindException e) {
+					System.err.println("Port in use. Exiting");
+					System.exit(0);
+				}catch (SocketTimeoutException e1) {
+						// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+				}
+				
+						
+		}
+		}
+	}
 
 	
 	public static void main(String[] args) {
-		new MAC();
+		new MAC(true);
 	}
 	
 	

@@ -1,9 +1,11 @@
 package systemTests;
 
+import junit.framework.TestCase;
+import connection.ModelEditControll;
 import apps.LAC;
 import apps.MAC;
 
-public class InteractionTests {
+public class InteractionTests extends TestCase{
 	
 	
 	/**
@@ -13,8 +15,26 @@ public class InteractionTests {
 	//FIXME Oddy MAC & LAC interaction
 	public void testInteraction(){
 
-		MAC mac = new MAC();
-		LAC lac = new LAC();
+		int lacid = 1;
+
+		MAC mac = new MAC(false);
+		LAC lac = new LAC(lacid,false);
+		
+		
+		ModelEditControll sender = lac;
+		ModelEditControll receiver = mac.getLACAdapterList().getElementLACAdapterAt(lacid);
+		
+		
+		assertEquals(receiver.getModel().getID(), sender.getModel().getID());
+		
+		assertEquals(receiver.getModel().toString(), sender.getModel().toString());
+		
+		
+		
+		
+		
+		
+		
 	}
 
 }

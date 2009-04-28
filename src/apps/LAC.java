@@ -63,8 +63,8 @@ public class LAC extends ModelEditControll{
 	 * This constructor is used when creating a completly new LAC
 	 * 
 	 */
-	public LAC() {
-		gui = new LACgui(this);
+	public LAC(boolean useGUI) {
+		if(useGUI)gui = new LACgui(this);
 		connection = new TCPConnection(STARTPORT);
 		connectWithRetry();
 		
@@ -95,8 +95,8 @@ public class LAC extends ModelEditControll{
 	 * This constructor is used when loading a LAC for storage
 	 * @param id an int, the stored id of the LAC
 	 */
-	public LAC(int id) {
-		gui = new LACgui(this);
+	public LAC(int id,boolean useGUI) {
+		if(useGUI)gui = new LACgui(this);
 		connectWithRetry();
 
 		
@@ -241,9 +241,9 @@ public class LAC extends ModelEditControll{
 			String s = JOptionPane.showInputDialog("Skriv inn ID til LACen som skal startes. (-1 genererer ny LAC)");
 			int id = Integer.parseInt(s);
 			if(id<0)
-				new LAC();
+				new LAC(true);
 			else
-				new LAC(id);
+				new LAC(id,true);
 			run=false;
 			}catch(NumberFormatException e){
 				System.err.println("Kun tall!");

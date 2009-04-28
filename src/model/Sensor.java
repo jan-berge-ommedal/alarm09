@@ -186,7 +186,7 @@ public class Sensor extends AbstractPropertyChangeBean{
 	 */
 	public void replaceBattery(ModelEditControll mec) throws IOException {
 		setBattery(100);
-		this.addEvent(mec.insertEvent(this.getRoom().getID(),this.getID(),Event.EventType.BATTERYREPLACEMENT));
+		this.addEvent(new Event(Event.EventType.BATTERYREPLACEMENT,this));
 	}
 	
 	
