@@ -100,7 +100,8 @@ public class MACProtocol {
 						if(s[2].equals(e.toString()))
 							et = e;
 					}
-					Event e = adaper.insertEvent();
+					//NBNBNBNBNB SKAFF ROMID OG SENSIOR IDDDDDD
+					Event e = adaper.insertEvent(0,0,et);
 					
 					adaper.getConnection().send(Integer.toString(e.getID()));
 				}
