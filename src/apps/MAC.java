@@ -226,17 +226,6 @@ public class MAC{
 	
 	
 
-		@Override
-		public int getNextRoomID(Room room) throws IOException {
-			return database.insertRoom(room.getModel().getID(), room.getRomNR(), room.getRomType(), room.getRomInfo());
-		}
-
-		@Override
-		public int getNextSensorID(Sensor sensor) throws IOException {
-			return database.insertSensor(sensor.getRoom().getID(), sensor.isAlarmState(), sensor.getBattery());
-		}
-
-
 		public void propertyChange(PropertyChangeEvent arg0) {
 			
 			System.err.println("Handle This");
@@ -258,6 +247,22 @@ public class MAC{
 		@Override
 		public int getNextLACID(String adress) throws IOException {
 			return database.insertLAC(adress);
+		}
+
+
+		@Override
+		public int getNextRoomID(int modelID, String roomNr, String roomType,
+				String roomInfo) throws IOException {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+
+		@Override
+		public int getNextSensorID(int roomID, boolean alarmState,
+				int batteyStatus) throws IOException {
+			// TODO Auto-generated method stub
+			return 0;
 		}
 
 

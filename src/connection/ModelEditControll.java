@@ -53,8 +53,8 @@ public abstract class ModelEditControll implements PropertyChangeListener {
 		return connectionWrapper;
 	}
 	
-	public abstract int getNextRoomID(Room room) throws IOException;
-	public abstract int getNextSensorID(Sensor sensor) throws IOException;
+	public abstract int getNextRoomID(int modelID, String roomNr, String roomType, String roomInfo) throws IOException;
+	public abstract int getNextSensorID(int roomID, boolean alarmState, int batteyStatus) throws IOException;
 	public abstract int getNextLACID(String adress) throws IOException;
 
 
