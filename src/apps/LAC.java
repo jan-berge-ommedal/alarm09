@@ -283,10 +283,12 @@ public class LAC extends ModelEditControll{
 			throws IOException {
 		Room r = null;
 		for(Room room : this.getModel().getRooms()){
-			
+			if(room.getID()==roomID)r=room;
 		}
 		if(r==null)throw new IOException("Could not find room");
-		return null;
+		int receiveID = LACProtocol.insertSensor(roomID, alarmState, batteyStatus);
+		Sensor sensor = new Sensor(receiveID,alarmState,batteyStatus,LAC.getTime(),r,true);
+		return sensor;
 	}
 
 	
@@ -303,8 +305,7 @@ public class LAC extends ModelEditControll{
 	}
 
 	@Override
-	public Event insertEvent(int roomID, int sensorID, EventType eventType)
-			throws IOException {
+	public Event insertEvent(int roomID, int sensorID, EventType eventType)	throws IOException {
 		// TODO Auto-generated method stub
 		return null;
 	}

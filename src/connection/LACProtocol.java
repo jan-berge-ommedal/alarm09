@@ -182,6 +182,12 @@ public class LACProtocol {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	public static int insertSensor(int roomID, boolean alarmState,
+			int batteyStatus) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 	
 	
 
