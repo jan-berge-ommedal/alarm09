@@ -152,7 +152,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		//overskriftslabels for lista
 		sensorID = new JLabel("Sensor ID");
 		roomname = new JLabel("Room name");
-		roomNUMBER = new JLabel("GET A ROOM!");
+		roomNUMBER = new JLabel("Room number");
 		sensorStatus = new JLabel("Sensor Status");
 		batteryStatus = new JLabel("Battery Status");
 		date = new JLabel("Date & Time");
@@ -353,9 +353,9 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	/**
 	 * Åpner vindu slik at rom kan editeres
 	 */
-	public void editRoom() {
+	public void editRoom(Sensor sensor) {
 		//oppretter frame etc
-		final JFrame frame = new JFrame("New Sensor");
+		final JFrame frame = new JFrame();
 		JPanel panel  = new JPanel();
 		panel.setLayout(null);
 		
@@ -367,8 +367,8 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		
 		JLabel header = new JLabel();
 		header.setBounds(2*LEFT_SPACE, TOP_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
-		header.setText("New Room");
-		frame.setTitle("New Room");
+		header.setText("Room attributes");
+		frame.setTitle("Edit Room");
 		
 		//labels for tekstfeltene der attributtene settes
 		JLabel romnr = new JLabel("Room number:");
@@ -377,8 +377,11 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		
 		//tekstfelter der attributtene settes
 		JTextField roomNr = new JTextField();
+		roomNr.setText("" + sensor.getRoom().getRomNR());
 		JTextField roomIn = new JTextField();
+		roomIn.setText(sensor.getRoom().getRomInfo());
 		JTextField roomTy = new JTextField();
+		roomTy.setText(sensor.getRoom().getRomType());
 		
 		//knapper
 		JButton roomSave = new JButton("Save");
@@ -391,7 +394,6 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		roomCancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frame.dispose();
-				installSensor(false);
 			}
 		});
 		
@@ -677,7 +679,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		}
 		else if (evt.getSource() == editRoom) {
 			if (this.sensorList.getSelectedIndex() != -1) { //sjekk om jlist har selected item
-				editRoom();
+				editRoom((Sensor)this.sensorList.getSelectedValue());
 			}
 			else {
 				noElementSelected();
@@ -707,7 +709,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 			if (roomsList.getSelectedIndex() != -1 ) { //et rom er valgt
 				this.room = (Room)roomsList.getSelectedItem();
 			}
-			else {
+			else { //ingen rom er valgt
 				this.room = null;
 			}
 		}
