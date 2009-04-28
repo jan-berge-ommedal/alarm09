@@ -1,6 +1,7 @@
 package connection;
 
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.sql.Timestamp;
 
@@ -16,6 +17,8 @@ import model.Sensor;
 public abstract class ModelEditControll implements PropertyChangeListener {
 	protected Model model;
 	protected ConnectionStatusWrapper connectionWrapper = new ConnectionStatusWrapper(ConnectionStatus.DISCONNECTED);
+	
+	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	
 	/**
 	 * This method tests all sensors 
@@ -105,6 +108,8 @@ public abstract class ModelEditControll implements PropertyChangeListener {
 
 	public abstract void deleteAllEvents(Sensor sensor);
 
-
+	public void addPropertyChangeListener(PropertyChangeListener listener){
+		pcs.addPropertyChangeListener(listener);
+	}
 
 }

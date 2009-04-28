@@ -40,7 +40,12 @@ public class ComboBoxRenderer implements ComboBoxModel {
 
 	@Override
 	public int getSize() {
-		return this.rooms.length;
+		if (this.rooms != null) {
+			return this.rooms.length;
+		}
+		else {
+			return 0;
+		}
 	}
 
 	@Override

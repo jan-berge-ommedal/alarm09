@@ -4,6 +4,8 @@ import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 
 import model.*;
@@ -30,7 +32,7 @@ import help.AlarmHelp;
  *
  */
 @SuppressWarnings("serial")
-public class LACgui extends JPanel implements Values, ActionListener {
+public class LACgui extends JPanel implements Values, ActionListener, PropertyChangeListener {
 	
 	private boolean fromMac;
 	private JFrame frame;
@@ -61,6 +63,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	
 	public LACgui(ModelEditControll controller){
 		this.mec = controller;
+		this.mec.addPropertyChangeListener(this);
 		this.initialize(false, false);
 	}
 	
@@ -566,7 +569,16 @@ public class LACgui extends JPanel implements Values, ActionListener {
 				this.frame.dispose();
 			} catch (IOException e1) {
 				System.err.println("Could not create Sensor due to an IO-error");
+			} catch (NullPointerException npe) {
+				System.err.println("Could not create Sensor due to no rooms existing/being selected");
+				noElementSelected();
 			}
 		}
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		this.frame.dispose();
+		initialize(true, false);
 	}
 }
