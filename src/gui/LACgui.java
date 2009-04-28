@@ -82,6 +82,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	 * @param model - en boolean som sier noe om guiet har en modell eller ikke
 	 */
 	private void initialize(boolean model) {
+		
 		Insets asdf = new Insets(0,0,0,0);
 		JPanel pane = new JPanel();
 		frame = new JFrame("LAC");
@@ -561,6 +562,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		this.frame.dispose();
+		model = mec.getModel();
 		initialize(true);
 	}
 }
