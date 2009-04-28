@@ -63,10 +63,44 @@ public abstract class ModelEditControll implements PropertyChangeListener {
 		return new Timestamp(System.currentTimeMillis());
 	}
 	
+	/**
+	 * Inserts a room into the ModelEditControllers' model, and ensures that persistent model is updated.
+	 * 
+	 * 
+	 * @param modelID
+	 * @param roomNr
+	 * @param roomType
+	 * @param roomInfo
+	 * @return
+	 * @throws IOException
+	 */
 	
 	public abstract Room insertRoom(int modelID, int roomNr, String roomType, String roomInfo) throws IOException;
+	
+	/**
+	 * Inserts a sensor into the ModelEditControllers' model, and ensures that persistent model is updated.
+	 * 
+	 * 
+	 * @param modelID
+	 * @param roomNr
+	 * @param roomType
+	 * @param roomInfo
+	 * @return
+	 * @throws IOException
+	 */
 	public abstract Sensor insertSensor(int roomID, boolean alarmState, int batteyStatus) throws IOException;
-	public abstract Model insertModel(String adress) throws IOException;
+	
+	/**
+	 * Inserts a event into the ModelEditControllers' model, and ensures that persistent model is updated.
+	 * 
+	 * 
+	 * @param modelID
+	 * @param roomNr
+	 * @param roomType
+	 * @param roomInfo
+	 * @return
+	 * @throws IOException
+	 */
 	public abstract Event insertEvent(Event.EventType eventType);
 
 	public abstract void deleteAllEvents(Sensor sensor);

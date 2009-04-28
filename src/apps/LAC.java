@@ -289,11 +289,7 @@ public class LAC extends ModelEditControll{
 		return null;
 	}
 
-	@Override
-	public Model insertModel(String adress) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 
 	@Override
 	public Room insertRoom(int modelID, int roomNr, String roomType,
