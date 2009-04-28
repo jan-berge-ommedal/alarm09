@@ -27,10 +27,10 @@ public class ComboBoxRenderer implements ComboBoxModel {
 	@Override
 	public void setSelectedItem(Object arg0) {
 		for (int i = 0; i < this.getSize(); i++) {
-			if (arg0 == getElementAt(i)) {
+			if (arg0.equals(getElementAt(i))) {
 				selectedIndex = i;
 			}
-		}	
+		}
 	}
 
 	@Override
@@ -61,5 +61,6 @@ public class ComboBoxRenderer implements ComboBoxModel {
 	public void removeListDataListener(ListDataListener arg0) {
 		listeners.remove(arg0);
 	}
+
 
 }
