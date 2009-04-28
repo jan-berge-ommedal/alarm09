@@ -63,6 +63,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	public LACgui(ModelEditControll controller){
 		this.mec = controller;
 		this.mec.addPropertyChangeListener(this);
+		this.model = mec.getModel();
 		this.initialize(false);
 	}
 	
