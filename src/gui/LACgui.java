@@ -326,11 +326,11 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 						Sensor s = mec.insertSensor(r.getID(), false, 100);
 					}
 					catch(NullPointerException npe) {
-						//npe
+						System.err.println("nullpointerex");
 					} catch (NumberFormatException nfe) {
-						//nfe
+						System.err.println("numberformatex");
 					} catch (IOException LOLio) {
-						//ioe
+						System.err.println("ioex");
 					}
 	
 					
@@ -736,7 +736,6 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	class SensorAttributesListener implements ActionListener {
 		private ModelEditControll mec;
 		private JFrame frame;
-		private Room room;
 		private ComboBoxAdapter cba;
 		
 		/**
