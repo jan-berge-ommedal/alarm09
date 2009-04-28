@@ -289,8 +289,8 @@ public class LAC extends ModelEditControll{
 
 
 	@Override
-	public int getNextLACID(Model model) throws IOException {
-		return LACProtocol.receiveNextModelID(connection, model.getAdresse());
+	public int getNextLACID(String adress) throws IOException {
+		return LACProtocol.receiveNextModelID(connection, adress);
 	}
 
 	

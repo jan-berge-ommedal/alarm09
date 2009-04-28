@@ -256,8 +256,8 @@ public class MAC{
 
 
 		@Override
-		public int getNextLACID(Model model) throws IOException {
-			return database.insertLAC(model.getAdresse());
+		public int getNextLACID(String adress) throws IOException {
+			return database.insertLAC(adress);
 		}
 
 
