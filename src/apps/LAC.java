@@ -218,7 +218,15 @@ public class LAC extends ModelEditControll{
 				}
 		}else if(e.getSource() instanceof Model){
 			Model model = (Model) e.getSource();
-			LACProtocol.updateLAC(connection, model);
+			try {
+				LACProtocol.updateLAC(connection, model);
+			} catch (ConnectException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
 		
 	}
