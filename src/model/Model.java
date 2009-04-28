@@ -173,6 +173,14 @@ public class Model extends AbstractPropertyChangeBean{
 		r.setRomInfo("sdfssdd");
 		r.setRomInfo("sdfssdd2");
 	}
+
+	public Sensor getSensor(int i) {
+		Sensor result = null;
+		for(Sensor s : this.getSensors()){
+			if(s.getID()==i)result=s;
+		}
+		return result;
+	}
 }
  
 
