@@ -1,5 +1,7 @@
 package gui;
 
+import java.util.ArrayList;
+
 import javax.swing.ComboBoxModel;
 import javax.swing.event.ListDataListener;
 
@@ -7,51 +9,53 @@ import model.Room;
 
 public class ComboBoxRenderer implements ComboBoxModel {
 
-	private Room[] rooms;	
+	private Room[] rooms = new Room[0];	
+	private int selectedIndex = -1;
+	
+	private ArrayList<ListDataListener> listeners = new ArrayList<ListDataListener>();
 	
 	public Object getSelectedItem() {
-		// TODO Auto-generated method stub
-		return null;
+		if (selectedIndex == -1) return null;
+		return getElementAt(selectedIndex);
 	}
 	
-	private String getRoomString(Room room) {
-		String result = "Nr: ";
-		result += room.getRomNR() + ", Type: ";
-		result += room.getRomType();
-		return result;
-	}
-
+	
 	@Override
 	public void setSelectedItem(Object arg0) {
-		// TODO Auto-generated method stub
-		
+		for (int i = 0; i < this.getSize(); i++) {
+			if (arg0 == getElementAt(i)) {
+				selectedIndex = i;
+			}
+		}	
 	}
 
 	@Override
 	public void addListDataListener(ListDataListener arg0) {
-		// TODO Auto-generated method stub
+		listeners.add(arg0);
 		
 	}
 
 	@Override
-	public Object getElementAt(int arg0) {
-		return getRoomString(rooms[arg0]);
+	public Object getElementAt(int index) {
+		if (index == 0) {
+			return "<Create New Room>";
+		}
+		Room room = rooms[index-1];
+		String result = "Nr: ";
+		result += room.getRomNR() + ", Type: ";
+		result += room.getRomType();
+		return result;		
 	}
 
 	@Override
 	public int getSize() {
-		if (this.rooms != null) {
-			return this.rooms.length;
-		}
-		else {
-			return 0;
-		}
+		return this.rooms.length+1;
+		
 	}
 
 	@Override
 	public void removeListDataListener(ListDataListener arg0) {
-		// TODO Auto-generated method stub
-		
+		listeners.remove(arg0);
 	}
 
 }

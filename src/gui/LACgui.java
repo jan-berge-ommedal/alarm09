@@ -20,6 +20,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ListDataListener;
 
 import connection.ModelEditControll;
 import help.AlarmHelp;
@@ -34,12 +35,10 @@ import help.AlarmHelp;
 @SuppressWarnings("serial")
 public class LACgui extends JPanel implements Values, ActionListener, PropertyChangeListener {
 	
-	private boolean fromMac;
 	private JFrame frame;
 	private JButton installSensor;
 	private JButton saveLog;
 	private JButton checkSensors;
-	private JButton returnMAC;
 	private JLabel sensors;
 	private JList sensorList;
 	private Model model;
@@ -64,7 +63,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	public LACgui(ModelEditControll controller){
 		this.mec = controller;
 		this.mec.addPropertyChangeListener(this);
-		this.initialize(false, false);
+		this.initialize(false);
 	}
 	
 	public Model getModel() {
@@ -75,20 +74,19 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		this.model = model;
 		this.sensorList.setModel(model);
 		this.frame.dispose();
-		this.initialize(true, false);
+		this.initialize(true);
 	}
 	
 	/**
 	 * 
 	 * @param model - en boolean som sier noe om guiet har en modell eller ikke
-	 * @param fromMac - en boolean som sier om lac er startet fra mac
 	 */
-	private void initialize(boolean model, boolean fromMac) {
+	private void initialize(boolean model) {
 		Insets asdf = new Insets(0,0,0,0);
 		JPanel pane = new JPanel();
 		frame = new JFrame("LAC");
 		frame.setSize(700, 700);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setContentPane(pane);
 		frame.setVisible(true);
 		
@@ -118,13 +116,6 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		viewSensor.addActionListener(this);
 		viewSensor.setMargin(asdf);
 		viewSensor.setVisible(true);
-		
-		returnMAC = new JButton("Return to MAC");
-		returnMAC.addActionListener(this);
-		returnMAC.setMargin(asdf);
-		if (!fromMac) {
-			returnMAC.setVisible(false);
-		}
 		sensors = new JLabel("Sensors");
 		if (model && this.model.getAdresse() != null) {
 			adresse = new JLabel(this.model.getAdresse());
@@ -154,7 +145,6 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		//pane.add(saveLog);
 		pane.add(checkSensors);
 		pane.add(sensors);
-		pane.add(returnMAC);
 		pane.add(adresse);
 		pane.add(sensorID);
 		pane.add(roomname);
@@ -170,7 +160,6 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		//saveLog.setBounds(LEFT_SPACE + BUTTON_WIDTH + DEFAULT_SPACE, TOP_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		sensors.setBounds(LEFT_SPACE, TOP_SPACE + BUTTON_HEIGHT + 2*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		checkSensors.setBounds(LEFT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT);
-		returnMAC.setBounds(LEFT_SPACE + BUTTON_WIDTH + DEFAULT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT);
 		viewSensor.setBounds(LEFT_SPACE, 700 - TOP_SPACE - 4*BUTTON_HEIGHT - 3*DEFAULT_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		replaceSensor.setBounds(LEFT_SPACE + DEFAULT_SPACE + BUTTON_WIDTH, 700 - TOP_SPACE - 4*BUTTON_HEIGHT - 3*DEFAULT_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		changeBattery.setBounds(LEFT_SPACE + 2*DEFAULT_SPACE + 2*BUTTON_WIDTH, 700 - TOP_SPACE - 4*BUTTON_HEIGHT - 3*DEFAULT_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
@@ -208,20 +197,6 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		sensorList.setFixedCellHeight(LIST_ELEMENT_HEIGHT);
 	}
 	
-	/**
-	 * Public metode som endrer booleanverdien som sier noe om LACgrensesnittet er generert fra MAC eller ikke
-	 * @param fromMac
-	 */
-	public void setFromMac(boolean fromMac) {
-		this.fromMac = fromMac;
-		if (fromMac) {
-			this.returnMAC.setVisible(true);
-		}
-		else {
-			this.returnMAC.setVisible(false);
-		}
-	}
-	
 	/*
 	 * Her følger diverse metoder som lager de vinduene som kommer opp dersom menyer som feks "Install Sensor" vises fra LACen
 	 */
@@ -235,8 +210,18 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 			for (int i = 0; i < rooms.length; i++) {
 				rooms[i] = model.getRooms().get(i);
 			}
-			JComboBox roomsList = new JComboBox(rooms);
+			final JComboBox roomsList = new JComboBox(rooms);
 			roomsList.setModel(new ComboBoxRenderer());
+			roomsList.addActionListener(new ActionListener() {
+
+				public void actionPerformed(ActionEvent e) {
+					if (roomsList.getSelectedIndex() == 0) {
+						//popp opp nytt gui for å mekke nytt rom
+						//legg til rom i lista
+					}
+				}
+				
+			});
 			
 			//oppretter frame etc
 			final JFrame frame = new JFrame("Sensor attributes");
@@ -523,9 +508,6 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 				noElementSelected();
 			}
 		}
-		else if (evt.getSource() == returnMAC) {
-			//returner til macen
-		}
 		else if (evt.getSource() == viewSensor) {
 			if (this.sensorList.getSelectedIndex() != -1) { //sjekk om jlist har selected item
 				SensorViewPanel.viewSensorEvents((Sensor)sensorList.getSelectedValue());
@@ -579,6 +561,6 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		this.frame.dispose();
-		initialize(true, false);
+		initialize(true);
 	}
 }
