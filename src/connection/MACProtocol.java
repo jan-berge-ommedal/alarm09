@@ -26,9 +26,6 @@ public class MACProtocol {
 				else if(receive.startsWith("GETMODEL")){
 					adaper.getConnection().send(XmlSerializer.toXml(adaper.getModel()));
 				}
-				else if(receive.substring(0, 9).equals("GETNEXTID")){
-//					adaper.getConnection().send(""+adaper.getNextLACID(receive.substring(9)));
-				}
 				else if(receive.substring(0, 9).equals("UPDATELAC")){
 					String[] s = receive.split(" ");
 					adaper.getModel().setAdresse(s[2]);
