@@ -250,18 +250,26 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 			 * Følgende er unike for tilfeller der rom ikke skal lages
 			 */
 			Room[] rooms = new Room[model.getRooms().size()];
+			int teller = 0;
+			for (Room r : model.getRooms()) {
+				rooms[teller] = r;
+				teller++;
+			}
+			
 			for (int i = 0; i < rooms.length; i++) {
 				rooms[i] = model.getRooms().get(i);
 			}
+			
 			final JComboBox roomsList = new JComboBox(rooms);
-			roomsList.setModel(new ComboBoxRenderer());
+			roomsList.setModel(new ComboBoxRenderer(rooms));
 			header.setText("New Sensor");
+			
 			
 			roomsList.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if (roomsList.getSelectedIndex() == 0) {
-						//popp opp nytt gui for å mekke nytt rom
-						//legg til rom i lista
+						frame.dispose();
+						installSensor(true);
 					}
 				}
 			});
@@ -280,7 +288,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 			//setter bounds på komponentene
 			save.setBounds(LEFT_SPACE, SMALL_WINDOW_HEIGHT - TOP_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 			cancel.setBounds(LEFT_SPACE + DEFAULT_SPACE + BUTTON_WIDTH, SMALL_WINDOW_HEIGHT-TOP_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
-			roomsList.setBounds(LEFT_SPACE + DEFAULT_SPACE + LABEL_WIDTH, TOP_SPACE + 5*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT); //sett plassering til romma
+			roomsList.setBounds(LEFT_SPACE + DEFAULT_SPACE + LABEL_WIDTH, TOP_SPACE + 5*DEFAULT_SPACE, 2*LABEL_WIDTH, LABEL_HEIGHT); //sett plassering til romma
 			chooseRoom.setBounds(LEFT_SPACE, TOP_SPACE + 5*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 			
 			//legger til elementene i panel

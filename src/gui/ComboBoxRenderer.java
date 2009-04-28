@@ -14,6 +14,10 @@ public class ComboBoxRenderer implements ComboBoxModel {
 	
 	private ArrayList<ListDataListener> listeners = new ArrayList<ListDataListener>();
 	
+	public ComboBoxRenderer(Room[] rooms) {
+		this.rooms = rooms;
+	}
+	
 	public Object getSelectedItem() {
 		if (selectedIndex == -1) return null;
 		return getElementAt(selectedIndex);
