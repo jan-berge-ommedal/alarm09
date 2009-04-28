@@ -229,13 +229,13 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	 * Kalles når en sensor skal innstalleres og lukker vinduet samt åpner vinduet for sensorinnstallering
 	 */
 	public void sensorAttributes(boolean install, Model model) {
-		
 		if (install) { //ny sensor skal installeres
 			Room[] rooms = new Room[model.getRooms().size()];
 			for (int i = 0; i < rooms.length; i++) {
 				rooms[i] = model.getRooms().get(i);
 			}
 			JComboBox roomsList = new JComboBox(rooms);
+			roomsList.setModel(new ComboBoxRenderer());
 			
 			//oppretter frame etc
 			final JFrame frame = new JFrame("Sensor attributes");
@@ -260,7 +260,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 			
 			JLabel chooseRoom = new JLabel("Choose room:");
 			JButton save = new JButton("Save");
-			save.addActionListener(new SensorAttributesListener(frame, this.mec));
+			save.addActionListener(new SensorAttributesListener(frame, this.mec, roomsList));
 			JButton cancel = new JButton("Return");
 			cancel.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -534,40 +534,43 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		}
 	}
 	
-	class SensorAttributesListener implements ActionListener{
+	/**
+	 * indre klasse som tar for seg funksjonalitet rundt install sensor
+	 * @author Olannon
+	 *
+	 */
+	class SensorAttributesListener implements ActionListener {
 		private ModelEditControll mec;
 		private JFrame frame;
+		private Room room;
 		
-		public SensorAttributesListener(JFrame frame, ModelEditControll mec) {
+		public SensorAttributesListener(JFrame frame, ModelEditControll mec, JComboBox roomsList) {
 			this.frame = frame;
 			this.mec = mec; 
+			if (roomsList.getSelectedIndex() != -1 ) { //et rom er valgt
+				this.room = (Room)roomsList.getSelectedItem();
+			}
+			else {
+				this.room = null;
+			}
 		}
 		
 		public void actionPerformed(ActionEvent e) {
-			Room room = null;
-		
-			boolean didCreateRoom = false;
 			try {
-				//mekk et rom
-			
+				//lagre sensor
 			}
 			catch (NumberFormatException nfe) {
 				sensorAttributeError(true);
 			}catch (NullPointerException npe) {
 				sensorAttributeError(false); 
 			}
-			if(didCreateRoom){
-				Sensor sensor;
-				try {
-					sensor = new Sensor(this.mec, room);
-					room.addSensor(sensor);
-					this.frame.setVisible(false);
-					if (sensor.getRoom() != null) {
-						this.mec.getModel().addRoom(room);
-					}
-				} catch (IOException e1) {
-					System.err.println("Could not create Sensor due to an IO-error");
-				}
+			Sensor sensor;
+			try {
+				sensor = new Sensor(this.mec, room);
+				room.addSensor(sensor);
+				this.frame.dispose();
+			} catch (IOException e1) {
+				System.err.println("Could not create Sensor due to an IO-error");
 			}
 		}
 	}
