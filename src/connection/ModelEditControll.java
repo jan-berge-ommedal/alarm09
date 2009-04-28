@@ -20,13 +20,8 @@ public abstract class ModelEditControll extends AbstractPropertyChangeBean {
 	public static final String PC_MODELCHANGE = "MODELCHANGE";
 	protected Model model;
 	
-	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-	private ConnectionStatusWrapper connectionStatusWrapper;
-	
-	public ModelEditControll(ConnectionStatusWrapper connectionStatusWrapper) {
-		this.connectionStatusWrapper = connectionStatusWrapper;
-	}
-	
+	protected ConnectionStatusWrapper connectionWrapper = new ConnectionStatusWrapper(ConnectionStatus.DISCONNECTED);
+
 	/**
 	 * This method tests all sensors 
 	 * @return a boolean that is false when some of the sensors doesn't pass the test
@@ -70,7 +65,7 @@ public abstract class ModelEditControll extends AbstractPropertyChangeBean {
 	}
 	
 	public ConnectionStatusWrapper getConnectionStatusWrapper(){
-		return connectionStatusWrapper;
+		return connectionWrapper;
 	}
 	
 

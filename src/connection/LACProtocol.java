@@ -176,6 +176,12 @@ public class LACProtocol {
 		// TODO Auto-generated method stub
 		
 	}
+
+	public static int insertRoom(Connection connection, int roomNr,
+			String roomType, String roomInfo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 	
 

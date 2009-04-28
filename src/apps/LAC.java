@@ -281,17 +281,25 @@ public class LAC extends ModelEditControll{
 	@Override
 	public Sensor insertSensor(int roomID, boolean alarmState, int batteyStatus)
 			throws IOException {
-		// TODO Auto-generated method stub
+		Room r = null;
+		for(Room room : this.getModel().getRooms()){
+			
+		}
+		if(r==null)throw new IOException("Could not find room");
 		return null;
 	}
 
 	
 
 	@Override
-	public Room insertRoom(int modelID, int roomNr, String roomType,
-			String roomInfo) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+	public Room insertRoom(int modelID, int roomNr, String roomType,String roomInfo) throws IOException {
+		if(modelID!=this.getModel().getID())throw new IOException("Error");
+		
+		int receiveID = LACProtocol.insertRoom(connection, roomNr,roomType,roomInfo);
+		Room r = new Room(receiveID,romNR,roomType,roomInfo,this.getModel());
+		
+		
+		return r;
 	}
 
 	@Override
