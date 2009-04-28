@@ -26,9 +26,9 @@ import apps.LAC;
  *
  */
 
-public class Sensor {
+public class Sensor extends AbstractPropertyChangeBean{
 	
-	public static final String PC_SENSORADDED = "SENSORSADDED";
+	public static final String PC_EVENTADDED = "EVENT_ADDED";
 	
 	/* START DATAFIELDS */
 	private int id;
@@ -38,7 +38,6 @@ public class Sensor {
 	/* END DATAFIELDS */
 	
 	private ArrayList<Event> events = new ArrayList<Event>();
-	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
 	private Room room;
 	
@@ -63,16 +62,16 @@ public class Sensor {
 		this.installationDate=installationDate;
 		this.room=r;
 		if(startSensor){
-			addEvent(new Event(computeNextEventID(), Event.EventType.STARTUP,LAC.getTime(),this));	
+			addEvent(new Event(Event.EventType.STARTUP,this));	
 			Thread t = new Thread(){
 				/**
 		 		* A thread that decreases the remaining batterytime
 				*/
 				public void run(){
 					while(true){
-						if(getBattery()>0)setBattery(getBattery()-1);
+						if(getBattery()>0)setBattery(getBattery()-5);
 						try {
-							Thread.currentThread().sleep(1000);
+							Thread.currentThread().sleep(5000);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
@@ -83,17 +82,6 @@ public class Sensor {
 		}
 	}
 	
-	/**
-	 * This method is used when new events is created to compute the next available ID.  
-	 * @return The next available ID for events
-	 */
-	private int computeNextEventID(){
-		int i=0;
-		for(Event e: events){
-			if(e.getID()>=i)i=e.getID()+1;
-		}
-		return i;
-	}
 	
 	
 	/**
@@ -116,11 +104,12 @@ public class Sensor {
 	 * This method is used when the sensor is replaced
 	 * 
 	 * @param installationDate a Timestamp representing when the replacement was performed
+	 * @param notifyListeners true if listeners should be notified
 	 */
-	public void setInstallationDate(Timestamp installationDate) {
+	public void setInstallationDate(Timestamp installationDate, boolean notifyListeners) {
 		Timestamp oldValue = this.installationDate;	
 		this.installationDate = installationDate;
-		pcs.firePropertyChange("INSTALLATIONDATE", oldValue, installationDate);
+		if(notifyListeners)pcs.firePropertyChange("INSTALLATIONDATE", oldValue, installationDate);
 	}
 	/**
 	 * 
@@ -128,7 +117,10 @@ public class Sensor {
 	 */
 	public Boolean isAlarmState() {
 		return alarmState;
+		
 	}
+	
+	
 	/**
 	 * 
 	 * 
@@ -176,7 +168,7 @@ public class Sensor {
 	
 	public void addEvent(Event event) {
 		this.events.add(event);
-		pcs.firePropertyChange("PC_EVENTADDED", null, event);
+		pcs.firePropertyChange(PC_EVENTADDED, null, event);
 	}
 	
 	/**
@@ -194,10 +186,8 @@ public class Sensor {
 	 * @throws IOException 
 	 */
 	public void replaceBattery(ModelEditControll mec) throws IOException {
+		setBattery(100);
 		this.addEvent(mec.insertEvent(this.getRoom().getID(),this.getID(),Event.EventType.BATTERYREPLACEMENT));
-		int oldValue = this.battery;
-		this.battery=100;
-		pcs.firePropertyChange("SENSORS", oldValue, this.battery);
 	}
 	
 	
@@ -244,14 +234,6 @@ public class Sensor {
 		return booleanResult;
 	}
 	
-	/**
-	 * Adds the specified PropertyChangeListener listener to receive change-events from this sensor.
-	 *  
-	 * @param listener the listener
-	 */
-	public void addPropertyChangeListener(PropertyChangeListener listener){
-		pcs.addPropertyChangeListener(listener);
-	}
 
 	public Room getRoom() {
 		return room;
@@ -273,10 +255,15 @@ public class Sensor {
 		pcs.firePropertyChange("EVENTS", oldValue, 0);
 	}
 
+	/**
+	 * 
+	 * 	@param battery
+	 */
+	
 	public void setBattery(int battery) {
 		int oldValue = this.battery;
 		this.battery=battery;
-		pcs.firePropertyChange("SENSORS", oldValue, this.battery);
+		pcs.firePropertyChange("BATTERY", oldValue, this.battery);
 	}
 }
  

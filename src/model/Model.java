@@ -21,8 +21,10 @@ import apps.LAC;
  *
  */
 
-public class Model implements ListModel, PropertyChangeListener {
+public class Model extends AbstractPropertyChangeBean{
  
+	private static final String PC_ROOMADDED = null;
+	private static final String PC_ROOMREMOVED = null;
 	/* START DATAFIELDS */
 	private int id;
 	private String adress = "<adress>";
@@ -44,6 +46,11 @@ public class Model implements ListModel, PropertyChangeListener {
 		return id;
 	}
 
+	/**
+	 * 
+	 * @param id
+	 */
+	
 	public void setID(int id) {
 		int oldValue = this.id;
 		this.id = id;
@@ -53,6 +60,11 @@ public class Model implements ListModel, PropertyChangeListener {
 	public String getAdresse() {
 		return adress;
 	}
+	
+	/**
+	 * 
+	 * @param adresse
+	 */
 
 	public void setAdresse(String adresse) {
 		String oldValue = this.adress;
@@ -61,14 +73,27 @@ public class Model implements ListModel, PropertyChangeListener {
 	}
 	
 	
-	public void addRoom(Room r){
-		r.addPropertyChangeListener(this);
-		rooms.add(r);
+	/**
+	 * 
+	 * @param room
+	 */
+	
+	
+	public void addRoom(Room room){
+		// TODO SJEKK AT DENNE FUNKER
+		room.addPropertyChangeListener(this);
+		rooms.add(room);
+		pcs.firePropertyChange(PC_ROOMADDED, null, room);
 	}
 	
-	public void removeRoom(Room r){
-		r.removePropertyChangeListener(this);
-		rooms.remove(this);
+	/**
+	 * 
+	 * @param room
+	 */
+	
+	public void removeRoom(Room room){
+		room.removePropertyChangeListener(this);
+		if(rooms.remove(room))pcs.firePropertyChange(PC_ROOMREMOVED, null, room);
 	}
 
 
@@ -99,54 +124,7 @@ public class Model implements ListModel, PropertyChangeListener {
 		
 	}
 
-	// @Override
-	public void propertyChange(PropertyChangeEvent e) {
-		for(PropertyChangeListener pcl : listeners){
-			pcl.propertyChange(e);
-		}
-		System.out.println("Change in model");
-		
-	}
 
-	public Sensor[] getSensors() {
-		ArrayList<Sensor> list = new ArrayList<Sensor>();
-		for(Room r : getRooms()){
-			for(Sensor s : r.getSensorer()){
-				list.add(s);
-			}
-		}
-		return list.toArray(new Sensor[list.size()]);
-	}
-
-	// @Override
-	public void addListDataListener(ListDataListener l) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	// @Override
-	public Object getElementAt(int index) {
-		return generateSensorList()[index];
-	}
-
-	// @Override
-	public int getSize() {
-		return generateSensorList().length;
-	}
-	
-	private Sensor[] generateSensorList(){
-		ArrayList<Sensor> result = new ArrayList<Sensor>();
-		for(Room r : this.rooms){
-			result.addAll(r.getSensorer());
-		}
-		return result.toArray(new Sensor[result.size()]);
-	}
-
-	// @Override
-	public void removeListDataListener(ListDataListener l) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	public String toString(){
 		String result = "Model\n---------------\n";
@@ -159,24 +137,42 @@ public class Model implements ListModel, PropertyChangeListener {
 	}
 
 
-	public static void main(String[] args) {
-		Model m = new Model();
-		m.addPropertyChangeListener(new PropertyChangeListener(){
-			
-			public void propertyChange(PropertyChangeEvent evt) {
-				System.out.println(evt.getPropertyName());
-			}
-			
-		});
-		Room r = new Room(0,51,"sdf","sdfsd",m);
-		m.addRoom(r);
-		r.setRomInfo("NEW INFO");
+	 @Override
+	public void propertyChange(PropertyChangeEvent e) {
+		for(PropertyChangeListener pcl : listeners){
+			pcl.propertyChange(e);
+		}
 		
 		
 	}
+	
 
+	public Sensor[] getSensors() {
+		ArrayList<Sensor> list = new ArrayList<Sensor>();
+		for(Room r : getRooms()){
+			for(Sensor s : r.getSensorer()){
+				list.add(s);
+			}
+		}
+		return list.toArray(new Sensor[list.size()]);
+	}
 	
-	
+	public static void main(String[] args) {
+		Model m = new Model();
+		m.addPropertyChangeListener(new PropertyChangeListener(){
+
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				System.out.println(evt.getSource());
+			}
+			
+		});
+		Room r = new Room(0,53,"sdfg","swddfsg",m);
+		m.addRoom(r);
+		r.setRomInfo("sdfssdd");
+		r.setRomInfo("sdfssdd");
+		r.setRomInfo("sdfssdd2");
+	}
 }
  
 

@@ -17,9 +17,12 @@ import apps.LAC;
  *
  */
 
-public class Room {
+public class Room extends AbstractPropertyChangeBean{
 	
 	public static final String PC_SENSORADDED = "SENSOR_ADDED";
+	public static final String PC_SENSOREMOVED = "SENOR_REMOVED";
+
+	
 	
 	/* START DATAFIELDS */
 	private int id;
@@ -32,7 +35,9 @@ public class Room {
 	
 	
 	private ArrayList<Sensor> sensorer = new ArrayList<Sensor>();
-	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	
+
+
 	
 	/**
 	 *
@@ -68,6 +73,12 @@ public class Room {
 	public int getRomNR() {
 		return romNR;
 	}
+	
+	
+	/**
+	 * 
+	 * @param romNR
+	 */
 
 	public void setRomNR(int romNR) {
 		int oldValue = this.romNR;
@@ -79,6 +90,11 @@ public class Room {
 	public String getRomType() {
 		return romType;
 	}
+	
+	/**
+	 * 
+	 * @param romType
+	 */
 
 	public void setRomType(String romType) {
 		String oldValue = this.romType;
@@ -89,6 +105,11 @@ public class Room {
 	public String getRomInfo() {
 		return romInfo;
 	}
+	
+	/**
+	 * 
+	 * @param romInfo
+	 */
 
 	public void setRomInfo(String romInfo) {
 		String oldValue = this.romInfo;
@@ -103,13 +124,15 @@ public class Room {
 	
 	
 	/**
-	 * Adds the given sensor
-	 * @param sensor
+	 * 
+	 * @param notifyListeners true if listeners should be notified
 	 */
 	public void addSensor(Sensor sensor) {
+		//TODO Sjekk at denne funker
 		int oldValue = this.sensorer.size();
 		this.sensorer.add(sensor);
-		pcs.firePropertyChange("SENSORS", oldValue, sensorer.size());
+		sensor.addPropertyChangeListener(this);
+		pcs.firePropertyChange(PC_SENSORADDED, null, sensor);
 	}
 	
 	/**
@@ -118,9 +141,8 @@ public class Room {
 	 */
 	
 	public void removeSensor(Sensor sensor) {
-		int oldValue = this.sensorer.size();
-		this.sensorer.remove(sensor);
-		pcs.firePropertyChange("SENSORS", oldValue, sensorer.size());
+		sensor.removePropertyChangeListener(this);
+		if(sensorer.remove(sensor))pcs.firePropertyChange(PC_SENSOREMOVED, null, sensor);
 	}
 	
 	/**
@@ -150,9 +172,6 @@ public class Room {
 	}
 	
 
-	public void removePropertyChangeListener(PropertyChangeListener listener) {
-		pcs.removePropertyChangeListener(listener);
-	}
 	
 	
 	 

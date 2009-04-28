@@ -170,12 +170,31 @@ public class LAC extends ModelEditControll{
 	public void propertyChange(PropertyChangeEvent e) {
 		super.propertyChange(e);
 		if(e.getSource() instanceof Sensor){
-			
-			
-			
-			
-		}
-		else if(e.getSource() instanceof Room){
+			Sensor sensor = (Sensor) e.getSource();
+			if(e.getPropertyName().equals(Sensor.PC_EVENTADDED)){
+				Event event = (Event) e.getNewValue();
+				try {
+					LACProtocol.insertEvent(connection, event);
+				} catch (ConnectException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+			}else{
+				try {
+					LACProtocol.updateSensor(connection, sensor);
+				} catch (ConnectException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}			
+		}else if(e.getSource() instanceof Room){
 			Room  r = (Room)e.getSource();
 				if(e.getPropertyName().equals(Room.PC_SENSORADDED)){
 					Sensor sensor = (Sensor)e.getNewValue();
