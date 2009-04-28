@@ -55,12 +55,12 @@ public class Sensor extends AbstractPropertyChangeBean{
 	 * @param installationDate Installation-date of the sensor
 	 */
 	
-	public Sensor(int id, boolean alarm, int battery, Timestamp installationDate,Room r, boolean startSensor){
+	public Sensor(int id, boolean alarm, int battery, Timestamp installationDate,Room room, boolean startSensor){
 		this.id=id;
 		this.alarmState=alarm;
 		this.battery=battery;
 		this.installationDate=installationDate;
-		this.room=r;
+		this.room=room;
 		if(startSensor){
 			addEvent(new Event(Event.EventType.STARTUP,this));	
 			Thread t = new Thread(){
@@ -80,6 +80,7 @@ public class Sensor extends AbstractPropertyChangeBean{
 			};
 			t.start();
 		}
+		room.addSensor(this);
 	}
 	
 	

@@ -12,31 +12,32 @@ import model.Room;
 import model.Sensor;
 import model.Event.EventType;
 
+import apps.LAC;
 import apps.MAC.LACAdapter;
 
 
 public class MACProtocol {
 
-	public static void handleMSG(LACAdapter adaper, String receive) throws ConnectException, IOException {
+	public static void handleMSG(LACAdapter adapter, String receive) throws ConnectException, IOException {
 
 			try {
 				if(receive.startsWith("CHECK")){
-					adaper.resetTimeout();
-					adaper.getConnection().send("CHECK");
+					adapter.resetTimeout();
+					adapter.getConnection().send("CHECK");
 				}
 				else if(receive.startsWith("GETMODEL")){
-					adaper.getConnection().send(XmlSerializer.toXml(adaper.getModel()));
+					adapter.getConnection().send(XmlSerializer.toXml(adapter.getModel()));
 				}
 				else if(receive.substring(0, 9).equals("UPDATELAC")){
 					String[] s = receive.split(" ");
-					adaper.getModel().setAdresse(s[2]);
-					adaper.getModel().setID(Integer.parseInt(s[1]));
+					adapter.getModel().setAdresse(s[2]);
+					adapter.getModel().setID(Integer.parseInt(s[1]));
 				}
 				else if(receive.substring(0, 10).equals("UPDATEROOM")){
 					String[] s = receive.split(" ");
 					
 					Room r = null;
-					for (Room room : adaper.getModel().getRooms()) {
+					for (Room room : adapter.getModel().getRooms()) {
 						if(room.getID() == Integer.parseInt(s[1])){
 							r = room;
 							break;
@@ -50,7 +51,7 @@ public class MACProtocol {
 					String[] s = receive.split(" ");
 					boolean b = (s[2].equals("true")) ? true : false;
 					Room r = null;
-					for (Room room : adaper.getModel().getRooms()) {
+					for (Room room : adapter.getModel().getRooms()) {
 						if(room.getID() == Integer.parseInt(s[5])){
 							r = room;
 							break;
@@ -73,11 +74,14 @@ public class MACProtocol {
 					int romNr = Integer.parseInt(s[2]);
 					String romType = s[3];
 					String romInfo = s[4];
-					int modelID = adaper.getModel().getID();
+					int modelID = adapter.getModel().getID();
+
 					
-					Room r = adaper.insertRoom(modelID, romNr, romType, romInfo);
+					//Konstruktører legger nå automatisk rommet som barn av modellen
+					Room room = new Room(-1,romNr, romType, romInfo, adapter.getModel());
 					
-					adaper.getConnection().send("" + r.getID());
+					
+					adapter.getConnection().send("" + room.getID());
 					
 				}
 				else if(receive.substring(0, 12).equals("INSERTSENSOR")){
@@ -86,9 +90,15 @@ public class MACProtocol {
 					int romID = Integer.parseInt(s[1]);
 					int battery = Integer.parseInt(s[5]);
 					
-					Sensor se = adaper.insertSensor(romID, b, battery);
+					Room room = adapter.getModel().getRoom(romID);
 					
-					adaper.getConnection().send(Integer.toString(se.getID()));
+					
+					//FIXME Opprettelsestidspunkt må sendes med fra LACProtocol
+					
+					//Konstruktører legger nå automatisk sensoren som barn av rommet
+					Sensor se = new Sensor(-1, b, battery,LAC.getTime(),room,false); 
+					
+					adapter.getConnection().send(Integer.toString(se.getID()));
 
 				}
 				else if(receive.substring(0, 11).equals("INSERTEVENT")){
@@ -99,20 +109,24 @@ public class MACProtocol {
 							et = e;
 					}
 					
-					Model m = adaper.getModel();
+					Model m = adapter.getModel();
 					
-					//NBNBNBNBNB SKAFF ROMID OG SENSIOR IDDDDDD
-					Event e = adaper.insertEvent(0,0,et);
+					//FIXME sensorID må sendes fra LACsiden
+					Sensor sensor = adapter.getModel().getSensor(0);
 					
-					adaper.getConnection().send(Integer.toString(e.getID()));
+					//FIXME opprettelsestidspunkt må sendes fra LAC
+					//Eventkonstruktøren legger automatisk event til som barn av sensor
+					Event e = new Event(-1,et,LAC.getTime(),sensor);
+					
+					adapter.getConnection().send(Integer.toString(e.getID()));
 				}
 				
 			} catch (Exception e) {
 				if(receive.startsWith("INSERT")){
-					adaper.getConnection().send(Integer.toString(-1));
+					adapter.getConnection().send(Integer.toString(-1));
 				}
 				else{
-					adaper.getConnection().send("NAK");
+					adapter.getConnection().send("NAK");
 				}
 			}
 		

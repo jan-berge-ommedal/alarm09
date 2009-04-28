@@ -41,7 +41,8 @@ public class Event {
 		this.eventType = eventType;
 		this.time = LAC.getTime();
 		this.id = nextEventID++;
-		this.sensor=sensor;
+		
+		this.sensor.addEvent(this);
 	}
 	
 	public Event(int id, EventType eventType, Timestamp time,Sensor sensor) {
@@ -50,6 +51,8 @@ public class Event {
 		this.id = id;
 		this.sensor=sensor;
 		if(id>=nextEventID)nextEventID=id+1;
+		
+		this.sensor.addEvent(this);
 	}
 	
 

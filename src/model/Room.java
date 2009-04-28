@@ -56,6 +56,7 @@ public class Room extends AbstractPropertyChangeBean{
 		this.romInfo = romInfo;
 		
 		this.model=model;
+		this.model.addRoom(this);
 	}
 	
 	

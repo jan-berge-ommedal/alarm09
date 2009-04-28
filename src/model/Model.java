@@ -181,6 +181,14 @@ public class Model extends AbstractPropertyChangeBean{
 		}
 		return result;
 	}
+
+	public Room getRoom(int romID) {
+		Room result = null;
+		for(Room r : rooms){
+			if(r.getID()==romID)result=r;
+		}
+		return result;
+	}
 }
  
 
