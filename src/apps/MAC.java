@@ -210,6 +210,10 @@ public class MAC{
 			connectionWrapper.setConnectionStatus(ConnectionStatus.CONNECTED);
 			timer.start();
 		}
+		
+		public void resetTimeout(){
+			timer.restart();
+		}
 
 
 		/**

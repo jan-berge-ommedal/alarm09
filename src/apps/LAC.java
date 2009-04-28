@@ -52,6 +52,8 @@ public class LAC extends ModelEditControll{
 
 	private boolean running = true;
 	
+	private RunThread thread;
+	
 	
 	
 	private static final int STARTPORT = 700;
@@ -73,30 +75,10 @@ public class LAC extends ModelEditControll{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		run();
+		thread = new RunThread();
+		thread.start();
 	}
 
-	private void run() {
-		while(running){
-			if(!LACProtocol.connectionCheck(connection)){
-				connectionWrapper.setConnectionStatus(ConnectionStatus.DISCONNECTED);
-				try {
-					connection.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				connectWithRetry();
-			}else{
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-			
-				
-		}
-	}
 
 	private void createNewLAC() throws ConnectException, IOException {
 		connection.send("NEW"+defaultAdres);
@@ -135,7 +117,8 @@ public class LAC extends ModelEditControll{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		run();
+		thread = new RunThread();
+		thread.start();
 	}
 	
 
@@ -307,6 +290,29 @@ public class LAC extends ModelEditControll{
 
 	
 
-	
+	class RunThread extends Thread{
+		
+		public void run(){
+			while(true){
+				if(!LACProtocol.connectionCheck(connection)){
+					connectionWrapper.setConnectionStatus(ConnectionStatus.DISCONNECTED);
+					try {
+						connection.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					connectWithRetry();
+				}else{
+					try {
+						Thread.sleep(10000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+				
+					
+			}
+		}
+	}
 }
  
