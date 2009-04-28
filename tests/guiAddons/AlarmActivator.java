@@ -65,7 +65,7 @@ public class AlarmActivator extends JFrame implements Values{
 			final Sensor s = sensors[i];
 			JPanel elementPanel = new JPanel();			
 			
-			JLabel label = new JLabel("Sensor "+s.getId());
+			JLabel label = new JLabel("Sensor "+s.getID());
 			JButton alarmButton = new JButton("Start alarm");
 			alarmButton.addActionListener(new ActionListener(){
 				public void actionPerformed(ActionEvent e) {

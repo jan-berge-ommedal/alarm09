@@ -98,7 +98,7 @@ public class Sensor {
 	 * 
 	 * @return The predefined sensors' ID
 	 */
-	public int getId() {
+	public int getID() {
 		return id;
 	}
 	
@@ -182,7 +182,7 @@ public class Sensor {
 	 * @throws IOException 
 	 */
 	public void replaceBattery(ModelEditControll mec) throws IOException {
-		this.addEvent(mec.insertEvent(Event.EventType.BATTERYREPLACEMENT));
+		this.addEvent(mec.insertEvent(this.getRoom().getID(),this.getID(),Event.EventType.BATTERYREPLACEMENT));
 		int oldValue = this.battery;
 		this.battery=100;
 		pcs.firePropertyChange("SENSORS", oldValue, this.battery);

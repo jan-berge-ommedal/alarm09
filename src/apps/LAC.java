@@ -299,11 +299,13 @@ public class LAC extends ModelEditControll{
 	}
 
 	@Override
-	public Event insertEvent(EventType eventType) {
+	public Event insertEvent(int roomID, int sensorID, EventType eventType)
+			throws IOException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	
 
 	
 }

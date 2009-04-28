@@ -177,7 +177,7 @@ public class XmlSerializer {
 	}
 
 	public static String toXmlSensor(Sensor sensor) {
-		String a = Integer.toString(sensor.getId());
+		String a = Integer.toString(sensor.getID());
 		String b = (sensor.isAlarmState() ? "true" : "false");
 		String c = sensor.getInstallationDate().toString();
 		String d = Integer.toString(sensor.getBattery());
@@ -190,7 +190,7 @@ public class XmlSerializer {
 		Element main = new Element("Sensors");
 		
 		Element id = new Element("id");
-		id.appendChild(Integer.toString(s.getId()));
+		id.appendChild(Integer.toString(s.getID()));
 		Element alarmState = new Element("alarmState");
 		alarmState.appendChild((s.isAlarmState() ? "true" : "false"));
 		Element timeStamp = new Element ("timeStamp");
@@ -229,7 +229,7 @@ public class XmlSerializer {
 	}
 
 	public static String toXmlEvent(Event event) {
-		String a = Integer.toString(event.getSensor().getId());
+		String a = Integer.toString(event.getSensor().getID());
 		String b = event.getEventType().toString();
 		String c = Integer.toString(event.getSensor().getRoom().getID());
 		return " " + a + " " + b + " " + c;

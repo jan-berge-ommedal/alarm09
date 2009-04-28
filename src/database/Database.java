@@ -102,7 +102,7 @@ public class Database {
 	
 	public Sensor getEvents(Sensor s){
 		
-		int id = s.getId();
+		int id = s.getID();
 		
 		try {
 			String query = "SELECT id,eventType, time FROM Event WHERE sensorID="+id;

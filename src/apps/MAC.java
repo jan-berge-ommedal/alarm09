@@ -235,7 +235,7 @@ public class MAC{
 
 		@Override
 		public void deleteAllEvents(Sensor sensor) {
-			database.removeSensorsEvents(sensor.getId());
+			database.removeSensorsEvents(sensor.getID());
 			sensor.deleteAllEvents();
 			try {
 				MACProtocol.deleteAllEvents(thread.connection,sensor);
@@ -261,14 +261,26 @@ public class MAC{
 		@Override
 		public Room insertRoom(int modelID, int roomNr, String roomType, String roomInfo) throws IOException {
 			int roomID = database.insertRoom(modelID, roomNr, roomType, roomInfo);
-			return new Room(roomID,roomNr,roomType,roomInfo, this.getModel());
+			Room room = new Room(roomID,roomNr,roomType,roomInfo, this.getModel());
+			this.getModel().addRoom(room);
+			return room;
 		}
 
 
 		@Override
-		public Event insertEvent(EventType eventType) {
-			// TODO Auto-generated method stub
-			return null;
+		public Event insertEvent(int roomID, int sensorID, EventType eventType) throws IOException {
+			Room r = null;
+			for(Room room : model.getRooms()){
+				if(room.getID()==roomID)r = room;
+			}
+			if(r==null)throw new IOException("Could not find room");
+			Sensor s = null;
+			for(Sensor sensor : r.getSensorer()){
+				if(sensor.getID()==sensorID)s = sensor;
+			}
+			if(s==null)throw new IOException("Could not find sensor");
+			int id = database.insertEvent(sensorID,eventType);
+			return new Event(id,eventType,this.getTime(),s);
 		}
 
 

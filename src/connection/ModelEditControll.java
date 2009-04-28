@@ -101,7 +101,7 @@ public abstract class ModelEditControll implements PropertyChangeListener {
 	 * @return
 	 * @throws IOException
 	 */
-	public abstract Event insertEvent(Sensor sensor, Event.EventType eventType);
+	public abstract Event insertEvent(int roomID, int sensorID, Event.EventType eventType) throws IOException;
 
 	public abstract void deleteAllEvents(Sensor sensor);
 

@@ -56,7 +56,7 @@ public class LACProtocol {
 					if(r.getID() == Integer.parseInt(s[4])) room = r;
 				}
 				for (Sensor se : room.getSensorer()) {
-					if(se.getId() == Integer.parseInt(s[5])) sensor = se;
+					if(se.getID() == Integer.parseInt(s[5])) sensor = se;
 				}
 				sensor.addEvent(new Event(id, eventtype,installationDate, sensor));
 			}
@@ -75,7 +75,7 @@ public class LACProtocol {
 				int id = Integer.parseInt(s[1]);
 				Sensor sensor = null;
 				for (Sensor se : lac.getModel().getSensors()) {
-					if(se.getId() == id) sensor = se;
+					if(se.getID() == id) sensor = se;
 				}
 				sensor.setAlarmState((true ? s[2].equals("true"): false));
 				sensor.setInstallationDate(XmlSerializer.makeTimestamp(s[3]));
@@ -90,7 +90,7 @@ public class LACProtocol {
 					}
 				}
 				for(Sensor se : room.getSensorer()){
-					if(se.getId() == Integer.parseInt(s[1])){
+					if(se.getID() == Integer.parseInt(s[1])){
 						se.deleteAllEvents();
 					}
 				}
