@@ -276,7 +276,7 @@ public class LAC extends ModelEditControll{
 	}
 
 
-
+/*
 
 	@Override
 	public Sensor insertSensor(int roomID, boolean alarmState, int batteyStatus)
@@ -306,10 +306,15 @@ public class LAC extends ModelEditControll{
 
 	@Override
 	public Event insertEvent(int roomID, int sensorID, EventType eventType)	throws IOException {
-		// TODO Auto-generated method stub
+		
+		for()
+		LACProtocol.insertEvent(connection, roomID, sensorID, eventType);
+		
+		Event e = new Event(eventType.add)
 		return null;
 	}
 
+*/
 	@Override
 	public void close() {
 		try {
