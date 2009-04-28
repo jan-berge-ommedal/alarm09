@@ -224,7 +224,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	 */
 	 
 	/**
-	 * Kalles når en sensor skal innstalleres og lukker vinduet samt åpner vinduet for sensorinnstallering
+	 * Metode som kalles for å installere sensor
 	 */
 	public void installSensor(boolean makeRoom) {
 		/*
@@ -309,15 +309,31 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 			JLabel romtype = new JLabel("Room type:");
 			
 			//tekstfelter der attributtene settes
-			JTextField roomNr = new JTextField();
-			JTextField roomIn = new JTextField();
-			JTextField roomTy = new JTextField();
+			final JTextField roomNr = new JTextField();
+			final JTextField roomIn = new JTextField();
+			final JTextField roomTy = new JTextField();
 			
 			//knapper
 			JButton roomSave = new JButton("Save");
 			roomSave.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					//rommet skal lagres	
+					//rommet må lagres
+					Room room = null; //TODO ordentlig opprettelse av dette rommet
+					try {
+						int ronr = Integer.parseInt(roomNr.getText());
+						String roin = roomIn.getText();
+						String roty = roomTy.getText();
+						
+						room.setRomNR(ronr);
+						room.setRomInfo(roin);
+						room.setRomType(roty);
+					}
+					catch(NullPointerException npe) {
+						//npe
+					}
+					catch (NumberFormatException nfe) {
+						//nfe
+					}
 				}
 			});
 			JButton roomCancel = new JButton("Cancel");
@@ -361,7 +377,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	/**
 	 * Åpner vindu slik at rom kan editeres
 	 */
-	public void editRoom(Sensor sensor) {
+	public void editRoom(final Sensor sensor) {
 		//oppretter frame etc
 		final JFrame frame = new JFrame();
 		JPanel panel  = new JPanel();
@@ -384,18 +400,34 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		JLabel romtype = new JLabel("Room type:");
 		
 		//tekstfelter der attributtene settes
-		JTextField roomNr = new JTextField();
+		final JTextField roomNr = new JTextField();
 		roomNr.setText("" + sensor.getRoom().getRomNR());
-		JTextField roomIn = new JTextField();
+		final JTextField roomIn = new JTextField();
 		roomIn.setText(sensor.getRoom().getRomInfo());
-		JTextField roomTy = new JTextField();
+		final JTextField roomTy = new JTextField();
 		roomTy.setText(sensor.getRoom().getRomType());
 		
 		//knapper
 		JButton roomSave = new JButton("Save");
 		roomSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//rommet skal lagres	
+				try { //henter ut info fra tekstfeltene og lagrer nytt rom
+					int ronr = Integer.parseInt(roomNr.getText());
+					String roin = roomIn.getText();
+					String roty = roomTy.getText();
+					
+					sensor.getRoom().setRomInfo(roin);
+					sensor.getRoom().setRomNR(ronr);
+					sensor.getRoom().setRomType(roty);
+				}
+				catch (NullPointerException npe) {
+					//evt gi beskjed 
+					System.err.println("nullpointerex");
+				}
+				catch (NumberFormatException nfe) {
+					//evt gi beskjed
+					System.err.println("numberformatex");
+				}
 			}
 		});
 		JButton roomCancel = new JButton("Cancel");
@@ -696,7 +728,8 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	}
 	
 	/**
-	 * indre klasse som tar for seg funksjonalitet rundt install sensor
+	 * indre klasse som tar for seg funksjonalitet rundt install sensor, når save trykkes
+	 * skal denne klassen legge til sensoren slik at alt oppdateres
 	 * @author Olannon
 	 *
 	 */
@@ -719,13 +752,16 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 			}
 			else { //ingen rom er valgt
 				this.room = null;
+				System.err.println("Rom er null");
 			}
 		}
 
 		public void actionPerformed(ActionEvent e) {
 			try {
 				mec.insertSensor(this.room.getID(), false, 100);
+				System.out.println("Sensor ble lagt til logisk!"); //testlinje
 				this.frame.dispose();
+				System.out.println("Hovedvindu skal vises!"); //testlinje
 			} catch (IOException e1) {
 				System.err.println("Could not create Sensor due to an IO-error");
 			} catch (NullPointerException npe) {
