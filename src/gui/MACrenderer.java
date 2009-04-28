@@ -14,13 +14,14 @@ import model.Model;
 import model.Sensor;
 
 import connection.ModelEditControll;
+import connection.ConnectionStatusWrapper.ConnectionStatus;
 
 import apps.LAC;
 import apps.MAC.LACAdapter;
 
 /**
  * Klasse som skal lage listkomponenten til LACs som vises i MACvinduet. Hvert element
- * i listen vil være en MACrendererkomponent som essensielt er et JPanel med labels på
+ * i listen vil vï¿½re en MACrendererkomponent som essensielt er et JPanel med labels pï¿½
  * @author Olannon
  *
  */
@@ -41,7 +42,7 @@ public class MACrenderer extends DefaultListCellRenderer implements ListCellRend
 		LACAdapter adapter = (LACAdapter)object;
 		
 		/*
-		 * Initialiserer komponenten som skal returneres som et panel med riktige mål
+		 * Initialiserer komponenten som skal returneres som et panel med riktige mï¿½l
 		 */
 		JPanel panel = new JPanel();
 		panel.setBounds(LEFT_SPACE, TOP_SPACE + LABEL_HEIGHT + BUTTON_HEIGHT + 3*DEFAULT_SPACE, LIST_ELEMENT_WIDTH, LIST_ELEMENT_HEIGHT);
@@ -54,10 +55,10 @@ public class MACrenderer extends DefaultListCellRenderer implements ListCellRend
 		
 		//Lager connectionstatuspanel
 		ConnectionStatusPanel connectionStatus = new ConnectionStatusPanel(element.getConnectionStatusWrapper());
-				
+
 		
 		/*
-		 * Initialiserer og legger til de JLabelene som skal være i JPanelet
+		 * Initialiserer og legger til de JLabelene som skal vï¿½re i JPanelet
 		 */
 
 		
@@ -77,6 +78,10 @@ public class MACrenderer extends DefaultListCellRenderer implements ListCellRend
 				alarmstLabel.setBackground(((BlinkingList)list).isBlink() ? colorOn : colorOff);
 			else
 				alarmstLabel.setBackground(Color.GREEN);
+			
+			if(element.getConnectionStatusWrapper().getConnectionStatus() == ConnectionStatus.DISCONNECTED) {
+				alarmstLabel.setBackground(Color.YELLOW);
+			}
 			
 			alarmstLabel.setBounds(alarmSIZE*3, 1, LIST_ELEMENT_WIDTH, LIST_ELEMENT_HEIGHT);
 			connectionStatus.setBounds(statuspanelSIZE, 1, 2*LIST_ELEMENT_WIDTH, LIST_ELEMENT_HEIGHT);
