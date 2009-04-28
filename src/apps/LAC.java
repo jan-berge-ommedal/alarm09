@@ -228,6 +228,7 @@ public class LAC extends ModelEditControll{
 	@Override
 	public void deleteAllEvents(Sensor sensor) {
 		sensor.deleteAllEvents();
+		LACProtocol.deleteSensorEvents(sensor);
 	}
 
 	/* MODELCONTROLLER */

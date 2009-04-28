@@ -195,8 +195,7 @@ public class MAC{
 		
 		public LACAdapter(MAC mac, int id) {
 			this.mac = mac;
-			this.model=database.getLACModel(id);
-			model.addPropertyChangeListener(this);
+			this.setModel(database.getLACModel(id));
 		}
 		
 		

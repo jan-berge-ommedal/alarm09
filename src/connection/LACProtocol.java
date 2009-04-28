@@ -171,6 +171,11 @@ public class LACProtocol {
 		}
 		return id; 
 	}
+
+	public static void deleteSensorEvents(Sensor sensor) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	
 
