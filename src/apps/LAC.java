@@ -76,19 +76,18 @@ public class LAC extends ModelEditControll{
 	}
 
 	private void run() {
-		ListenThread thread = new ListenThread();
 		while(running){
 			if(!LACProtocol.connectionCheck(connection)){
+				connectionWrapper.setConnectionStatus(ConnectionStatus.DISCONNECTED);
 				try {
 					connection.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				connectionWrapper.setConnectionStatus(ConnectionStatus.DISCONNECTED);
 				connectWithRetry();
 			}else{
 				try {
-					Thread.sleep(10000);
+					Thread.sleep(1000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -135,7 +134,7 @@ public class LAC extends ModelEditControll{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		run();
 	}
 	
 
@@ -284,6 +283,14 @@ public class LAC extends ModelEditControll{
 				e.printStackTrace();
 			}
 		}
+	}
+
+
+
+
+	@Override
+	public int getNextLACID(Model model) throws IOException {
+		return LACProtocol.receiveNextModelID(connection, model.getAdresse());
 	}
 
 	

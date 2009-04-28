@@ -109,7 +109,7 @@ public class MAC{
 					int LACid = Integer.parseInt(idString.substring(2));
 					boolean found = false;
 					for (LACAdaper adapter : adapters.lacAdapters) {
-						if(adapter.getID()==LACid){
+						if(adapter.getModel().getID()==LACid){
 							if(adapter.getConnectionStatusWrapper().getConnectionStatus() == ConnectionStatus.DISCONNECTED){
 								adapter.initializeConnection(newConnection);
 								found = true;
@@ -191,22 +191,17 @@ public class MAC{
 		private MAC mac;
 		private LACAdapterThread thread;
 		
-		private int LACid;
 		
 		public LACAdaper(MAC mac, int id) {
 			this.mac = mac;
-			this.LACid=id;
+			this.model=database.getLACModel(id);
+			model.addPropertyChangeListener(this);
 		}
 		
 		
 		public void initializeConnection(Connection newConnection) {
 			thread = new LACAdapterThread(this,newConnection);
 			connectionWrapper.setConnectionStatus(ConnectionStatus.CONNECTED);
-		}
-
-
-		public int getID() {
-			return LACid;
 		}
 
 
@@ -227,33 +222,23 @@ public class MAC{
 		public Connection getConnection(){
 			return thread.getConnection();
 		}
-
-		public MAC getMAC() {
-			return mac;
-		}
-
-		public boolean hasModel() {
-			return model!=null;
-		}
 		
-		public void setModel(Model model){
-			this.model=model;
-		}
-		
+	
 	
 
 		@Override
 		public int getNextRoomID(Room room) throws IOException {
-			throw new IOException("Vet ikke hvordan dette skal gjøres enda");
+			return database.insertRoom(room.getModel().getID(), room.getRomNR(), room.getRomType(), room.getRomInfo());
 		}
 
 		@Override
 		public int getNextSensorID(Sensor sensor) throws IOException {
-			throw new IOException("Vet ikke hvordan dette skal gjøres enda");
+			return database.insertSensor(sensor.getRoom().getID(), sensor.isAlarmState(), sensor.getBattery());
 		}
 
 
 		public void propertyChange(PropertyChangeEvent arg0) {
+			
 			System.err.println("Handle This");
 		}
 
@@ -271,10 +256,10 @@ public class MAC{
 
 
 		@Override
-		public int getNextLACID(Event event) throws IOException {
-			// TODO Auto-generated method stub
-			return 0;
+		public int getNextLACID(Model model) throws IOException {
+			return database.insertLAC(model.getAdresse());
 		}
+
 
 
 
@@ -287,7 +272,7 @@ public class MAC{
 		public LACAdapterThread(LACAdaper adapter, Connection connection) {
 			this.adapter=adapter;
 			this.connection=connection;
-			this.setName("LACAdapter-"+adapter.getID());
+			this.setName("LACAdapter-"+adapter.getModel().getID());
 			start();
 		}
 		

@@ -55,11 +55,9 @@ public abstract class ModelEditControll implements PropertyChangeListener {
 	
 	public abstract int getNextRoomID(Room room) throws IOException;
 	public abstract int getNextSensorID(Sensor sensor) throws IOException;
+	public abstract int getNextLACID(Model model) throws IOException;
 
 
 	public abstract void deleteAllEvents(Sensor sensor);
-
-
-	public abstract int getNextLACID(Event event) throws IOException;
 
 }
