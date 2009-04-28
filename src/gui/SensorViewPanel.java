@@ -8,6 +8,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import model.Model;
@@ -20,7 +21,7 @@ public class SensorViewPanel implements Values {
 	 * Statisk metode som genererer et vindu med sensorlogg - dvs en liste av events
 	 * @param sensor
 	 */
-	public static void viewSensorEvents(Sensor sensor) {
+	public static void viewSensorEvents(final Sensor sensor) {
 		final JFrame frame = new JFrame("Sensor Events");
 		JPanel panel = new JPanel();
 		frame.setSize(500, 400);
@@ -29,7 +30,9 @@ public class SensorViewPanel implements Values {
 		frame.setVisible(true);
 		JButton close = new JButton("Close");
 		JButton checkSensor = new JButton("Check Sensor");
-		JButton alarm = new JButton("Stop Alarm");
+		final JButton alarm = new JButton("Stop Alarm");
+		
+		//Close action listener
 		close.addActionListener(new ActionListener() {
 
 			@Override
@@ -39,6 +42,41 @@ public class SensorViewPanel implements Values {
 
 		}
 		);
+		
+		//Check sensor listener
+		checkSensor.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {				
+				if(sensor.testSensor()) {
+					JOptionPane.showMessageDialog(frame,
+						    "Check successful.", 
+						    "Success",
+						    JOptionPane.INFORMATION_MESSAGE);
+				}
+				else {
+					JOptionPane.showMessageDialog(frame,
+						    "Check error!",
+						    "Check error!",
+						    JOptionPane.ERROR_MESSAGE);
+				}
+			}
+
+		}
+		);
+		
+		//Alarm action listener
+		alarm.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				sensor.setAlarmState(false);
+				alarm.setVisible(false);
+			}
+
+		}
+		);
+		
 		JList eventList = new JList();
 		if (sensor != null) {
 			model.Event[] events = new model.Event[sensor.getEvents().size()];
@@ -50,21 +88,25 @@ public class SensorViewPanel implements Values {
 		else {
 			System.err.println("Sensor var null, why?");
 		}
+		
+		
 		eventList.setBounds(LEFT_SPACE, TOP_SPACE, 400, 200);
 		close.setBounds(LEFT_SPACE +300, 300, BUTTON_WIDTH, BUTTON_HEIGHT);
 		checkSensor.setBounds(LEFT_SPACE + 150, 300, BUTTON_WIDTH +25, BUTTON_HEIGHT);
 		alarm.setBounds(LEFT_SPACE, 300, BUTTON_WIDTH + 25, BUTTON_HEIGHT);
 
+		
 		if(sensor != null) {
 			if(!sensor.isAlarmState()) {
 				alarm.setVisible(false);
 			}
 		}
 
+		
 		eventList.setVisible(true);
 		panel.setLayout(null);
+		
 		panel.add(eventList);
-
 		panel.add(checkSensor);
 		panel.add(alarm);
 		panel.add(close);
@@ -89,5 +131,4 @@ public class SensorViewPanel implements Values {
 	public static void main(String[] args) {
 		viewSensorEvents(new Sensor(2, true, 50, new Timestamp(0), new Room(2, 32, "Hus", "Stort",  new Model()), true));
 	}
-
 }
