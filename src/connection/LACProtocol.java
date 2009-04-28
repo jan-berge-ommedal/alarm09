@@ -123,8 +123,8 @@ public class LACProtocol {
 		return XmlSerializer.toModel(s);
 	}
 
-	public static void updateLAC(Connection connection, LAC lac) throws ConnectException, IOException {
-		connection.send("UPDATELAC" + " " + Integer.toString(lac.getModel().getID()) + " " + lac.getModel().getAdresse());
+	public static void updateLAC(Connection connection, Model model) throws ConnectException, IOException {
+		connection.send("UPDATELAC" + " " + Integer.toString(model.getModel().getID()) + " " + model.getModel().getAdresse());
 		if(connection.receive().equals("NAK")){
 			throw new IOException("Received a NAK in LACProtocol");
 		}

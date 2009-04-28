@@ -195,7 +195,7 @@ public class LAC extends ModelEditControll{
 				}
 			}			
 		}else if(e.getSource() instanceof Room){
-			Room  r = (Room)e.getSource();
+			Room  room = (Room)e.getSource();
 				if(e.getPropertyName().equals(Room.PC_SENSORADDED)){
 					Sensor sensor = (Sensor)e.getNewValue();
 					try {
@@ -205,7 +205,20 @@ public class LAC extends ModelEditControll{
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
+				}else{
+					try {
+						LACProtocol.updateRoom(connection, room);
+					} catch (ConnectException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}
+		}else if(e.getSource() instanceof Model){
+			Model model = (Model) e.getSource();
+			LACProtocol.updateLAC(connection, model);
 		}
 		
 	}
