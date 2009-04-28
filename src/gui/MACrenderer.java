@@ -65,6 +65,7 @@ public class MACrenderer extends DefaultListCellRenderer implements ListCellRend
 		if(m!=null){
 
 			JLabel adressLabel = new JLabel(""+adapter.getModel().getAdresse());
+			adressLabel.setBounds(statuspanelSIZE+statuspanelSIZE, 1, LIST_ELEMENT_WIDTH, LIST_ELEMENT_HEIGHT);
 			
 			JLabel lacIDLabel = new JLabel("ID "+(index+1));
 			lacIDLabel.setBounds(0, 0, lacIDSIZE, CELLHEIGHT);
@@ -85,17 +86,7 @@ public class MACrenderer extends DefaultListCellRenderer implements ListCellRend
 			panel.add(alarmstLabel);
 			panel.add(connectionStatus);
 				
-		} else {
-
-			JLabel LACID = new JLabel("LAC ID: "+adapter.getModel().getID());
-			LACID.setBounds(0, 0, lacIDSIZE, CELLHEIGHT);
-			ConnectionStatusPanel ConnectionStatus = new ConnectionStatusPanel(adapter.getConnectionStatusWrapper());
-			ConnectionStatus.setBounds(lacNAMESIZE, 0, 200, CELLHEIGHT);
-			
-			panel.add(LACID);
-			panel.add(ConnectionStatus);
-			
-		}
+		} 
 
 		panel.setBackground((selected ? Color.PINK : Color.WHITE));
 	
