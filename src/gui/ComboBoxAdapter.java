@@ -7,14 +7,14 @@ import javax.swing.event.ListDataListener;
 
 import model.Room;
 
-public class ComboBoxRenderer implements ComboBoxModel {
+public class ComboBoxAdapter implements ComboBoxModel {
 
 	private Room[] rooms = new Room[0];	
 	private int selectedIndex = -1;
 	
 	private ArrayList<ListDataListener> listeners = new ArrayList<ListDataListener>();
 	
-	public ComboBoxRenderer(Room[] rooms) {
+	public ComboBoxAdapter(Room[] rooms) {
 		this.rooms = rooms;
 	}
 	
@@ -60,6 +60,11 @@ public class ComboBoxRenderer implements ComboBoxModel {
 	@Override
 	public void removeListDataListener(ListDataListener arg0) {
 		listeners.remove(arg0);
+	}
+
+	public Room getSelectedRoom() {
+		if(selectedIndex<1)return null;
+		return rooms[selectedIndex-1];
 	}
 
 

@@ -68,8 +68,6 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		this.mec.addPropertyChangeListener(this);
 		this.model = mec.getModel();
 		this.initialize(false);
-		
-		
 	}
 	
 	public Model getModel() {
@@ -249,6 +247,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 			/*
 			 * Følgende er unike for tilfeller der rom ikke skal lages
 			 */
+			
 			Room[] rooms = new Room[model.getRooms().size()];
 			int teller = 0;
 			for (Room r : model.getRooms()) {
@@ -261,13 +260,14 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 			}
 			
 			final JComboBox roomsList = new JComboBox(rooms);
-			roomsList.setModel(new ComboBoxRenderer(rooms));
+			ComboBoxAdapter cba = new ComboBoxAdapter(rooms);
+			roomsList.setModel(cba);
 			header.setText("New Sensor");
 			
 			
 			roomsList.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					if (roomsList.getSelectedIndex() == 0) {
+					if (roomsList.getSelectedIndex() == 0) { //skal lages et nytt rom
 						frame.dispose();
 						installSensor(true);
 					}
@@ -276,7 +276,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 				
 			JLabel chooseRoom = new JLabel("Choose room:");
 			JButton save = new JButton("Save");
-			save.addActionListener(new SensorAttributesListener(frame, this.mec, roomsList));
+			save.addActionListener(new SensorAttributesListener(frame, this.mec, cba));
 			JButton cancel = new JButton("Return");
 			cancel.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -317,23 +317,23 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 			JButton roomSave = new JButton("Save");
 			roomSave.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					//rommet må lagres
-					Room room = null; //TODO ordentlig opprettelse av dette rommet
 					try {
 						int ronr = Integer.parseInt(roomNr.getText());
 						String roin = roomIn.getText();
 						String roty = roomTy.getText();
 						
-						room.setRomNR(ronr);
-						room.setRomInfo(roin);
-						room.setRomType(roty);
+						Room r = mec.insertRoom(model.getID(), ronr, roty, roin);
+						Sensor s = mec.insertSensor(r.getID(), false, 100);
 					}
 					catch(NullPointerException npe) {
 						//npe
-					}
-					catch (NumberFormatException nfe) {
+					} catch (NumberFormatException nfe) {
 						//nfe
+					} catch (IOException LOLio) {
+						//ioe
 					}
+	
+					
 				}
 			});
 			JButton roomCancel = new JButton("Cancel");
@@ -737,6 +737,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		private ModelEditControll mec;
 		private JFrame frame;
 		private Room room;
+		private ComboBoxAdapter cba;
 		
 		/**
 		 * konstruktør for saveknappen ved install sensor
@@ -744,21 +745,16 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		 * @param mec
 		 * @param roomsList
 		 */
-		public SensorAttributesListener(JFrame frame, ModelEditControll mec, JComboBox roomsList) {
+		public SensorAttributesListener(JFrame frame, ModelEditControll mec, ComboBoxAdapter cba) {
 			this.frame = frame;
 			this.mec = mec; 
-			if (roomsList.getSelectedIndex() != -1 ) { //et rom er valgt
-				this.room = (Room)roomsList.getSelectedItem();
-			}
-			else { //ingen rom er valgt
-				this.room = null;
-				System.err.println("Rom er null");
-			}
+			this.cba = cba;
 		}
 
 		public void actionPerformed(ActionEvent e) {
 			try {
-				mec.insertSensor(this.room.getID(), false, 100);
+				Room r = cba.getSelectedRoom();
+				mec.insertSensor(r.getID(), false, 100);
 				System.out.println("Sensor ble lagt til logisk!"); //testlinje
 				this.frame.dispose();
 				System.out.println("Hovedvindu skal vises!"); //testlinje
@@ -773,8 +769,12 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		this.frame.dispose();
-		model = mec.getModel();
-		initialize(true);
+		System.out.println("Gui received change");
+		if(evt.getSource() instanceof ModelEditControll){
+			model = mec.getModel();			
+			// Burde muligens gjøres annerledes
+			this.frame.dispose();
+			initialize(true);
+		}
 	}
 }

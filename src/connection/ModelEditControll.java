@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 
 import connection.ConnectionStatusWrapper.ConnectionStatus;
 
+import model.AbstractPropertyChangeBean;
 import model.Event;
 import model.Model;
 import model.Room;
@@ -15,12 +16,16 @@ import model.Sensor;
 
 
 
-public abstract class ModelEditControll implements PropertyChangeListener {
+public abstract class ModelEditControll extends AbstractPropertyChangeBean {
 	public static final String PC_MODELCHANGE = "MODELCHANGE";
 	protected Model model;
-	protected ConnectionStatusWrapper connectionWrapper = new ConnectionStatusWrapper(ConnectionStatus.DISCONNECTED);
 	
 	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	private ConnectionStatusWrapper connectionStatusWrapper;
+	
+	public ModelEditControll(ConnectionStatusWrapper connectionStatusWrapper) {
+		this.connectionStatusWrapper = connectionStatusWrapper;
+	}
 	
 	/**
 	 * This method tests all sensors 
@@ -65,7 +70,7 @@ public abstract class ModelEditControll implements PropertyChangeListener {
 	}
 	
 	public ConnectionStatusWrapper getConnectionStatusWrapper(){
-		return connectionWrapper;
+		return connectionStatusWrapper;
 	}
 	
 
@@ -119,20 +124,7 @@ public abstract class ModelEditControll implements PropertyChangeListener {
 
 	public abstract void deleteAllEvents(Sensor sensor);
 
-	public void addPropertyChangeListener(PropertyChangeListener listener){
-		pcs.addPropertyChangeListener(listener);
-	}
-	public void removePropertyChangeListener(PropertyChangeListener listener){
-		pcs.removePropertyChangeListener(listener);
-	}
 	
-	public void propertyChange(PropertyChangeEvent e) {
-		for(PropertyChangeListener listener : pcs.getPropertyChangeListeners()){
-			listener.propertyChange(e);
-		}
-	}
-
-
 	public abstract void close();
 
 }
