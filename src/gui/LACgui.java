@@ -57,6 +57,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	private JButton changeBattery;
 	private ModelEditControll mec;
 	private JButton viewSensor;
+	private JButton editRoom;
 	
 	/*
 	 * Her følger diverse konstruktører som alle kaller initialize på et senere tidspunkt
@@ -127,6 +128,10 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		changeBattery.addActionListener(this);
 		changeBattery.setMargin(asdf);
 		changeBattery.setVisible(true);
+		editRoom = new JButton("Edit Room");
+		editRoom.addActionListener(this);
+		editRoom.setMargin(asdf);
+		editRoom.setVisible(true);
 		viewSensor = new JButton("View Sensor");
 		viewSensor.addActionListener(this);
 		viewSensor.setMargin(asdf);
@@ -171,6 +176,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		pane.add(replaceSensor);
 		pane.add(changeBattery);
 		pane.add(viewSensor);
+		pane.add(editRoom);
 		installSensor.setBounds(LEFT_SPACE, TOP_SPACE, BUTTON_WIDTH+3*DEFAULT_SPACE, BUTTON_HEIGHT);
 		//saveLog.setBounds(LEFT_SPACE + BUTTON_WIDTH + DEFAULT_SPACE, TOP_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		sensors.setBounds(LEFT_SPACE, TOP_SPACE + BUTTON_HEIGHT + 2*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
@@ -184,7 +190,8 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		sensorStatus.setBounds(LEFT_SPACE + 3*LIST_LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		batteryStatus.setBounds(LEFT_SPACE + 3*LIST_LABEL_WIDTH + LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		date.setBounds(LEFT_SPACE + 3*LABEL_WIDTH+2*LIST_LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
-		csp.setBounds(LEFT_SPACE + 4*BUTTON_WIDTH + 4*DEFAULT_SPACE, TOP_SPACE, 2*LABEL_WIDTH, 2*LABEL_HEIGHT);		
+		csp.setBounds(LEFT_SPACE + 4*BUTTON_WIDTH + 4*DEFAULT_SPACE, TOP_SPACE, 2*LABEL_WIDTH, 2*LABEL_HEIGHT);
+		editRoom.setBounds(LEFT_SPACE + LIST_WIDTH - BUTTON_WIDTH, 700 - TOP_SPACE - 4*BUTTON_HEIGHT - 3*DEFAULT_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		
 		/*
 		 * Initialiserer JListen
@@ -219,7 +226,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	/**
 	 * Kalles når en sensor skal innstalleres og lukker vinduet samt åpner vinduet for sensorinnstallering
 	 */
-	public void sensorAttributes(boolean makeRoom) {
+	public void installSensor(boolean makeRoom) {
 		/*
 		 * Felles for metoden uavhengig av makeRoom
 		 */
@@ -309,7 +316,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 			roomCancel.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					frame.dispose();
-					sensorAttributes(false);
+					installSensor(false);
 				}
 			});
 			
@@ -340,6 +347,81 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 			
 			panel.add(header);
 		}
+		frame.repaint();
+	}
+	
+	/**
+	 * Åpner vindu slik at rom kan editeres
+	 */
+	public void editRoom() {
+		//oppretter frame etc
+		final JFrame frame = new JFrame("New Sensor");
+		JPanel panel  = new JPanel();
+		panel.setLayout(null);
+		
+		//pakker frame etc
+		frame.setSize(400, 400);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.setContentPane(panel);
+		frame.setVisible(true);
+		
+		JLabel header = new JLabel();
+		header.setBounds(2*LEFT_SPACE, TOP_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
+		header.setText("New Room");
+		frame.setTitle("New Room");
+		
+		//labels for tekstfeltene der attributtene settes
+		JLabel romnr = new JLabel("Room number:");
+		JLabel rominfo = new JLabel("Room info:");
+		JLabel romtype = new JLabel("Room type:");
+		
+		//tekstfelter der attributtene settes
+		JTextField roomNr = new JTextField();
+		JTextField roomIn = new JTextField();
+		JTextField roomTy = new JTextField();
+		
+		//knapper
+		JButton roomSave = new JButton("Save");
+		roomSave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//rommet skal lagres	
+			}
+		});
+		JButton roomCancel = new JButton("Cancel");
+		roomCancel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				frame.dispose();
+				installSensor(false);
+			}
+		});
+		
+		//plassering
+		romnr.setBounds(LEFT_SPACE, TOP_SPACE + LABEL_HEIGHT + 2*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
+		roomNr.setBounds(LEFT_SPACE + LABEL_WIDTH + DEFAULT_SPACE, TOP_SPACE + LABEL_HEIGHT + 2*DEFAULT_SPACE, TEXTFIELD_LENGTH, LABEL_HEIGHT);
+		
+		rominfo.setBounds(LEFT_SPACE, TOP_SPACE + 2*LABEL_HEIGHT + 3*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
+		roomIn.setBounds(LEFT_SPACE + LABEL_WIDTH + DEFAULT_SPACE, TOP_SPACE + 2*LABEL_HEIGHT + 3*DEFAULT_SPACE, TEXTFIELD_LENGTH, LABEL_HEIGHT);
+		
+		romtype.setBounds(LEFT_SPACE, TOP_SPACE + 3*LABEL_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
+		roomTy.setBounds(LEFT_SPACE + LABEL_WIDTH + DEFAULT_SPACE, TOP_SPACE + 3*LABEL_HEIGHT + 4*DEFAULT_SPACE, TEXTFIELD_LENGTH, LABEL_HEIGHT);
+		
+		roomSave.setBounds(LEFT_SPACE, SMALL_WINDOW_HEIGHT - TOP_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
+		roomCancel.setBounds(LEFT_SPACE + DEFAULT_SPACE + BUTTON_WIDTH, SMALL_WINDOW_HEIGHT-TOP_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
+		
+		//legger til elementene i panelet
+		panel.add(romnr);
+		panel.add(rominfo);
+		panel.add(romtype);
+		
+		panel.add(roomNr);
+		panel.add(roomIn);
+		panel.add(roomTy);
+		
+		panel.add(roomSave);
+		panel.add(roomCancel);
+		
+		panel.add(header);
+		
 		frame.repaint();
 	}
 	
@@ -549,7 +631,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 			logSaved(); //TODO skulle vi lagt inn mulighet for feilmelding dersom loggen ikke lagres?
 		}
 		else if (evt.getSource() == installSensor) {
-			sensorAttributes(false);
+			installSensor(false);
 		}
 		else if (evt.getSource() == checkSensors) {
 			if (this.mec != null && this.sensorList.getModel().getSize() > 0) {
@@ -590,6 +672,14 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 				SensorViewPanel.viewSensorEvents((Sensor)sensorList.getSelectedValue());
 			}
 			else { //liste har ikke selected item
+				noElementSelected();
+			}
+		}
+		else if (evt.getSource() == editRoom) {
+			if (this.sensorList.getSelectedIndex() != -1) { //sjekk om jlist har selected item
+				editRoom();
+			}
+			else {
 				noElementSelected();
 			}
 		}
