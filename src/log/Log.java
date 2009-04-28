@@ -15,7 +15,7 @@ public class Log {
 		if(mac){
 			try{
 				// Create file 
-				FileWriter fstream = new FileWriter("Log/Maclog-" + dato.getDate() + "." + dato.getMonth() + "-" + dato.getHours() + dato.getMinutes() + ".log");
+				FileWriter fstream = new FileWriter("Log/MAC-" + dato.getDate() + "." + dato.getMonth() + "-" + dato.getHours() + dato.getMinutes() + ".log");
 				BufferedWriter out = new BufferedWriter(fstream);
 				out.write(model.toString());
 				JOptionPane.showMessageDialog(new JFrame(), 
@@ -36,7 +36,7 @@ public class Log {
 		else {
 			try{
 				// Create file 
-				FileWriter fstream = new FileWriter("Log/Laclog-" + dato.getDate() + "." + dato.getMonth() + "-" + dato.getHours() + dato.getMinutes() + ".log");
+				FileWriter fstream = new FileWriter("Log/LAC-" + dato.getDate() + "." + dato.getMonth() + "-" + dato.getHours() + dato.getMinutes() + ".log");
 				BufferedWriter out = new BufferedWriter(fstream);
 				out.write(model.toString());
 				JOptionPane.showMessageDialog(new JFrame(), 
