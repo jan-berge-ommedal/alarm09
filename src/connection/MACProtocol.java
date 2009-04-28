@@ -60,7 +60,7 @@ public class MACProtocol {
 					}
 					Sensor se = null;
 					for (Sensor sensor : r.getSensorer()) {
-						if(sensor.getId() == Integer.parseInt(s[1])){
+						if(sensor.getID() == Integer.parseInt(s[1])){
 							se = sensor;
 							break;
 						}
@@ -90,7 +90,7 @@ public class MACProtocol {
 					
 					Sensor se = adaper.insertSensor(romID, b, battery);
 					
-					adaper.getConnection().send(Integer.toString(se.getId()));
+					adaper.getConnection().send(Integer.toString(se.getID()));
 
 				}
 				else if(receive.substring(0, 11).equals("INSERTEVENT")){
@@ -100,7 +100,7 @@ public class MACProtocol {
 						if(s[2].equals(e.toString()))
 							et = e;
 					}
-					Event e = adaper.insertEvent(et);
+					Event e = adaper.insertEvent();
 					
 					adaper.getConnection().send(Integer.toString(e.getID()));
 				}
@@ -124,7 +124,7 @@ public class MACProtocol {
 	}
 	
 	public static void newSensor(Sensor s, Connection c) throws IOException{
-		String st = "NEWSENSOR" + " " + s.getId() + " " + s.isAlarmState() + " " + s.getInstallationDate().toString() + " " + s.getBattery() + " " + s.getRoom().getID();
+		String st = "NEWSENSOR" + " " + s.getID() + " " + s.isAlarmState() + " " + s.getInstallationDate().toString() + " " + s.getBattery() + " " + s.getRoom().getID();
 		c.send(st);
 		if(c.receive().equals("NAK")){
 			throw new IOException("Received a NAK in MACProtocol");
@@ -132,7 +132,7 @@ public class MACProtocol {
 	}
 	
 	public static void newEvent(Event e, Connection c) throws IOException{
-		String s = "NEWEVENT" + " " + e.getID() + " " + e.getEventType().toString() + " " + e.getTime().toString() + " " +  e.getSensor().getRoom().getID() + " " + e.getSensor().getId();
+		String s = "NEWEVENT" + " " + e.getID() + " " + e.getEventType().toString() + " " + e.getTime().toString() + " " +  e.getSensor().getRoom().getID() + " " + e.getSensor().getID();
 		c.send(s);
 		if(c.receive().equals("NAK")){
 			throw new IOException("Received a NAK in MACProtocol");
@@ -148,14 +148,14 @@ public class MACProtocol {
 	}
 	
 	public static void updateSensor(Sensor s, Connection c) throws IOException{
-		String st = "UPDATESENSOR" + " " + s.getId() + " " + s.isAlarmState() + " " + s.getInstallationDate().toString() + " " + s.getBattery();
+		String st = "UPDATESENSOR" + " " + s.getID() + " " + s.isAlarmState() + " " + s.getInstallationDate().toString() + " " + s.getBattery();
 		c.send(st);
 		if(c.receive().equals("NAK")){
 			throw new IOException("Received a NAK in MACProtocol");
 		}
 	}
 	public static void deleteAllEvents(Connection c, Sensor sensor) throws IOException{
-		String s = "DELETEALLEVENTS " + sensor.getId() + " " + sensor.getRoom().getID();
+		String s = "DELETEALLEVENTS " + sensor.getID() + " " + sensor.getRoom().getID();
 		c.send(s);
 		if(c.receive().equals("NAK")){
 			throw new IOException("Received a NAK in MACProtocol");
