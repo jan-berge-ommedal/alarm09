@@ -2,7 +2,10 @@ package gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -11,17 +14,22 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import model.Event;
 import model.Model;
 import model.Room;
 import model.Sensor;
+import model.Event.EventType;
 
 public class SensorViewPanel implements Values {
-
+	private static Sensor sensor = null;
+	static JList eventList;
 	/**
 	 * Statisk metode som genererer et vindu med sensorlogg - dvs en liste av events
 	 * @param sensor
 	 */
-	public static void viewSensorEvents(final Sensor sensor) {
+	public static void viewSensorEvents(Sensor sensorr) {
+		sensor = sensorr;
+		sensor.addEvent(new Event(2, EventType.ALARM, new Timestamp(0), sensor));
 		final JFrame frame = new JFrame("Sensor Events");
 		JPanel panel = new JPanel();
 		frame.setSize(500, 400);
@@ -30,7 +38,16 @@ public class SensorViewPanel implements Values {
 		frame.setVisible(true);
 		JButton close = new JButton("Close");
 		JButton checkSensor = new JButton("Check Sensor");
+		eventList = refreshlist();
 		final JButton alarm = new JButton("Stop Alarm");
+		
+		
+		sensor.addPropertyChangeListener(new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent e) {
+				eventList = refreshlist();
+				frame.repaint();
+			}
+		});
 		
 		//Close action listener
 		close.addActionListener(new ActionListener() {
@@ -71,23 +88,20 @@ public class SensorViewPanel implements Values {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				sensor.setAlarmState(false);
+				JOptionPane.showMessageDialog(frame,
+					    "Alarm stopped!",
+					    "Alarm stopped!",
+					    JOptionPane.INFORMATION_MESSAGE);
 				alarm.setVisible(false);
+				eventList = refreshlist();
+				frame.repaint();
 			}
 
 		}
 		);
 		
-		JList eventList = new JList();
-		if (sensor != null) {
-			model.Event[] events = new model.Event[sensor.getEvents().size()];
-			for (int i = 0; i < events.length; i++) {
-				events[i] = sensor.getEvents().get(i);
-			}
-			eventList.setListData(events);
-		}
-		else {
-			System.err.println("Sensor var null, why?");
-		}
+		
+
 		
 		
 		eventList.setBounds(LEFT_SPACE, TOP_SPACE, 400, 200);
@@ -130,5 +144,22 @@ public class SensorViewPanel implements Values {
 	 */
 	public static void main(String[] args) {
 		viewSensorEvents(new Sensor(2, true, 50, new Timestamp(0), new Room(2, 32, "Hus", "Stort",  new Model()), true));
+	}
+	
+	private static JList refreshlist() {
+		JList temp = new JList();
+		if (sensor != null) {
+			ArrayList<Event> events = sensor.getEvents();
+			model.Event[] eventarray = new model.Event[events.size()];
+			for(int i = 0; i < events.size(); i++) {
+				eventarray[i] = events.get(i);
+			}
+			temp.setListData(eventarray);
+			return temp;
+		}
+		else {
+			System.err.println("Sensor var null, why?");
+			return temp;
+		}
 	}
 }
