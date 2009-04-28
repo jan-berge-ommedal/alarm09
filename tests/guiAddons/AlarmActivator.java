@@ -87,12 +87,11 @@ public class AlarmActivator extends JFrame implements Values{
 	this.setContentPane(pane);
 	}
 	
-	
 	public static void main(String[] args) {
 		LAC lac = new LAC(1);
 		new AlarmActivator(lac.getModel());
-		
 	}
+	
 
 
 }
