@@ -177,9 +177,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		sensorStatus.setBounds(LEFT_SPACE + 3*LIST_LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		batteryStatus.setBounds(LEFT_SPACE + 3*LIST_LABEL_WIDTH + LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		date.setBounds(LEFT_SPACE + 3*LABEL_WIDTH+2*LIST_LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
-		csp.setBounds(LEFT_SPACE + 4*BUTTON_WIDTH + 4*DEFAULT_SPACE, TOP_SPACE, 2*LABEL_WIDTH, 2*LABEL_HEIGHT);
-		
-		
+		csp.setBounds(LEFT_SPACE + 4*BUTTON_WIDTH + 4*DEFAULT_SPACE, TOP_SPACE, 2*LABEL_WIDTH, 2*LABEL_HEIGHT);		
 		
 		/*
 		 * Initialiserer JListen
@@ -248,7 +246,7 @@ public class LACgui extends JPanel implements Values, ActionListener {
 			frame.setContentPane(panel);
 			frame.setVisible(true);
 			
-			//overskrift - viser om det er ny 
+			//overskrift - viser om det er ny sensor
 			JLabel header = new JLabel();
 			if (install) {
 				header.setText("New Sensor");
@@ -347,7 +345,8 @@ public class LACgui extends JPanel implements Values, ActionListener {
 	}
 	
 	/**
-	 * Mekker gui
+	 * Lager et infovindu som sier fra dersom sensorattributtene ikke
+	 * er kompatible
 	 * @param numbers - hvis true er talla lol, hvis false nullpointer
 	 */
 	public static void sensorAttributeError(boolean numbers) {
@@ -544,6 +543,12 @@ public class LACgui extends JPanel implements Values, ActionListener {
 		private JFrame frame;
 		private Room room;
 		
+		/**
+		 * konstruktør for saveknappen ved install sensor
+		 * @param frame
+		 * @param mec
+		 * @param roomsList
+		 */
 		public SensorAttributesListener(JFrame frame, ModelEditControll mec, JComboBox roomsList) {
 			this.frame = frame;
 			this.mec = mec; 
@@ -554,16 +559,13 @@ public class LACgui extends JPanel implements Values, ActionListener {
 				this.room = null;
 			}
 		}
-		
+
 		public void actionPerformed(ActionEvent e) {
 			try {
-				mec.insertSensor(room.getID(), false, 100);
+				mec.insertSensor(this.room.getID(), false, 100);
 				this.frame.dispose();
 			} catch (IOException e1) {
 				System.err.println("Could not create Sensor due to an IO-error");
-			}
-			finally {
-				//do nada
 			}
 		}
 	}
