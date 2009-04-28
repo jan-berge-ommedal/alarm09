@@ -137,6 +137,8 @@ public class Sensor {
 	public void setAlarmState(Boolean alarmState) {
 		if(this.alarmState!=alarmState){
 			if(alarmState==null){
+				//TODO TEST SENSOR!!
+				
 				//Alarmen settes til Non Confirmed. Følgende timer setter den til true etter angitt tid 
 				Timer t = new Timer(ALARMCOUNDOWN,new ActionListener(){
 					@Override
@@ -228,7 +230,17 @@ public class Sensor {
 	 * @return a boolean that is true if battery is good and no alarm
 	 */
 	public boolean testSensor() {
-		return getBattery()>10 && !isAlarmState();
+		String result = "Sensortest for Sensor "+getID()+": ";
+		
+		boolean batteryOk = getBattery()>20;
+		if(batteryOk)result+="Low battery ";
+		if(!isAlarmState())result+="Alarm ";
+		
+		boolean booleanResult = batteryOk && !isAlarmState();
+		if(booleanResult)result+="Ok, ";
+		this.addEvent(new Event((booleanResult ? EventType.SUCCESSFULTEST : EventType.FAILEDTEST),this));
+		System.out.println(result);
+		return booleanResult;
 	}
 	
 	/**

@@ -25,6 +25,8 @@ public class Event {
 	
 	private Sensor sensor;
 	
+	private static int nextEventID = 0;
+	
 	
 	
 	/**
@@ -35,11 +37,19 @@ public class Event {
 	 * @param s
 	 */
 
-	public Event(int id, EventType eventType, Timestamp time,Sensor s) {
+	public Event(EventType eventType, Sensor sensor) {
+		this.eventType = eventType;
+		this.time = LAC.getTime();
+		this.id = nextEventID++;
+		this.sensor=sensor;
+	}
+	
+	public Event(int id, EventType eventType, Timestamp time,Sensor sensor) {
 		this.eventType = eventType;
 		this.time = time;
 		this.id = id;
 		this.sensor=sensor;
+		if(id>=nextEventID)nextEventID=id+1;
 	}
 	
 
@@ -63,7 +73,7 @@ public class Event {
 
 
 	public enum EventType{
-		FALSEALARM, ALARM, STARTUP, BATTERYREPLACEMENT, DETECTED
+		FALSEALARM, ALARM, STARTUP, BATTERYREPLACEMENT, DETECTED, SUCCESSFULTEST, FAILEDTEST
 	}
 	
 	public String toString(){
