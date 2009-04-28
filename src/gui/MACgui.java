@@ -18,7 +18,7 @@ import javax.swing.ListSelectionModel;
 import connection.ModelEditControll;
 
 import apps.MAC;
-import apps.MAC.LACAdaper;
+import apps.MAC.LACAdapter;
 
 /**
  * 
@@ -120,7 +120,7 @@ public class MACgui extends JPanel implements Values, ActionListener, PropertyCh
 		if (e.getSource() == checkMarked) {
 			if (lacList.getSelectedIndex() != -1) {
 				for (Object o : lacList.getSelectedValues()) {
-					LACAdaper adaper = (LACAdaper)o;
+					LACAdapter adaper = (LACAdapter)o;
 					if(!adaper.testSensors()){
 						checkFailed(adaper.getModel().getID(), adaper.getModel().getAdresse());
 					}

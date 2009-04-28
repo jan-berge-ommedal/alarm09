@@ -2,6 +2,7 @@ package connection;
 
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.sql.Timestamp;
 
 import connection.ConnectionStatusWrapper.ConnectionStatus;
 
@@ -53,11 +54,23 @@ public abstract class ModelEditControll implements PropertyChangeListener {
 		return connectionWrapper;
 	}
 	
-	public abstract int getNextRoomID(int modelID, String roomNr, String roomType, String roomInfo) throws IOException;
-	public abstract int getNextSensorID(int roomID, boolean alarmState, int batteyStatus) throws IOException;
-	public abstract int getNextLACID(String adress) throws IOException;
 
+	/**
+	 * Returns current time
+	 * @return The current Timestamp
+	 */
+	public static Timestamp getTime() {
+		return new Timestamp(System.currentTimeMillis());
+	}
+	
+	
+	public abstract Room insertRoom(int modelID, int roomNr, String roomType, String roomInfo) throws IOException;
+	public abstract Sensor insertSensor(int roomID, boolean alarmState, int batteyStatus) throws IOException;
+	public abstract Model insertModel(String adress) throws IOException;
+	public abstract Event insertEvent(Event.EventType eventType);
 
 	public abstract void deleteAllEvents(Sensor sensor);
+
+
 
 }

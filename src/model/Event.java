@@ -25,30 +25,10 @@ public class Event {
 	
 	private Sensor sensor;
 	
+	
+	
 	/**
-	 * USE THIS WHEN CREATING A NEW EVENT
 	 * 
-	 * @param eventType
-	 * @param time
-	 * @param s
-	 * @throws IOException 
-	 */
-
-	public Event(ModelEditControll mec, EventType eventType, Timestamp time,Sensor s) throws IOException {
-		this.eventType = eventType;
-		this.time = time;
-		this.sensor=sensor;
-		
-		
-		this.id = mec.getNextLACID(this);
-		
-	
-		
-	}
-	
-	
-	/**
-	 * USE THIS WHEN LOADING A EVENT
 	 * 
 	 * @param eventType
 	 * @param time
@@ -59,8 +39,6 @@ public class Event {
 		this.eventType = eventType;
 		this.time = time;
 		this.id = id;
-		
-	
 		this.sensor=sensor;
 	}
 	

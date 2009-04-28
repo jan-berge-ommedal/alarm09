@@ -60,56 +60,25 @@ public class Sensor {
 		this.battery=battery;
 		this.installationDate=installationDate;
 		this.room=r;
-		if(startSensor)startup();
-	}
-	
-	/**
-	 * <strong>This constructor is used to create a new sensor when a predefined ID doesn't exist</strong>  
-	 * 
-	 * @param lac The sensors' LAC
-	 * @param events  of Events
-	 * @param room The room containing the sensor
-	 * @param installationDate Installation-date of the sensor
-	 * @throws IOException 
-	 */
-	
-	public Sensor(ModelEditControll control, Room room) throws IOException{
-		alarmState=false;
-		battery=100;
-		installationDate = LAC.getTime();
-		this.room=room;
-		
-		this.id = control.getNextSensorID(this);
-		startup();
-	}
-	
-	
-	/**
-	 * A shared subroutine for constructors. It adds a startup-event.
-	 * 
-	 * @param lac
-	 * @param events
-	 * @param rom
-	 * @param installationDate
-	 */
-	private void startup() {	
-		addEvent(new Event(computeNextEventID(), Event.EventType.STARTUP,LAC.getTime(),this));	
-		Thread t = new Thread(){
-			/**
-	 		* A thread that decreases the remaining batterytime
-			*/
-			public void run(){
-				while(true){
-					if(getBattery()>0)battery=getBattery()-1;
-					try {
-						Thread.currentThread().sleep(1000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
+		if(startSensor){
+			addEvent(new Event(computeNextEventID(), Event.EventType.STARTUP,LAC.getTime(),this));	
+			Thread t = new Thread(){
+				/**
+		 		* A thread that decreases the remaining batterytime
+				*/
+				public void run(){
+					while(true){
+						if(getBattery()>0)setBattery(getBattery()-1);
+						try {
+							Thread.currentThread().sleep(1000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
 					}
 				}
-			}
-		};
-		t.start();
+			};
+			t.start();
+		}
 	}
 	
 	/**
@@ -213,9 +182,9 @@ public class Sensor {
 	 * @throws IOException 
 	 */
 	public void replaceBattery(ModelEditControll mec) throws IOException {
+		this.addEvent(mec.insertEvent(Event.EventType.BATTERYREPLACEMENT));
 		int oldValue = this.battery;
 		this.battery=100;
-		this.addEvent(new Event(mec,EventType.BATTERYREPLACEMENT,LAC.getTime(),this));
 		pcs.firePropertyChange("SENSORS", oldValue, this.battery);
 	}
 	

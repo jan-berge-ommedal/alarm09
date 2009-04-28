@@ -28,6 +28,7 @@ import model.Event;
 import model.Model;
 import model.Room;
 import model.Sensor;
+import model.Event.EventType;
 import no.ntnu.fp.net.co.Connection;
 
 /**
@@ -82,7 +83,7 @@ public class MAC{
 	
 	private void loadAdapters() {
 		for(int id : database.getIDs()){
-			adapters.add(new LACAdaper(this, id));
+			adapters.add(new LACAdapter(this, id));
 		}
 	}
 	
@@ -91,7 +92,7 @@ public class MAC{
 	}
 
 	/**
-	 * This method is used to create a new {@link LACAdaper} and add it to the MAC
+	 * This method is used to create a new {@link LACAdapter} and add it to the MAC
 	 * 
 	 */
 	private void startMAC(){
@@ -108,7 +109,7 @@ public class MAC{
 					// THE LAC REQUESTED TO LOAD MODEL FROM DB
 					int LACid = Integer.parseInt(idString.substring(2));
 					boolean found = false;
-					for (LACAdaper adapter : adapters.lacAdapters) {
+					for (LACAdapter adapter : adapters.lacAdapters) {
 						if(adapter.getModel().getID()==LACid){
 							if(adapter.getConnectionStatusWrapper().getConnectionStatus() == ConnectionStatus.DISCONNECTED){
 								adapter.initializeConnection(newConnection);
@@ -135,7 +136,7 @@ public class MAC{
 						newConnection.send(""+returnid);
 						Model m = new Model();
 						m.setID(returnid);
-						LACAdaper adapter = new LACAdaper(this,returnid);
+						LACAdapter adapter = new LACAdapter(this,returnid);
 						adapter.setModel(m);
 						adapter.initializeConnection(newConnection);
 						adapters.add(adapter);
@@ -187,12 +188,12 @@ public class MAC{
 	 * @author Jan Berge Ommedal
 	 *
 	 */
-	public class LACAdaper extends ModelEditControll{
+	public class LACAdapter extends ModelEditControll{
 		private MAC mac;
 		private LACAdapterThread thread;
 		
 		
-		public LACAdaper(MAC mac, int id) {
+		public LACAdapter(MAC mac, int id) {
 			this.mac = mac;
 			this.model=database.getLACModel(id);
 			model.addPropertyChangeListener(this);
@@ -245,25 +246,40 @@ public class MAC{
 
 
 		@Override
-		public int getNextLACID(String adress) throws IOException {
-			return database.insertLAC(adress);
+		public Sensor insertSensor(int roomID, boolean alarmState, int batteryStatus) throws IOException {
+			Room r = null;
+			for(Room room : model.getRooms()){
+				if(room.getID()==roomID)r = room;
+			}
+			if(r==null)throw new IOException("Could not find room");
+			int newSensorID = database.insertSensor(roomID, alarmState, batteryStatus);
+			return new Sensor(newSensorID,alarmState,batteryStatus,this.getTime(),r,false);
 		}
 
 
 		@Override
-		public int getNextRoomID(int modelID, String roomNr, String roomType,
+		public Model insertModel(String adress) throws IOException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+
+		@Override
+		public Room insertRoom(int modelID, int roomNr, String roomType,
 				String roomInfo) throws IOException {
 			// TODO Auto-generated method stub
-			return 0;
+			return null;
 		}
 
 
 		@Override
-		public int getNextSensorID(int roomID, boolean alarmState,
-				int batteyStatus) throws IOException {
+		public Event insertEvent(EventType eventType) {
 			// TODO Auto-generated method stub
-			return 0;
+			return null;
 		}
+
+
+	
 
 
 
@@ -272,9 +288,9 @@ public class MAC{
 	
 	class LACAdapterThread extends Thread{
 		private Connection connection;
-		private LACAdaper adapter;
+		private LACAdapter adapter;
 		
-		public LACAdapterThread(LACAdaper adapter, Connection connection) {
+		public LACAdapterThread(LACAdapter adapter, Connection connection) {
 			this.adapter=adapter;
 			this.connection=connection;
 			this.setName("LACAdapter-"+adapter.getModel().getID());
@@ -309,7 +325,7 @@ public class MAC{
 	}
 	
 	class LacAdapterList implements ListModel{
-		private ArrayList<LACAdaper> lacAdapters = new ArrayList<LACAdaper>();
+		private ArrayList<LACAdapter> lacAdapters = new ArrayList<LACAdapter>();
 		
 		private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
@@ -322,14 +338,14 @@ public class MAC{
 			pcs.addPropertyChangeListener(listener);
 		}
 
-		public void remove(LACAdaper adaper) {
+		public void remove(LACAdapter adaper) {
 			int oldValue = lacAdapters.size();
 			lacAdapters.remove(adaper);
 			pcs.firePropertyChange("LACADAPTERS", oldValue, lacAdapters.size());
 			
 		}
 
-		public void add(LACAdaper adaper) {
+		public void add(LACAdapter adaper) {
 			int oldValue = lacAdapters.size();
 			lacAdapters.add(adaper);
 			pcs.firePropertyChange("LACADAPTERS", oldValue, lacAdapters.size());

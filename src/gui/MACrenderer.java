@@ -16,7 +16,7 @@ import model.Sensor;
 import connection.ModelEditControll;
 
 import apps.LAC;
-import apps.MAC.LACAdaper;
+import apps.MAC.LACAdapter;
 
 /**
  * Klasse som skal lage listkomponenten til LACs som vises i MACvinduet. Hvert element
@@ -38,7 +38,7 @@ public class MACrenderer extends DefaultListCellRenderer implements ListCellRend
 	public Component getListCellRendererComponent(JList list, Object object,
 			int index, boolean selected, boolean hasCellFocus) {
 		
-		LACAdaper adapter = (LACAdaper)object;
+		LACAdapter adapter = (LACAdapter)object;
 		
 		/*
 		 * Initialiserer komponenten som skal returneres som et panel med riktige mål

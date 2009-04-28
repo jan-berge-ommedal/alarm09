@@ -12,12 +12,12 @@ import model.Room;
 import model.Sensor;
 import model.Event.EventType;
 
-import apps.MAC.LACAdaper;
+import apps.MAC.LACAdapter;
 
 
 public class MACProtocol {
 
-	public static void handleMSG(LACAdaper adaper, String receive) throws ConnectException, IOException {
+	public static void handleMSG(LACAdapter adaper, String receive) throws ConnectException, IOException {
 
 			try {
 				if(receive.startsWith("CHECK")){

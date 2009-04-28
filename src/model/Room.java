@@ -33,7 +33,7 @@ public class Room {
 	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	
 	/**
-	 * USE THIS WHEN CREATING ROOMS THAT EXISTS IN DATABASE
+	 *
 	 * 
 	 * @param id
 	 * @param romNR
@@ -51,27 +51,6 @@ public class Room {
 		this.model=model;
 	}
 	
-	/**
-	 * USE THIS WHEN CREATING NEW ROOMS THAT DOESNT EXISTS IN DATABASE
-	 * 
-	 * @param id
-	 * @param romNR
-	 * @param romType
-	 * @param romInfo
-	 * @param model
-	 * @throws IOException 
-	 */
-
-	public Room(ModelEditControll control, int romNR, String romType, String romInfo) throws IOException {
-		this.model = control.getModel();
-		this.romNR = romNR;
-		this.romType = romType;
-		this.romInfo = romInfo;
-		
-		
-		this.id = control.getNextRoomID(this);
-		
-	}
 	
 	/* SECTION OF SIMPLE GET & SET */
 
@@ -167,6 +146,7 @@ public class Room {
 		return s;
 		
 	}
+	
 
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		pcs.removePropertyChangeListener(listener);

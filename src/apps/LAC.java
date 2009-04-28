@@ -34,6 +34,7 @@ import model.Event;
 import model.Model;
 import model.Room;
 import model.Sensor;
+import model.Event.EventType;
 import no.ntnu.fp.net.co.Connection;
 
 /**
@@ -193,13 +194,6 @@ public class LAC extends ModelEditControll{
 
 	
 
-	/**
-	 * Returns current time
-	 * @return The current Timestamp
-	 */
-	public static Timestamp getTime() {
-		return new Timestamp(System.currentTimeMillis());
-	}
 
 	// @Override
 	public void propertyChange(PropertyChangeEvent e) {
@@ -289,11 +283,32 @@ public class LAC extends ModelEditControll{
 
 
 	@Override
-	public int getNextLACID(String adress) throws IOException {
-		return LACProtocol.receiveNextModelID(connection, adress);
+	public Sensor insertSensor(int roomID, boolean alarmState, int batteyStatus)
+			throws IOException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
-	
+	@Override
+	public Model insertModel(String adress) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Room insertRoom(int modelID, int roomNr, String roomType,
+			String roomInfo) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Event insertEvent(EventType eventType) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
 	
 }
  
