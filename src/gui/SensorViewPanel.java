@@ -21,31 +21,43 @@ import model.Sensor;
 import model.Event.EventType;
 
 public class SensorViewPanel implements Values {
-	private static Sensor sensor = null;
-	static JList eventList;
+	
+	private static Sensor sensor;
+	private static JList eventList;
+	private static JButton close;
+	private static JButton checkSensor;
+	private static JButton alarm;
+	
+	
 	/**
 	 * Statisk metode som genererer et vindu med sensorlogg - dvs en liste av events
 	 * @param sensor
 	 */
 	public static void viewSensorEvents(Sensor sensorr) {
+		
 		sensor = sensorr;
-		sensor.addEvent(new Event(2, EventType.ALARM, new Timestamp(0), sensor));
+		//sensor.addEvent(new Event(2, EventType.ALARM, new Timestamp(0), sensor));
+		
 		final JFrame frame = new JFrame("Sensor Events");
+		
 		JPanel panel = new JPanel();
+		
 		frame.setSize(500, 400);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setContentPane(panel);
 		frame.setVisible(true);
-		JButton close = new JButton("Close");
-		JButton checkSensor = new JButton("Check Sensor");
-		eventList = refreshlist();
-		final JButton alarm = new JButton("Stop Alarm");
 		
+		close = new JButton("Close");
+		checkSensor = new JButton("Check Sensor");
+		eventList = new JList();
+		alarm = new JButton("Stop Alarm");
+		
+		eventList.setListData(giveArray());
 		
 		sensor.addPropertyChangeListener(new PropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent e) {
-				eventList = refreshlist();
-				frame.repaint();
+				eventList.setListData(giveArray());
+				//eventList.repaint();
 			}
 		});
 		
@@ -88,13 +100,14 @@ public class SensorViewPanel implements Values {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				sensor.setAlarmState(false);
+				//sensor.addEvent(new Event(2, EventType.ALARM, new Timestamp(0), sensor));
 				JOptionPane.showMessageDialog(frame,
 					    "Alarm stopped!",
 					    "Alarm stopped!",
 					    JOptionPane.INFORMATION_MESSAGE);
 				alarm.setVisible(false);
-				eventList = refreshlist();
-				frame.repaint();
+				//eventList.setListData(giveArray());
+				//eventList.repaint();
 			}
 
 		}
@@ -146,20 +159,18 @@ public class SensorViewPanel implements Values {
 		viewSensorEvents(new Sensor(2, true, 50, new Timestamp(0), new Room(2, 32, "Hus", "Stort",  new Model()), true));
 	}
 	
-	private static JList refreshlist() {
-		JList temp = new JList();
+	private static model.Event[] giveArray() {
 		if (sensor != null) {
 			ArrayList<Event> events = sensor.getEvents();
 			model.Event[] eventarray = new model.Event[events.size()];
 			for(int i = 0; i < events.size(); i++) {
 				eventarray[i] = events.get(i);
 			}
-			temp.setListData(eventarray);
-			return temp;
+			return eventarray;
 		}
 		else {
 			System.err.println("Sensor var null, why?");
-			return temp;
+			return null;
 		}
 	}
 }
