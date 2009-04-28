@@ -19,6 +19,8 @@ import apps.LAC;
 
 public class Room {
 	
+	public static final String PC_SENSORADDED = "SENSOR_ADDED";
+	
 	/* START DATAFIELDS */
 	private int id;
 	private int romNR;

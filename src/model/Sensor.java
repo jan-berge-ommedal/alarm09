@@ -28,6 +28,8 @@ import apps.LAC;
 
 public class Sensor {
 	
+	public static final String PC_SENSORADDED = "SENSORSADDED";
+	
 	/* START DATAFIELDS */
 	private int id;
 	private Boolean alarmState;
@@ -173,9 +175,8 @@ public class Sensor {
 	 */
 	
 	public void addEvent(Event event) {
-		int oldValue = this.events.size();
 		this.events.add(event);
-		pcs.firePropertyChange("EVENTS", oldValue, oldValue+1);
+		pcs.firePropertyChange("PC_EVENTADDED", null, event);
 	}
 	
 	/**

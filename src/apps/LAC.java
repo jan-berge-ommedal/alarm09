@@ -169,22 +169,24 @@ public class LAC extends ModelEditControll{
 	// @Override
 	public void propertyChange(PropertyChangeEvent e) {
 		super.propertyChange(e);
-		if(e.getSource() instanceof Sensor)
-			try {
-				LACProtocol.updateSensor(connection,((Sensor)e.getSource()));
-			} catch (ConnectException e1) {
-				e1.printStackTrace();
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
+		if(e.getSource() instanceof Sensor){
+			
+			
+			
+			
+		}
 		else if(e.getSource() instanceof Room){
-			try {
-				LACProtocol.updateRoom(connection,((Room)e.getSource()));
-			} catch (ConnectException e1) {
-				e1.printStackTrace();
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
+			Room  r = (Room)e.getSource();
+				if(e.getPropertyName().equals(Room.PC_SENSORADDED)){
+					Sensor sensor = (Sensor)e.getNewValue();
+					try {
+						LACProtocol.insertSensor(connection, sensor);
+					} catch (ConnectException e1) {
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+				}
 		}
 		
 	}
@@ -214,27 +216,7 @@ public class LAC extends ModelEditControll{
 		LACProtocol.deleteSensorEvents(sensor);
 	}
 
-	/* MODELCONTROLLER */
-	public int getNextRoomID(Room room) throws IOException {
-		return LACProtocol.insertRoom(connection, room);
-	}
-
-	public int getNextSensorID(Sensor sensor) throws IOException  {
-		return LACProtocol.insertSensor(connection, sensor);
-	}
-
-	public int getNextLACID(Event event) throws IOException  {
-		return LACProtocol.insertEvent(connection, event);
-	}
-
-	public boolean hasAlarm() {
-		for (Sensor s : model.getSensors()) {
-			if(s.isAlarmState())return true;
-		}	
-		return false;
-	}
-
-
+	
 	
 
 	class ListenThread extends Thread{
@@ -281,6 +263,7 @@ public class LAC extends ModelEditControll{
 	@Override
 	public void close() {
 		try {
+			System.out.println("This LAC is closing");
 			connection.close();
 		} catch (IOException e) {
 			e.printStackTrace();
