@@ -124,7 +124,7 @@ public class LACProtocol {
 	}
 
 	public static void updateLAC(Connection connection, Model model) throws ConnectException, IOException {
-		connection.send("UPDATELAC" + " " + Integer.toString(model.getModel().getID()) + " " + model.getModel().getAdresse());
+		connection.send("UPDATELAC" + " " + Integer.toString(model.getID()) + " " + model.getAdresse());
 		if(connection.receive().equals("NAK")){
 			throw new IOException("Received a NAK in LACProtocol");
 		}
