@@ -21,6 +21,7 @@ public class MACProtocol {
 
 			try {
 				if(receive.startsWith("CHECK")){
+					adaper.resetTimeout();
 					adaper.getConnection().send("CHECK");
 				}
 				else if(receive.startsWith("GETMODEL")){
