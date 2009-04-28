@@ -175,19 +175,7 @@ public class LAC extends ModelEditControll{
 	
 	
 	
-	/**
-	 * Returns the datamodel of the LAC
-	 * @return the model
-	 */
-	public void setModel(Model m){
-		super.setModel(m);
-		gui.setModel(model);
-	}
 	
-	/**
-	 * Sets the given parameter as the datamodel of the LAC, and add
-	 * @param model the new model
-	 */
 	
 	
 	
@@ -197,6 +185,7 @@ public class LAC extends ModelEditControll{
 
 	// @Override
 	public void propertyChange(PropertyChangeEvent e) {
+		super.propertyChange(e);
 		if(e.getSource() instanceof Sensor)
 			try {
 				LACProtocol.updateSensor(connection,((Sensor)e.getSource()));

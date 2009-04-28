@@ -143,6 +143,8 @@ public class Sensor {
 			}
 			Boolean oldValue = this.alarmState;
 			this.alarmState = alarmState;
+			// TODO FIX THIS
+			this.events.add(new Event(0,EventType.ALARM,LAC.getTime(),this));
 			pcs.firePropertyChange("INSTALLATIONDATE", oldValue, alarmState);
 		}
 	}

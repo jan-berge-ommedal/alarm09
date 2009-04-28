@@ -1,5 +1,6 @@
 package connection;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
@@ -15,10 +16,11 @@ import model.Sensor;
 
 
 public abstract class ModelEditControll implements PropertyChangeListener {
+	public static final String PC_MODELCHANGE = "MODELCHANGE";
 	protected Model model;
 	protected ConnectionStatusWrapper connectionWrapper = new ConnectionStatusWrapper(ConnectionStatus.DISCONNECTED);
 	
-	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 	
 	/**
 	 * This method tests all sensors 
@@ -36,10 +38,19 @@ public abstract class ModelEditControll implements PropertyChangeListener {
 		return model;
 	}
 	
+
+	/**
+	 * Sets the given parameter as the datamodel of the LAC, and add
+	 * @param model the new model
+	 */
+	
+	
 	public void setModel(Model model){
+		Model oldValue = this.model;
 		if(this.model!=null)this.model.removePropertyChangeListener(this);
 		this.model = model;
 		if(model!=null)model.addPropertyChangeListener(this);
+		pcs.firePropertyChange(PC_MODELCHANGE, oldValue, this.model);
 	}
 	
 	/**
@@ -110,6 +121,15 @@ public abstract class ModelEditControll implements PropertyChangeListener {
 
 	public void addPropertyChangeListener(PropertyChangeListener listener){
 		pcs.addPropertyChangeListener(listener);
+	}
+	public void removePropertyChangeListener(PropertyChangeListener listener){
+		pcs.removePropertyChangeListener(listener);
+	}
+	
+	public void propertyChange(PropertyChangeEvent e) {
+		for(PropertyChangeListener listener : pcs.getPropertyChangeListeners()){
+			listener.propertyChange(e);
+		}
 	}
 
 }
