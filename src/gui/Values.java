@@ -20,6 +20,6 @@ public interface Values {
 	public static final int LIST_ELEMENT_HEIGHT = 25;
 	public static final int SMALL_WINDOW_HEIGHT = 350;
 	public static final int SMALL_WINDOW_WIDTH = 350;
-	public static final int TEXTFIELD_LENGTH = 20;
+	public static final int TEXTFIELD_LENGTH = 100;
 
 }

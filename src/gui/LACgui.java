@@ -219,46 +219,46 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	/**
 	 * Kalles når en sensor skal innstalleres og lukker vinduet samt åpner vinduet for sensorinnstallering
 	 */
-	public void sensorAttributes(boolean install, Model model) {
-		if (install) { //ny sensor skal installeres
+	public void sensorAttributes(boolean makeRoom) {
+		/*
+		 * Felles for metoden uavhengig av makeRoom
+		 */
+
+		//oppretter frame etc
+		final JFrame frame = new JFrame("New Sensor");
+		JPanel panel  = new JPanel();
+		panel.setLayout(null);
+		
+		//pakker frame etc
+		frame.setSize(400, 400);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.setContentPane(panel);
+		frame.setVisible(true);
+		
+		JLabel header = new JLabel();
+		header.setBounds(2*LEFT_SPACE, TOP_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
+		
+		if (!makeRoom) { //skal ikke lages nytt rom
+			/*
+			 * Følgende er unike for tilfeller der rom ikke skal lages
+			 */
 			Room[] rooms = new Room[model.getRooms().size()];
 			for (int i = 0; i < rooms.length; i++) {
 				rooms[i] = model.getRooms().get(i);
 			}
 			final JComboBox roomsList = new JComboBox(rooms);
 			roomsList.setModel(new ComboBoxRenderer());
+			header.setText("New Sensor");
+			
 			roomsList.addActionListener(new ActionListener() {
-
 				public void actionPerformed(ActionEvent e) {
 					if (roomsList.getSelectedIndex() == 0) {
 						//popp opp nytt gui for å mekke nytt rom
 						//legg til rom i lista
 					}
 				}
-				
 			});
-			
-			//oppretter frame etc
-			final JFrame frame = new JFrame("Sensor attributes");
-			JPanel panel  = new JPanel();
-			panel.setLayout(null);
-			
-			//pakker frame etc
-			frame.setSize(400, 400);
-			frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-			frame.setContentPane(panel);
-			frame.setVisible(true);
-			
-			//overskrift - viser om det er ny sensor
-			JLabel header = new JLabel();
-			if (install) {
-				header.setText("New Sensor");
-			}
-			else {
-				header.setText("Edit Sensor");
-			}
-			header.setBounds(2*LEFT_SPACE, TOP_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
-			
+				
 			JLabel chooseRoom = new JLabel("Choose room:");
 			JButton save = new JButton("Save");
 			save.addActionListener(new SensorAttributesListener(frame, this.mec, roomsList));
@@ -270,6 +270,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 			}
 			);
 		
+			//setter bounds på komponentene
 			save.setBounds(LEFT_SPACE, SMALL_WINDOW_HEIGHT - TOP_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 			cancel.setBounds(LEFT_SPACE + DEFAULT_SPACE + BUTTON_WIDTH, SMALL_WINDOW_HEIGHT-TOP_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 			roomsList.setBounds(LEFT_SPACE + DEFAULT_SPACE + LABEL_WIDTH, TOP_SPACE + 5*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT); //sett plassering til romma
@@ -281,8 +282,65 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 			panel.add(cancel);
 			panel.add(roomsList);
 			panel.add(chooseRoom);
-			frame.repaint();
+			
 		}
+		else { //rom skal lages
+			header.setText("New Room");
+			frame.setTitle("New Room");
+			
+			//labels for tekstfeltene der attributtene settes
+			JLabel romnr = new JLabel("Room number:");
+			JLabel rominfo = new JLabel("Room info:");
+			JLabel romtype = new JLabel("Room type:");
+			
+			//tekstfelter der attributtene settes
+			JTextField roomNr = new JTextField();
+			JTextField roomIn = new JTextField();
+			JTextField roomTy = new JTextField();
+			
+			//knapper
+			JButton roomSave = new JButton("Save");
+			roomSave.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					//rommet skal lagres	
+				}
+			});
+			JButton roomCancel = new JButton("Cancel");
+			roomCancel.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					frame.dispose();
+					sensorAttributes(false);
+				}
+			});
+			
+			//plassering
+			romnr.setBounds(LEFT_SPACE, TOP_SPACE + LABEL_HEIGHT + 2*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
+			roomNr.setBounds(LEFT_SPACE + LABEL_WIDTH + DEFAULT_SPACE, TOP_SPACE + LABEL_HEIGHT + 2*DEFAULT_SPACE, TEXTFIELD_LENGTH, LABEL_HEIGHT);
+			
+			rominfo.setBounds(LEFT_SPACE, TOP_SPACE + 2*LABEL_HEIGHT + 3*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
+			roomIn.setBounds(LEFT_SPACE + LABEL_WIDTH + DEFAULT_SPACE, TOP_SPACE + 2*LABEL_HEIGHT + 3*DEFAULT_SPACE, TEXTFIELD_LENGTH, LABEL_HEIGHT);
+			
+			romtype.setBounds(LEFT_SPACE, TOP_SPACE + 3*LABEL_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
+			roomTy.setBounds(LEFT_SPACE + LABEL_WIDTH + DEFAULT_SPACE, TOP_SPACE + 3*LABEL_HEIGHT + 4*DEFAULT_SPACE, TEXTFIELD_LENGTH, LABEL_HEIGHT);
+			
+			roomSave.setBounds(LEFT_SPACE, SMALL_WINDOW_HEIGHT - TOP_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
+			roomCancel.setBounds(LEFT_SPACE + DEFAULT_SPACE + BUTTON_WIDTH, SMALL_WINDOW_HEIGHT-TOP_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
+			
+			//legger til elementene i panelet
+			panel.add(romnr);
+			panel.add(rominfo);
+			panel.add(romtype);
+			
+			panel.add(roomNr);
+			panel.add(roomIn);
+			panel.add(roomTy);
+			
+			panel.add(roomSave);
+			panel.add(roomCancel);
+			
+			panel.add(header);
+		}
+		frame.repaint();
 	}
 	
 	/**
@@ -367,7 +425,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 			info.setText("Skriv tall i stedet for bokstaver");
 		}
 		else {
-			info.setText("Nullpointer - finner ikke sensorobjekt som info skal lagres til");
+			info.setText("Nullpointer - finner ikke romobjekt som info skal lagres til");
 		}
 		JButton y = new JButton("OK");
 		y.addActionListener(new ActionListener() {
@@ -491,7 +549,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 			logSaved(); //TODO skulle vi lagt inn mulighet for feilmelding dersom loggen ikke lagres?
 		}
 		else if (evt.getSource() == installSensor) {
-			sensorAttributes(true, this.model);
+			sensorAttributes(false);
 		}
 		else if (evt.getSource() == checkSensors) {
 			if (this.mec != null && this.sensorList.getModel().getSize() > 0) {
