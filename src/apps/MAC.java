@@ -2,6 +2,8 @@ package apps;
 
 import gui.MACgui;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -13,6 +15,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import javax.swing.ListModel;
+import javax.swing.Timer;
 import javax.swing.event.ListDataListener;
 
 import connection.ConnectionImplementation;
@@ -188,20 +191,24 @@ public class MAC{
 	 * @author Jan Berge Ommedal
 	 *
 	 */
-	public class LACAdapter extends ModelEditControll{
+	public class LACAdapter extends ModelEditControll implements ActionListener{
 		private MAC mac;
 		private LACAdapterThread thread;
+		
+		private Timer timer;
 		
 		
 		public LACAdapter(MAC mac, int id) {
 			this.mac = mac;
 			this.setModel(database.getLACModel(id));
+			timer = new Timer(20000,this);
 		}
 		
 		
 		public void initializeConnection(Connection newConnection) {
 			thread = new LACAdapterThread(this,newConnection);
 			connectionWrapper.setConnectionStatus(ConnectionStatus.CONNECTED);
+			timer.start();
 		}
 
 
@@ -210,19 +217,16 @@ public class MAC{
 		 * 
 		 */
 		public void stopAdapter(){
-			try {
-				thread.closeConnection();
-				thread.stop();
-				adapters.remove(this);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			close();
+			adapters.remove(this);
+			
 		}
+	
 		
-		public Connection getConnection(){
-			return thread.getConnection();
+		@Override
+		public void close() {
+			// Does nothing
 		}
-		
 	
 	
 
@@ -283,6 +287,31 @@ public class MAC{
 		}
 
 
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			if(arg0.getSource()==timer){
+				System.out.println("LACAdapter "+getModel().getID()+": Connection timed out");
+				connectionWrapper.setConnectionStatus(ConnectionStatus.DISCONNECTED);
+				try {
+					thread.closeConnection();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				thread.stop();
+				timer.stop();
+			}
+		}
+
+
+		public Connection getConnection() {
+			return thread.connection;
+		}
+
+
+		
+
+
 	
 
 
@@ -300,12 +329,8 @@ public class MAC{
 			this.setName("LACAdapter-"+adapter.getModel().getID());
 			start();
 		}
-		
-		public Connection getConnection() {
-			return connection;
-		}
-
-		public void closeConnection() throws IOException {
+	
+		private void closeConnection() throws IOException {
 			connection.close();
 		}
 

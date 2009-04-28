@@ -132,4 +132,7 @@ public abstract class ModelEditControll implements PropertyChangeListener {
 		}
 	}
 
+
+	public abstract void close();
+
 }

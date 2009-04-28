@@ -295,6 +295,16 @@ public class LAC extends ModelEditControll{
 		return null;
 	}
 
+	@Override
+	public void close() {
+		try {
+			connection.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.exit(0);
+	}
+
 	
 
 	
