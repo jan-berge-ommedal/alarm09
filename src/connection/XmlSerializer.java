@@ -101,7 +101,7 @@ public class XmlSerializer {
 			else if(sensorteller == 5){fem = makeTimestamp(xmls[i].substring(10));}
 			else if(sensorteller == 7){to = Integer.parseInt(xmls[i].substring(8));}
 			else if(sensorteller == 9){
-				s = new Sensor(en, seks, to,fem, aModel.getRooms().get(aModel.getRooms().size()-1), false);
+				s = new Sensor(en, seks, to,fem, aModel.getRooms().get(aModel.getRooms().size()-1), true);
 				aModel.getRooms().get(aModel.getRooms().size()-1).addSensor(s);
 			}
 			// Checks for events
