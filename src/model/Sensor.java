@@ -124,7 +124,7 @@ public class Sensor {
 	 * 
 	 * @return the alarmstate of the sensor. True=Alarm, False=No Alarm, Null=Non Confirmed 
 	 */
-	public boolean isAlarmState() {
+	public Boolean isAlarmState() {
 		return alarmState;
 	}
 	/**

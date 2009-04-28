@@ -28,8 +28,10 @@ public class LACrenderer extends DefaultListCellRenderer implements ListCellRend
 	private static final int sensorStatusSIZE = LIST_LABEL_WIDTH;
 	private static final int timeStampSIZE = 2*LIST_LABEL_WIDTH;
 	
-	private static final Color colorOn = Color.RED;
-	private static final Color colorOff = new Color(255,150,150);
+	private static final Color alarmColorOn = Color.RED;
+	private static final Color alarmColorOff = new Color(255,150,150);
+	private static final Color detectedColorOn = Color.YELLOW;
+	private static final Color detectedColorOff = new Color(255,150,150);
 	private static final Color colorSelected = new Color(0,170,255);
 	
 
@@ -64,8 +66,14 @@ public class LACrenderer extends DefaultListCellRenderer implements ListCellRend
 		roomNrLAbel.setBounds(roomNAMESIZE+roomTYPESIZE, 0, roomNRSIZE, CELLHEIGHT);
 		JPanel SensorStatus = new JPanel();
 		
-		if(s.isAlarmState())
-			SensorStatus.setBackground(((BlinkingList)list).isBlink() ? colorOn : colorOff);
+		Boolean alarmstate = s.isAlarmState();
+		
+		if(alarmstate==null || alarmstate){
+			if(alarmstate==null)
+				SensorStatus.setBackground(((BlinkingList)list).isBlink() ? detectedColorOn : detectedColorOff);
+			else
+				SensorStatus.setBackground(((BlinkingList)list).isBlink() ? alarmColorOn : alarmColorOff);
+		}
 		else
 			SensorStatus.setBackground(Color.GREEN);
 		

@@ -517,7 +517,11 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		}
 		else if (evt.getSource() == changeBattery) {
 			if (this.sensorList.getSelectedIndex() != -1) { //sjekk om jlist har selected item
-				((Sensor)sensorList.getSelectedValue()).setBattery(100);
+				try {
+					((Sensor)sensorList.getSelectedValue()).replaceBattery(mec);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 			else { //liste har ikke selected item
 				noElementSelected();
