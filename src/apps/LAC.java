@@ -169,12 +169,13 @@ public class LAC extends ModelEditControll{
 	// @Override
 	public void propertyChange(PropertyChangeEvent e) {
 		super.propertyChange(e);
+		System.out.println("Model changed: "+e);
 		if(e.getSource() instanceof Sensor){
 			Sensor sensor = (Sensor) e.getSource();
 			if(e.getPropertyName().equals(Sensor.PC_EVENTADDED)){
 				Event event = (Event) e.getNewValue();
 				try {
-					LACProtocol.insertEvent(connection, event);
+					//LACProtocol.insertEvent(connection, event);
 				} catch (ConnectException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -185,7 +186,7 @@ public class LAC extends ModelEditControll{
 				
 			}else{
 				try {
-					LACProtocol.updateSensor(connection, sensor);
+					//LACProtocol.updateSensor(connection, sensor);
 				} catch (ConnectException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -207,7 +208,7 @@ public class LAC extends ModelEditControll{
 					}
 				}else{
 					try {
-						LACProtocol.updateRoom(connection, room);
+						//LACProtocol.updateRoom(connection, room);
 					} catch (ConnectException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -219,7 +220,7 @@ public class LAC extends ModelEditControll{
 		}else if(e.getSource() instanceof Model){
 			Model model = (Model) e.getSource();
 			try {
-				LACProtocol.updateLAC(connection, model);
+				//LACProtocol.updateLAC(connection, model);
 			} catch (ConnectException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -314,6 +315,9 @@ public class LAC extends ModelEditControll{
 	
 
 	class RunThread extends Thread{
+		public RunThread() {
+			this.setName("Run Thread");
+		}
 		
 		public void run(){
 			while(true){
