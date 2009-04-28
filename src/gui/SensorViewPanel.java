@@ -34,7 +34,7 @@ public class SensorViewPanel implements Values {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				frame.setVisible(false);
+				frame.dispose();
 			}
 
 		}
