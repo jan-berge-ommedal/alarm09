@@ -296,7 +296,7 @@ public class LAC extends ModelEditControll{
 		if(modelID!=this.getModel().getID())throw new IOException("Error");
 		
 		int receiveID = LACProtocol.insertRoom(connection, roomNr,roomType,roomInfo);
-		Room r = new Room(receiveID,romNR,roomType,roomInfo,this.getModel());
+		Room r = new Room(receiveID,roomNr,roomType,roomInfo,this.getModel());
 		
 		
 		return r;
