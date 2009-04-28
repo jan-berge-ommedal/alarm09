@@ -175,7 +175,7 @@ public class LAC extends ModelEditControll{
 			if(e.getPropertyName().equals(Sensor.PC_EVENTADDED)){
 				Event event = (Event) e.getNewValue();
 				try {
-					//LACProtocol.insertEvent(connection, event);
+					LACProtocol.insertEvent(connection, event);
 				} catch (ConnectException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -186,7 +186,7 @@ public class LAC extends ModelEditControll{
 				
 			}else{
 				try {
-					//LACProtocol.updateSensor(connection, sensor);
+					LACProtocol.updateSensor(connection, sensor);
 				} catch (ConnectException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -208,7 +208,7 @@ public class LAC extends ModelEditControll{
 					}
 				}else{
 					try {
-						//LACProtocol.updateRoom(connection, room);
+						LACProtocol.updateRoom(connection, room);
 					} catch (ConnectException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
