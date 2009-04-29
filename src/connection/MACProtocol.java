@@ -50,7 +50,7 @@ public class MACProtocol extends AbstractApplicationProtocol {
 				
 				String sensorstring = removeFlag(receive, UPDATESENSOR);
 				
-				Sensor sensor = XmlSerializer.toSensor(sensorstring);
+				Sensor sensor = XmlSerializer.toSensor(sensorstring,controller.getModel());
 				
 				sendACK(c);
 			}
@@ -70,7 +70,7 @@ public class MACProtocol extends AbstractApplicationProtocol {
 
 				String sensorstring = removeFlag(receive, INSERTSENSOR);
 				
-				Sensor sensor = XmlSerializer.toSensor(sensorstring);
+				Sensor sensor = XmlSerializer.toSensor(sensorstring,controller.getModel());
 				
 				sendACK(c);
 			}
@@ -78,7 +78,7 @@ public class MACProtocol extends AbstractApplicationProtocol {
 				
 				String eventstring = removeFlag(receive, INSERTEVENT);
 				
-				Event event = XmlSerializer.toEvent(eventstring);
+				Event event = XmlSerializer.toEvent(eventstring,controller.getModel());
 				
 				sendACK(c);
 			}

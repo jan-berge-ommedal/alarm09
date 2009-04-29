@@ -11,6 +11,7 @@ import com.sun.xml.internal.bind.v2.runtime.XMLSerializer;
 
 import junit.framework.TestCase;
 
+import connection.ModelEditController;
 import connection.XmlSerializer;
 
 import model.Event;
@@ -30,27 +31,60 @@ import model.Event.EventType;
 public class XMLParsingTests extends TestCase{
 	
 	public void testParse(){
-		Model m = AlarmHelp.getDefaultModel();
-		Room r = new Room(3,51,"sdfgdfgh","asdfasdf",m);
+		ModelEditController controller = new DefaultModelEditController();
+		Model model = AlarmHelp.getDefaultModel(controller);
+		
+		Room r = new Room(3,51,"sdfgdfgh","asdfasdf",model);
 		Sensor s = new Sensor(0,false,90,LAC.getTime(),r,false);
-		s.addEvent(new Event(5,EventType.ALARM,new Timestamp(42367),s));
-		s.addEvent(new Event(8,EventType.STARTUP, new Timestamp(4232),s));
-		r.addSensor(s);
-		r.addSensor(new Sensor(6,false,67,new Timestamp(5674645),r,true));
-		m.addRoom(r);
+		Event e = new Event(5,EventType.ALARM,new Timestamp(42367),s);
 		
-		System.out.println(m);
 		
-		String xmlParse = XmlSerializer.toXmlComplete(m);
+		// COMPLETE MODEL TRANSFER
+		
+		String xmlParse = XmlSerializer.toXmlComplete(model);
 		Model m2;
 		try {
-			m2 = XmlSerializer.toModel(xmlParse);
+			m2 = XmlSerializer.toModelComplete(xmlParse, controller);
 			System.out.println("\n"+m2);
-			assertEquals(m.toString(), m2.toString());
-		} catch (ParseException e) {
+			assertEquals(model.toString(), m2.toString());
+		} catch (ParseException ex) {
 			assertEquals("Ddidnt read proper format", true, false);
 		}
 		
+		
+		
+		
+		String eventString = XmlSerializer.toEventString(e);
+		Event e2 = XmlSerializer.toEvent(eventString, model);
+		assertEquals(e.toString(), e2.toString());
+
+		String sensorString = XmlSerializer.toSensorString(s);
+		Sensor s2 = XmlSerializer.toSensor(sensorString, model);
+		assertEquals(s.toString(), s2.toString());
+
+		
+		String roomString = XmlSerializer.toRoomString(r);
+		Room r2 = XmlSerializer.toRoom(roomString, model);
+		assertEquals(r.toString(), r2.toString());
+		
+		
 	}
 
+	public class DefaultModelEditController extends ModelEditController{
+
+		
+		
+		@Override
+		public void close() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void deleteAllEvents(Sensor sensor) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
 }

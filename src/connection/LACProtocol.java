@@ -40,14 +40,14 @@ public class LACProtocol extends AbstractApplicationProtocol{
 				String roomString = removeFlag(msg, INSERTROOM);
 				
 				//The sensor is automatically inserted into the model by the constructor invoked by the XMLSerializer
-				Sensor room = XmlSerializer.toSensor(roomString);
+				Sensor room = XmlSerializer.toSensor(roomString,controller.getModel());
 				
 				sendACK(connection);
 			}
 			else if(checkFlag(msg, INSERTEVENT)){
 				String eventString = removeFlag(msg, INSERTEVENT);
 
-				Event event = XmlSerializer.toEvent(eventString);
+				Event event = XmlSerializer.toEvent(eventString,controller.getModel());
 				
 				sendACK(connection);
 
