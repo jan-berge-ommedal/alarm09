@@ -37,44 +37,27 @@ public class LACProtocol extends AbstractApplicationProtocol{
 			}
 			else if(checkFlag(msg, INSERTSENSOR)){
 				
-				String sensorString = removeFlag(msg, INSERTROOM);
+				String roomString = removeFlag(msg, INSERTROOM);
 				
 				//The sensor is automatically inserted into the model by the constructor invoked by the XMLSerializer
-				Sensor room = XmlSerializer.toSensor(sensorString);
+				Sensor room = XmlSerializer.toSensor(roomString);
 				
 				sendACK(connection);
 			}
 			else if(checkFlag(msg, INSERTEVENT)){
-				String sensorString = removeFlag(msg, INSERTEVENT);
+				String eventString = removeFlag(msg, INSERTEVENT);
+
+				Event event = XmlSerializer.toEvent(eventString);
 				
-				//The sensor is automatically inserted into the model by the constructor invoked by the XMLSerializer
-				
-				int id = Integer.parseInt(s[1]);
-				EventType eventtype = null;
-				for (EventType e : EventType.values()) {
-					if(e.toString().equals(s[2])) eventtype = e;
-				}
-				Timestamp installationDate = XmlSerializer.makeTimestamp(s[3]);
-				Room room = null;
-				Sensor sensor = null;
-				for (Room r : lac.getModel().getRooms()) {
-					if(r.getID() == Integer.parseInt(s[4])) room = r;
-				}
-				for (Sensor se : room.getSensorer()) {
-					if(se.getID() == Integer.parseInt(s[5])) sensor = se;
-				}
-				sensor.addEvent(new Event(id, eventtype,installationDate, sensor));
+				sendACK(connection);
+
 			}
-			else if(s[0].equals("UPDATEROOM")){
-				int id = Integer.parseInt(s[1]);
-				Room room = null;
-				for (Room r : lac.getModel().getRooms()) {
-					if(r.getID() == id) room = r;
-				}
-	
-				room.setRomNR(Integer.parseInt(s[2]));
-				room.setRomType(s[3]);
-				room.setRomInfo(s[4]);
+			else if(checkFlag(msg, UPDATEROOM)){
+				String eventString = removeFlag(msg, INSERTEVENT);
+
+				Event event = XmlSerializer.toEvent(eventString);
+				
+				sendACK(connection);
 			}
 			else if(s[0].equals("UPDATESENSOR")){
 				int id = Integer.parseInt(s[1]);

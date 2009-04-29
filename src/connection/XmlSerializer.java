@@ -251,6 +251,10 @@ public class XmlSerializer {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	public static Event toEvent(String eventString) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 
 }
