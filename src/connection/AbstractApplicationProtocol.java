@@ -11,6 +11,7 @@ import no.ntnu.fp.net.co.Connection;
 public abstract class AbstractApplicationProtocol {
 	
 	protected static final String INSERTSENSOR = "NEWSENSOR";
+	protected static final String INSERTROOM = "NEWSENSOR";
 	
 	
 	protected static void receiveACK(Connection connection) throws IOException {
@@ -34,8 +35,7 @@ public abstract class AbstractApplicationProtocol {
 	}
 	
 	public void checkFlag(String msg, String flag) throws IOException {
-		//FIXME
-		throw new IOException("Not implemented");
+		if(!msg.startsWith(flag))throw new IOException("Not implemented");
 	}
 	
 	public abstract void insertSensor(ModelEditController controller, Connection connection, Sensor sensor) throws ConnectException, IOException;
