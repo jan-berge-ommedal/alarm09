@@ -198,6 +198,7 @@ public class ConnectionImplementation extends AbstractConnection {
 					this.lastValidPacketReceived = ack;
 				}
 			}
+			else throw new IOException("Wrong ACK recieved in send()");
 		}
 		else throw new ConnectException("There is no connection");
 	}
@@ -221,7 +222,10 @@ public class ConnectionImplementation extends AbstractConnection {
 				this.lastValidPacketReceived = h;
 				return h.getPayload().toString();
 			}
-			else throw new IOException("Invalid packet recieved");
+			//if(this.isDuplicate(h)) {
+			//	this.sendAck(h, false);
+			//}
+			throw new IOException("Invalid packet recieved");
 		}
 		else throw new ConnectException("No connection established");
 	}
@@ -330,5 +334,12 @@ public class ConnectionImplementation extends AbstractConnection {
 			connectionPort = (int)(Math.random()*60000);
 		}
 		return connectionPort;
+	}
+	
+	private boolean isDuplicate(KtnDatagram packet) {
+		if(this.lastValidPacketReceived.equals(packet)) {
+			return true;
+		}
+		else return false;
 	}
 }
