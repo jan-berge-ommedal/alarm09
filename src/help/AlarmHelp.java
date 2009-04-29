@@ -7,6 +7,7 @@ import apps.LAC;
 
 public class AlarmHelp {
 	
+	/*
 	public static Model getDefaultModel(){
 		Model m = new Model();
 		m.setAdresse("Lidarende 1");
@@ -21,4 +22,5 @@ public class AlarmHelp {
 		return m;
 	}
 
+*/
 }
