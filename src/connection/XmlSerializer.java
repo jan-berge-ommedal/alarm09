@@ -221,6 +221,8 @@ public class XmlSerializer {
 		
 		System.out.println("This is a XMLString for a room:\n----------------\n\n");
 		
+		
+		
 		return null;
 	}
 	public static String toEventString(Event event) {
@@ -231,10 +233,14 @@ public class XmlSerializer {
 	}
 	
 	
-	public static Event toEvent(String eventString) {
+	public static Event toEvent(String eventString,Model model) {
 		// TODO Auto-generated method stub
 		
 		System.out.println("This is a XMLString for a event:\n----------------\n\n");
+		
+		Sensor sensor = model.getSensor(idtilmodell);
+		
+		Event e = new Event(-1,null,null)
 		
 		return null;
 	}
@@ -247,7 +253,7 @@ public class XmlSerializer {
 		
 		return "#" + a + "#" + b + "#" + c + "#" + d + "#" + e;
 	}
-	public static Sensor toSensor(String sensorString) {
+	public static Sensor toSensor(String sensorString,Model model) {
 		// TODO Auto-generated method stub
 		
 		System.out.println("This is a XMLString for a sensor:\n----------------\n\n");
