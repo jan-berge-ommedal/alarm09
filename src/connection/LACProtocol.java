@@ -143,19 +143,16 @@ public class LACProtocol {
 
 	public static void insertRoom(Connection connection, Room room, LAC lac) throws ConnectException, IOException {
 		connection.send("INSERTROOM" + XmlSerializer.toXmlRoom(room));
-		handleMSG(connection.receive(), lac, connection);
 		receiveACK(connection);
 	}
 	
 	public static void insertSensor(Connection connection, Sensor sensor, LAC lac) throws ConnectException, IOException {
 		connection.send("INSERTSENSOR" + XmlSerializer.toXmlSensor(sensor));
-		handleMSG(connection.receive(), lac, connection);
 		receiveACK(connection);
 	}
 	
 	public static void insertEvent(Connection connection, Event event, LAC lac) throws ConnectException, IOException {
 		connection.send("INSERTEVENT" + XmlSerializer.toXmlEvent(event));
-		handleMSG(connection.receive(), lac, connection);
 		receiveACK(connection);
 	}
 
