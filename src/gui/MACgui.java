@@ -11,9 +11,12 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+
+import com.sun.xml.internal.ws.model.Mode;
 
 import log.Log;
 import model.Model;
@@ -97,7 +100,7 @@ public class MACgui extends JPanel implements Values, ActionListener, PropertyCh
 	private void setupList() {
 		lacList.setModel(mac.getLACAdapterList());
 		lacList.setCellRenderer(new MACrenderer());
-		lacList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		lacList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		lacList.setFixedCellWidth(LIST_ELEMENT_WIDTH);
 		lacList.setFixedCellHeight(LIST_ELEMENT_HEIGHT);
 	}
@@ -141,23 +144,30 @@ public class MACgui extends JPanel implements Values, ActionListener, PropertyCh
 
 		}
 		else if (e.getSource() == openLac) {
-			ModelEditController temp = (ModelEditController)lacList.getSelectedValue();
-			if(temp != null) {
-				new LACgui(temp);
+			if (lacList.getSelectedIndices().length == 1) {
+				ModelEditController temp = (ModelEditController)lacList.getSelectedValue();
+				if(temp != null) {
+					new LACgui(temp);
+				}
+			}
+			
+			else if (lacList.getSelectedValue() == null){
+				LACgui.noElementSelected();
 			}
 			else {
-				LACgui.noElementSelected();
+				JOptionPane.showMessageDialog(null, "Please select one LAC");
 			}
 		}
 		else if (e.getSource() == writeLog) {
 			Object[] templog = lacList.getSelectedValues();
-			for (Object o: templog) {
-				o = (ModelEditController)o;
-			}
+			ModelEditController[] mecs = new ModelEditController[templog.length];
+			for (int i = 0; i < mecs.length; i++) {
+				mecs[i] = (ModelEditController)templog[i];
+			} 
 			if (templog.length != 0) { 
 				Model[] tempplog = new Model[templog.length];
 				for(int i = 0; i < templog.length; i++) {
-					tempplog[i] = templog[i].getModel();
+					tempplog[i] = mecs[i].getModel();
 				}
 				if(templog != null) {				
 					Log.printReport(tempplog, true);
