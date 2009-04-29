@@ -20,12 +20,6 @@ import apps.MAC.LACAdapter;
 public class MACProtocol extends AbstractApplicationProtocol {
 
 	@Override
-	public void checkFlag(String msg, String flag) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void handleMSG(String receive, ModelEditController controller, Connection c) {
 		LACAdapter adapter = (LACAdapter)controller;
 		try {
@@ -36,102 +30,55 @@ public class MACProtocol extends AbstractApplicationProtocol {
 			else if(receive.startsWith("GETMODEL")){
 				c.send(XmlSerializer.toXml(adapter.getModel()));
 			}
-			else if(receive.substring(0, 9).equals("UPDATELAC")){
+			else if(checkFlag(receive, UPDATEMODEL)){
 				//FIXME kan ikke splitte på whitespace
-				String[] s = receive.split("#");
-				adapter.getModel().setAdresse(s[2]);
-				adapter.getModel().setID(Integer.parseInt(s[1]));
+				String modelstring = removeFlag(receive, UPDATEMODEL);
+				
+				Model model = XmlSerializer.toModel(modelstring);
+				
 				sendACK(c);
 			}
-			else if(receive.substring(0, 10).equals("UPDATEROOM")){
-				String[] s = receive.split("#");
+			else if(checkFlag(receive, UPDATEROOM)){
 				
-				Room r = null;
-				for (Room room : adapter.getModel().getRooms()) {
-					if(room.getID() == Integer.parseInt(s[1])){
-						r = room;
-						break;
-					}
-				}
-				r.setRomNR(Integer.parseInt(s[2]));
-				r.setRomType(s[3]);
-				r.setRomInfo(s[4]);
+				String roomstring = removeFlag(receive, UPDATEROOM);
+				
+				Room room = XmlSerializer.toRoom(roomstring);
+				
+				sendACK(c);
 			}
-			else if(receive.substring(0, 12).equals("UPDATESENSOR")){
-				String[] s = receive.split("#");
-				boolean b = (s[2].equals("true")) ? true : false;
-				Room r = null;
-				for (Room room : adapter.getModel().getRooms()) {
-					if(room.getID() == Integer.parseInt(s[5])){
-						r = room;
-						break;
-					}
-				}
-				Sensor se = null;
-				for (Sensor sensor : r.getSensorer()) {
-					if(sensor.getID() == Integer.parseInt(s[1])){
-						se = sensor;
-						break;
-					}
-				}
-				se.setAlarmState(b);
-				se.setBattery(Integer.parseInt(s[3]));
-				se.setInstallationDate(XmlSerializer.makeTimestamp(s[4]));
+			else if(checkFlag(receive, UPDATESENSOR)){
+				
+				String sensorstring = removeFlag(receive, UPDATESENSOR);
+				
+				Sensor sensor = XmlSerializer.toSensor(sensorstring);
+				
+				sendACK(c);
 			}
-			else if(receive.substring(0, 10).equals("INSERTROOM")){
-
-				String[] s = receive.split("#");
-				int lacID = Integer.parseInt(s[4]);
-				int romNr = Integer.parseInt(s[1]);
-				String romType = s[2];
-				String romInfo = s[3];
-				int modelID = adapter.getModel().getID();
-
-
+			else if(checkFlag(receive, INSERTROOM)){
+				
+				String roomstring = removeFlag(receive, INSERTROOM);
+				
+				Room room = XmlSerializer.toRoom(roomstring);
 				
 				//Konstruktører legger nå automatisk rommet som barn av modellen
-				Room room = new Room(-1,romNr, romType, romInfo, adapter.getModel());
+				//Room room = new Room(-1,romNr, romType, romInfo, adapter.getModel());
 				
 				sendACK(c);
 				
 			}
-			else if(receive.substring(0, 12).equals("INSERTSENSOR")){
+			else if(checkFlag(receive, INSERTSENSOR)){
 
-				String[] s = receive.split("#");
-				boolean b = (s[2].equals("true")) ? true : false;
-				int romID = Integer.parseInt(s[5]);
-				int battery = Integer.parseInt(s[4]);
+				String sensorstring = removeFlag(receive, INSERTSENSOR);
 				
-				Room room = adapter.getModel().getRoom(romID);
-				
-				Timestamp t = Timestamp.valueOf(s[3]);
-				
-
-				
-				//Konstruktører legger nå automatisk sensoren som barn av rommet
-				Sensor se = new Sensor(-1, b, battery, t,room,false); 
+				Sensor sensor = XmlSerializer.toSensor(sensorstring);
 				
 				sendACK(c);
-
 			}
-			else if(receive.substring(0, 11).equals("INSERTEVENT")){
-				String[] s = receive.split("#");
-				EventType et = null;
-				for(EventType e : EventType.values()){
-					if(s[3].equals(e.toString()))
-						et = e;
-				}
+			else if(checkFlag(receive, INSERTEVENT)){
 				
-				Model m = adapter.getModel();
+				String eventstring = removeFlag(receive, INSERTEVENT);
 				
-				int eventID = Integer.parseInt(s[1]);
-				Timestamp timestamp = Timestamp.valueOf(s[5]);
-				
-				
-				Sensor sensor = adapter.getModel().getSensor(Integer.parseInt(s[2]));
-				
-				//Eventkonstruktøren legger automatisk event til som barn av sensor
-				Event e = new Event(eventID,et,timestamp,sensor);
+				Event event = XmlSerializer.toEvent(eventstring);
 				
 				sendACK(c);
 			}
