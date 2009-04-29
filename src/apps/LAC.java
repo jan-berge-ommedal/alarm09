@@ -54,7 +54,7 @@ public class LAC extends ModelEditController{
 	
 	private RunThread thread;
 	
-	
+	private final LACProtocol protocol = new LACProtocol();
 	
 	private static final int STARTPORT = 700;
 	private static String defaultAdres = "My Adresss";
@@ -173,7 +173,7 @@ public class LAC extends ModelEditController{
 			if(e.getPropertyName().equals(Sensor.PC_EVENTADDED)){
 				Event event = (Event) e.getNewValue();
 				try {
-					LACProtocol.insertEvent(connection, event,this);
+					protocol.insertEvent(this,connection, event);
 				} catch (IOException e1) {
 					System.err.println("LAC: The event was not inserted sucessfully on th MAC. Removing it on the LAC..");
 					model.removePropertyChangeListener(this);
@@ -183,7 +183,7 @@ public class LAC extends ModelEditController{
 				
 			}else{
 				try {
-					LACProtocol.updateSensor(connection, sensor);
+					protocol.updateSensor(this,connection, sensor);
 				} catch (ConnectException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -197,7 +197,7 @@ public class LAC extends ModelEditController{
 				if(e.getPropertyName().equals(Room.PC_SENSORADDED)){
 					Sensor sensor = (Sensor)e.getNewValue();
 					try {
-						LACProtocol.insertSensor(connection, sensor,this);
+						protocol.insertSensor(this, connection,sensor);
 					} catch (IOException e1) {
 						System.err.println("LAC: The sensor was not inserted sucessfully on th MAC. Removing it on the LAC..");
 						model.removePropertyChangeListener(this);
@@ -210,7 +210,7 @@ public class LAC extends ModelEditController{
 				}else{
 				
 					try {
-						LACProtocol.updateRoom(connection, room);
+						protocol.updateRoom(this,connection, room);
 					} catch (ConnectException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -224,7 +224,7 @@ public class LAC extends ModelEditController{
 			if(e.getPropertyName().equals(Model.PC_ROOMADDED)){
 				Room room = (Room) e.getNewValue();
 				try {
-					LACProtocol.insertRoom(connection, room,this);
+					protocol.insertRoom(this,connection, room);
 				} catch (IOException e1) {
 					System.err.println("LAC: The room was not inserted sucessfully on th MAC. Removing it on the LAC.. ");
 					model.removePropertyChangeListener(this);
@@ -234,7 +234,7 @@ public class LAC extends ModelEditController{
 				}
 			}else{
 				try {
-					LACProtocol.updateLAC(connection, model);
+					protocol.updateModel(this,connection);
 				} catch (ConnectException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -270,7 +270,8 @@ public class LAC extends ModelEditController{
 	@Override
 	public void deleteAllEvents(Sensor sensor) {
 		sensor.deleteAllEvents();
-		LACProtocol.deleteSensorEvents(sensor);
+		//protocol.deleteSensorEvents(sensor);
+		System.out.println("Delete not implemented in protocol");
 	}
 
 	

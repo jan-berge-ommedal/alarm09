@@ -54,11 +54,11 @@ public abstract class AbstractApplicationProtocol {
 		
 	}
 	
-	protected String removeFlag(String msg, String flag){
+	protected static String removeFlag(String msg, String flag){
 		return msg.substring(flag.length());
 	}
 	
-	public boolean checkFlag(String msg, String flag){
+	protected static boolean checkFlag(String msg, String flag){
 		return msg.startsWith(flag);
 	}
 	

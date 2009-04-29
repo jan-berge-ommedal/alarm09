@@ -30,7 +30,7 @@ public class LACProtocol extends AbstractApplicationProtocol{
 				String roomString = removeFlag(msg, INSERTROOM);
 				
 				//The room is automatically inserted into the model by the constructor invoked by the XMLSerializer
-				Room room = XmlSerializer.toRoom(roomString);
+				Room room = XmlSerializer.toRoom(roomString,controller.getModel());
 				
 				sendACK(connection);
 				
@@ -53,35 +53,38 @@ public class LACProtocol extends AbstractApplicationProtocol{
 
 			}
 			else if(checkFlag(msg, UPDATEROOM)){
-				String eventString = removeFlag(msg, INSERTEVENT);
+				String eventString = removeFlag(msg, UPDATEROOM);
 
-				Event event = XmlSerializer.toEvent(eventString);
+				
+				System.err.println("LAC: UPDATEROOM, Dette må handles, men sender ACK, slik at vi kan kjøre");
 				
 				sendACK(connection);
 			}
-			else if(s[0].equals("UPDATESENSOR")){
-				int id = Integer.parseInt(s[1]);
-				Sensor sensor = null;
-				for (Sensor se : lac.getModel().getSensors()) {
-					if(se.getID() == id) sensor = se;
-				}
-				sensor.setAlarmState((true ? s[2].equals("true"): false));
-				sensor.setInstallationDate(XmlSerializer.makeTimestamp(s[3]));
-				sensor.setBattery(Integer.parseInt(s[4]));
+			else if(checkFlag(msg, UPDATESENSOR)){
+				String eventString = removeFlag(msg, INSERTEVENT);
+				
+				System.err.println("LAC: UPDATESENSOR, Dette må handles, men sender ACK, slik at vi kan kjøre");
+				
+				sendACK(connection);
+			}
+			else if(checkFlag(msg, UPDATEEVENT)){
+				String eventString = removeFlag(msg, INSERTEVENT);
+				
+				System.err.println("LAC: UPDATEEVENT, Dette må handles, men sender ACK, slik at vi kan kjøre");
+				
+				sendACK(connection);
+			}
+			else if(checkFlag(msg, UPDATEMODEL)){
+				String eventString = removeFlag(msg, INSERTEVENT);
+				
+				System.err.println("LAC: UPDATEMODEL, Dette må handles, men sender ACK, slik at vi kan kjøre");
+				
+				sendACK(connection);
 			}
 			
-			else if(s[0].equals("DELETEALLEVENTS")){
-				Room room = null;
-				for (Room r : lac.getModel().getRooms()) {
-					if (r.getID() == Integer.parseInt(s[2])){
-						room = r;
-					}
-				}
-				for(Sensor se : room.getSensorer()){
-					if(se.getID() == Integer.parseInt(s[1])){
-						se.deleteAllEvents();
-					}
-				}
+			else if(false){
+				// DELETE EVENT MBY???
+			
 			}
 		} catch (Exception e) {
 			try {

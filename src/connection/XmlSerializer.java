@@ -214,7 +214,7 @@ public class XmlSerializer {
 		return main;
 	}
 
-	public static Element insertXmlEvent(Event e) {
+	private static Element insertXmlEvent(Event e) {
 		Element events = new Element("events");
 		
 		Element eventId = new Element("id");
@@ -240,19 +240,27 @@ public class XmlSerializer {
 	
 	
 	public static String toXml(Model model) {
-		// TODO Auto-generated method stub
-		return null;
+		return "<MODEL><ID>"+model.getID()+"</ID><ADDRES>"+model.getAdresse()+"</ADDRES></MODEL>";
 	}
-	public static Room toRoom(String roomString) {
+	public static Room toRoom(String roomString,Model model) {
 		// TODO Auto-generated method stub
+		
+		System.out.println("This is a XMLString for a room:\n----------------\n\n");
+		
 		return null;
 	}
 	public static Sensor toSensor(String sensorString) {
 		// TODO Auto-generated method stub
+		
+		System.out.println("This is a XMLString for a sensor:\n----------------\n\n");
+		
 		return null;
 	}
 	public static Event toEvent(String eventString) {
 		// TODO Auto-generated method stub
+		
+		System.out.println("This is a XMLString for a event:\n----------------\n\n");
+		
 		return null;
 	}
 

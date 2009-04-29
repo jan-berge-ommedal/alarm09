@@ -57,6 +57,7 @@ public class MAC{
 	
 	private static final int TIMEOUT = 600000;
 	
+	private final MACProtocol protocol = new MACProtocol();
 	
 	
 	public MAC(boolean useGUI) {
@@ -176,14 +177,14 @@ public class MAC{
 				if(e.getPropertyName().equals(Sensor.PC_EVENTADDED)){
 					Event event = (Event) e.getNewValue();
 					try {
-						MACProtocol.newEvent(event, thread.connection);
+						protocol.insertEvent(this, thread.connection,event);
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
 					event.setID(database.insertEvent(event.getID(), event.getEventType()));				
 				}else{
 					try {
-						MACProtocol.updateSensor(sensor, thread.connection);
+						protocol.updateSensor(this, thread.connection,sensor);
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -194,14 +195,14 @@ public class MAC{
 					if(e.getPropertyName().equals(Room.PC_SENSORADDED)){
 						Sensor sensor = (Sensor) e.getNewValue();
 						try {
-							MACProtocol.newSensor(sensor, thread.connection);
+							protocol.insertSensor(this, thread.connection,sensor);
 						} catch (IOException e1) {
 							e1.printStackTrace();
 						}
 						sensor.setID(database.insertSensor(sensor.getRoom().getID(), sensor.isAlarmState(), sensor.getBattery()));
 					}else{
 						try {
-							MACProtocol.updateRoom(room, thread.connection);
+							protocol.updateRoom(this,thread.connection,room);
 						} catch (IOException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
@@ -212,7 +213,7 @@ public class MAC{
 				if(e.getPropertyName().equals(Model.PC_ROOMADDED)){
 					Room room = (Room) e.getNewValue();
 					try {
-						MACProtocol.newRoom(room, thread.connection);
+						protocol.insertRoom(this, thread.connection,room);
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
@@ -222,7 +223,15 @@ public class MAC{
 						e1.printStackTrace();
 					}
 				}else{
-					MACProtocol.updateModel(model, thread.connection);
+					try {
+						protocol.updateModel(this,thread.connection);
+					} catch (ConnectException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}
 			}
 			
@@ -233,11 +242,14 @@ public class MAC{
 		public void deleteAllEvents(Sensor sensor) {
 			database.removeSensorsEvents(sensor.getID());
 			sensor.deleteAllEvents();
+			System.err.println("Delete not implemented in AppProtocol");
+			/*
 			try {
-				MACProtocol.deleteAllEvents(thread.connection,sensor);
+				//protocol.deleteAllEvents(thread.connection,sensor);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			*/
 		}
 
 		@Override
@@ -295,7 +307,7 @@ public class MAC{
 			try {
 				while(true){
 					String msg = connection.receive();
-					MACProtocol.handleMSG(adapter,msg);
+					protocol.handleMSG(msg,this.adapter,this.connection);
 				}
 			} catch (SocketTimeoutException e) {
 				e.printStackTrace();
