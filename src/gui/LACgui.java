@@ -9,6 +9,8 @@ import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
+
+import log.Log;
 import model.*;
 import model.Event.EventType;
 import apps.LAC;
@@ -24,7 +26,7 @@ import javax.swing.ListSelectionModel;
 import connection.ModelEditController;
 
 /**
- * Denne klassen håndterer vinduet som presenteres fra en LAC maskin
+ * Denne klassen hï¿½ndterer vinduet som presenteres fra en LAC maskin
  * @author Olannon
  */
 @SuppressWarnings("serial")
@@ -63,7 +65,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	private String adress;
 	
 	/*
-	 * Her følger diverse konstruktører som alle kaller initialize på et senere tidspunkt
+	 * Her fï¿½lger diverse konstruktï¿½rer som alle kaller initialize pï¿½ et senere tidspunkt
 	 */
 	
 	public LACgui(ModelEditController controller){
@@ -96,8 +98,8 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	*/
 	
 	/**
-	 * Denne metoden oppfører seg som en hjelpemetode til konstruktøren som genererer GUIet. Dersom
-	 * den kalles med true vil den sette guiet til å følge en modell
+	 * Denne metoden oppfï¿½rer seg som en hjelpemetode til konstruktï¿½ren som genererer GUIet. Dersom
+	 * den kalles med true vil den sette guiet til ï¿½ fï¿½lge en modell
 	 * @param model - en boolean som sier noe om guiet har en modell eller ikke
 	 */
 	private void initialize() {
@@ -226,14 +228,14 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		 */
 		sensorList = new BlinkingList();
 		this.id = new JLabel("ingen ID valgt");
-		if (model) { //hvis initialize kalles med en model settes listen til å være med elementene
+		if (model) { //hvis initialize kalles med en model settes listen til ï¿½ vï¿½re med elementene
 			sensorList.setModel(new ModelListAdapter(this.model));
 			try {
 				String id = "LAC ID:  " + this.mec.getModel().getID();
 				this.id = new JLabel(id);
 				this.id.setFont(f);	
 			} catch (NullPointerException npe) {
-				System.err.println("nullpointerex når LAC ID skulle settes: trace følger under");
+				System.err.println("nullpointerex nï¿½r LAC ID skulle settes: trace fï¿½lger under");
 				npe.printStackTrace();
 				System.out.println("-------------TRACE DONE-----------");
 			}
@@ -255,11 +257,11 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	}
 	
 	/*
-	 * Her følger diverse metoder som lager de vinduene som kommer opp dersom menyer som feks "Install Sensor" vises fra LACen
+	 * Her fï¿½lger diverse metoder som lager de vinduene som kommer opp dersom menyer som feks "Install Sensor" vises fra LACen
 	 */
 	 
 	/**
-	 * Metode som kalles for å installere sensor
+	 * Metode som kalles for ï¿½ installere sensor
 	 */
 	public void installSensor(boolean makeRoom) {
 		/*
@@ -282,7 +284,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		
 		if (!makeRoom) { //skal ikke lages nytt rom
 			/*
-			 * Følgende er unike for tilfeller der rom ikke skal lages
+			 * Fï¿½lgende er unike for tilfeller der rom ikke skal lages
 			 */
 			
 			Room[] rooms = new Room[model.getRooms().size()];
@@ -322,7 +324,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 			}
 			);
 		
-			//setter bounds på komponentene
+			//setter bounds pï¿½ komponentene
 			save.setBounds(LEFT_SPACE, SMALL_WINDOW_HEIGHT - TOP_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 			cancel.setBounds(LEFT_SPACE + DEFAULT_SPACE + BUTTON_WIDTH, SMALL_WINDOW_HEIGHT-TOP_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 			roomsList.setBounds(LEFT_SPACE + DEFAULT_SPACE + LABEL_WIDTH, TOP_SPACE + 5*DEFAULT_SPACE, 2*LABEL_WIDTH, LABEL_HEIGHT); //sett plassering til romma
@@ -411,7 +413,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	}
 	
 	/**
-	 * Åpner vindu slik at et rom kan editeres
+	 * ï¿½pner vindu slik at et rom kan editeres
 	 * @param sensor - en sensor som sier noe om hvilket rom det er snakk om
 	 */
 	public void editRoom(final Sensor sensor) {
@@ -505,9 +507,9 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	}
 	
 	/**
-	 * Metode som kalles når man skal bekrefte at brannslukkingen skal starte:
-	 * merk at denne metoden ikke bruker konstantene i Values for å plassere komponentene
-	 * (da vinduet er veldig lite er dette neppe nødvendig) 
+	 * Metode som kalles nï¿½r man skal bekrefte at brannslukkingen skal starte:
+	 * merk at denne metoden ikke bruker konstantene i Values for ï¿½ plassere komponentene
+	 * (da vinduet er veldig lite er dette neppe nï¿½dvendig) 
 	 */
 	public static void fireFightConfirm() {
 		final JFrame frame = new JFrame("Confirmation needed");
@@ -710,7 +712,10 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 
 	public void actionPerformed(ActionEvent evt) {
 		if (evt.getSource() == saveLog) {
-			logSaved(); //TODO skulle vi lagt inn mulighet for feilmelding dersom loggen ikke lagres?
+			if(model != null) {
+			Log.printReport(model, false);
+			}
+			else noElementSelected();
 		}
 		else if (evt.getSource() == installSensor) {
 			installSensor(false);
@@ -768,7 +773,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	}
 	
 	/**
-	 * indre klasse som tar for seg funksjonalitet rundt install sensor, når save trykkes
+	 * indre klasse som tar for seg funksjonalitet rundt install sensor, nï¿½r save trykkes
 	 * skal denne klassen legge til sensoren slik at alt oppdateres
 	 * @author Olannon
 	 *
@@ -779,7 +784,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		private ComboBoxAdapter cba;
 		
 		/**
-		 * konstruktør for saveknappen ved install sensor
+		 * konstruktï¿½r for saveknappen ved install sensor
 		 * @param frame
 		 * @param mec
 		 * @param roomsList
@@ -809,7 +814,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		System.out.println("Gui received change");
 		if(evt.getSource() instanceof ModelEditController){
 			model = mec.getModel();			
-			// Burde muligens gjøres annerledes
+			// Burde muligens gjï¿½res annerledes
 			this.frame.dispose();
 			initialize();
 		}
