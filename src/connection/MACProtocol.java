@@ -17,8 +17,73 @@ import apps.LAC;
 import apps.MAC.LACAdapter;
 
 
-public class MACProtocol {
+public class MACProtocol extends AbstractApplicationProtocol {
 
+	@Override
+	public void checkFlag(String msg, String flag) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void handleMSG(String msg, ModelEditController controller,
+			Connection connection) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void insertEvent(ModelEditController controller,
+			Connection connection, Event event) throws ConnectException,
+			IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void insertRoom(ModelEditController controller,
+			Connection connection, Room room) throws ConnectException,
+			IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void insertSensor(ModelEditController controller,
+			Connection connection, Sensor sensor) throws ConnectException,
+			IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateEvent(ModelEditController controller,
+			Connection connection, Event event) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateModel(ModelEditController controller,
+			Connection connection) throws ConnectException, IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateRoom(ModelEditController controller,
+			Connection connection, Room room) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateSensor(ModelEditController controller,
+			Connection connection, Sensor sensor) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+/*
 	public static void handleMSG(LACAdapter adapter, String receive) throws ConnectException, IOException {
 
 			try {
@@ -136,18 +201,7 @@ public class MACProtocol {
 			}
 		
 	}
-	private static void sendACK(Connection connection) {
-		try {
-			connection.send("ACK");
-		} catch (ConnectException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
+	
 	public static void newRoom(Room r, Connection c) throws IOException{
 		String s = "NEWROOM" + " " + r.getID() + " " + r.getRomNR() + " " + r.getRomType() + " " + r.getRomInfo();
 		c.send(s);
@@ -183,9 +237,7 @@ public class MACProtocol {
 	public static void updateSensor(Sensor s, Connection c) throws IOException{
 		String st = "UPDATESENSOR" + "#" + s.getID() + "#" + s.isAlarmState() + "#" + s.getInstallationDate().toString() + "#" + s.getBattery();
 		c.send(st);
-		if(c.receive().equals("NAK")){
-			throw new IOException("Received a NAK in MACProtocol");
-		}
+		receiveACK(c);
 	}
 	public static void deleteAllEvents(Connection c, Sensor sensor) throws IOException{
 		String s = "DELETEALLEVENTS " + sensor.getID() + " " + sensor.getRoom().getID();
@@ -198,5 +250,7 @@ public class MACProtocol {
 		//FIXME
 		
 	}
+	
+	*/
 
 }

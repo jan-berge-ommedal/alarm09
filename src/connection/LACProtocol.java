@@ -16,13 +16,16 @@ import model.Room;
 import model.Sensor;
 import model.Event.EventType;
 
-public class LACProtocol {
-	
-	
-	public static void handleMSG(String receive, LAC lac, Connection c) throws ConnectException, IOException{
-			
+public class LACProtocol extends AbstractApplicationProtocol{
+
+
+
+	@Override
+	public void handleMSG(String msg, ModelEditController controller,Connection connection) {
+		LAC lac = (LAC) controller;
+		
 		try {
-			String[] s = receive.split("#");
+			String[] s = msg.split("#");
 			
 			if(s[0].equals("NEWROOM")){
 				int id = Integer.parseInt(s[1]);
@@ -96,10 +99,96 @@ public class LACProtocol {
 				}
 			}
 		} catch (Exception e) {
-			c.send("NAK");
+			try {
+				connection.send("NAK");
+			} catch (ConnectException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
+	}
+	
+	
+	@Override
+	public void insertEvent(ModelEditController controller, Connection connection, Event event) throws ConnectException, IOException {
+		connection.send("INSERTEVENT" + XmlSerializer.toXmlEvent(event));
+		receiveACK(connection);
 		
 	}
+
+	@Override
+	public void insertRoom(ModelEditController controller, Connection connection, Room room) throws ConnectException, IOException {
+		connection.send("INSERTROOM" + XmlSerializer.toXmlRoom(room));
+		receiveACK(connection);
+		
+	}
+
+	@Override
+	public void insertSensor(ModelEditController controller, Connection connection, Sensor sensor) throws ConnectException, IOException {
+		connection.send("INSERTSENSOR" + XmlSerializer.toXmlSensor(sensor));
+		
+		String insertStringFromMAC = connection.receive();
+		checkFlag(insertStringFromMAC,INSERTSENSOR);
+		sendACK(connection);
+		
+		String updateMessage = connection.receive();
+		handleMSG(updateMessage, controller, connection);
+		
+		receiveACK(connection);
+		
+	}
+
+	
+
+	
+
+	
+	@Override
+	public void updateEvent(ModelEditController controller, Connection connection ,  Event event) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateModel(ModelEditController controller, Connection connection) throws ConnectException, IOException {
+		Model model = controller.getModel();
+		connection.send("UPDATELAC" + "#" + Integer.toString(model.getID()) + "#" + model.getAdresse());
+		receiveACK(connection);
+	}
+
+	@Override
+	public void updateRoom(ModelEditController controller, Connection connection, Room room) throws IOException {
+		Model model = controller.getModel();
+		connection.send("UPDATEROOM" + XmlSerializer.toXmlRoom(room));
+		receiveACK(connection);
+		
+	}
+
+	@Override
+	public void updateSensor(ModelEditController controller, Connection connection, Sensor sensor) throws IOException {
+		connection.send("UPDATESENSOR" + XmlSerializer.toXmlSensor(sensor));
+		receiveACK(connection);
+		// TODO Auto-generated method stub
+		
+	}
+	
+
+	public static Model receiveCompleteModel(Connection connection, int modelid, ModelEditController controller) throws ConnectException, IOException, ParseException {
+		connection.send("GETMODEL"+modelid);
+		String s = connection.receive();
+		if(s == "-1"){
+			throw new IOException("Received a NAK in LACProtocol");
+		}
+		return XmlSerializer.toModel(s,controller);
+	}
+
+	
+	
+	
+
 	
 	public static boolean connectionCheck(Connection connection) {
 		try{
@@ -114,62 +203,8 @@ public class LACProtocol {
 	}
 	
 
-	public static Model receiveCompleteModel(Connection connection, int modelid, ModelEditController controller) throws ConnectException, IOException, ParseException {
-		connection.send("GETMODEL"+modelid);
-		String s = connection.receive();
-		if(s == "-1"){
-			throw new IOException("Received a NAK in LACProtocol");
-		}
-		return XmlSerializer.toModel(s,controller);
-	}
-
-	public static void updateLAC(Connection connection, Model model) throws ConnectException, IOException {
-		connection.send("UPDATELAC" + "#" + Integer.toString(model.getID()) + "#" + model.getAdresse());
-		receiveACK(connection);
-	}
-
+	
 	
 
-	public static void updateRoom(Connection connection, Room room) throws ConnectException, IOException {
-		connection.send("UPDATEROOM" + XmlSerializer.toXmlRoom(room));
-		receiveACK(connection);
-	}
-	
-	public static void updateSensor(Connection connection, Sensor sensor) throws ConnectException, IOException {
-		connection.send("UPDATESENSOR" + XmlSerializer.toXmlSensor(sensor));
-		receiveACK(connection);
-	}
-	
-
-	public static void insertRoom(Connection connection, Room room, LAC lac) throws ConnectException, IOException {
-		connection.send("INSERTROOM" + XmlSerializer.toXmlRoom(room));
-		receiveACK(connection);
-	}
-	
-	public static void insertSensor(Connection connection, Sensor sensor, LAC lac) throws ConnectException, IOException {
-		connection.send("INSERTSENSOR" + XmlSerializer.toXmlSensor(sensor));
-		receiveACK(connection);
-	}
-	
-	public static void insertEvent(Connection connection, Event event, LAC lac) throws ConnectException, IOException {
-		connection.send("INSERTEVENT" + XmlSerializer.toXmlEvent(event));
-		receiveACK(connection);
-	}
-
-	public static void deleteSensorEvents(Sensor sensor) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	private static void receiveACK(Connection connection) throws IOException {
-		if(!connection.receive().equals("ACK")){
-			System.err.println("LACProtocol Received NAK, throwing exception");
-			throw new IOException("Received a NAK in LACProtocol");
-		}
-	}
-
-	
-	
-	
 
 }
