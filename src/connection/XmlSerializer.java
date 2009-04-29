@@ -218,12 +218,14 @@ public class XmlSerializer {
 
 	public static Room toRoom(String roomString,Model model) {
 		// TODO Auto-generated method stub
+		String s[] = roomString.split("#");
+		int roomNR = Integer.parseInt(s[2]);
+		String roomType = s[3];
+		String roomInfo = s[4];
 		
-		System.out.println("This is a XMLString for a room:\n----------------\n\n");
+		Room room = new Room(-1, roomNR, roomType, roomInfo, model);
 		
-		
-		
-		return null;
+		return room;
 	}
 	public static String toEventString(Event event) {
 		String a = Integer.toString(event.getSensor().getID());
@@ -235,14 +237,15 @@ public class XmlSerializer {
 	
 	public static Event toEvent(String eventString,Model model) {
 		// TODO Auto-generated method stub
+		String s[] = eventString.split("#");
+		EventType e = EventType.valueOf(s[3]);
+		Timestamp time = makeTimestamp(s[5]);
 		
-		System.out.println("This is a XMLString for a event:\n----------------\n\n");
+		Sensor sensor = model.getSensor(Integer.parseInt(s[4]));
 		
-		Sensor sensor = model.getSensor(idtilmodell);
+		Event event = new Event(-1,e,time, sensor);
 		
-		Event e = new Event(-1,null,null)
-		
-		return null;
+		return event;
 	}
 	public static String toSensorString(Sensor sensor) {
 		String a = Integer.toString(sensor.getID());
@@ -251,12 +254,24 @@ public class XmlSerializer {
 		String d = Integer.toString(sensor.getBattery());
 		String e = Integer.toString(sensor.getRoom().getID());
 		
-		return "#" + a + "#" + b + "#" + c + "#" + d + "#" + e;
+		return "#" + a + "#" + b + "#" + c + "#" + d + "#" + e + "#" + System.currentTimeMillis();
 	}
 	public static Sensor toSensor(String sensorString,Model model) {
-		// TODO Auto-generated method stub
 		
-		System.out.println("This is a XMLString for a sensor:\n----------------\n\n");
+		String s[] = sensorString.split("#");
+		boolean alarm = (s[2].equals("true") ? true : false);
+		int battery = Integer.parseInt(s[4]);
+		Timestamp time = makeTimestamp(s[6]);
+		
+		Room room = null;
+		for (Room r : model.getRooms()) {
+			if(r.getID() == Integer.parseInt(s[5])){
+				room = r;
+				break;
+			}
+		}
+		
+		Sensor sensor = new Sensor(-1, alarm, battery, time, room, true);
 		
 		return null;
 	}
