@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import connection.ModelEditControll;
+import connection.ModelEditController;
 
 import apps.LAC;
 
@@ -22,6 +22,7 @@ public class Room extends AbstractPropertyChangeBean{
 	public static final String PC_SENSORADDED = "SENSOR_ADDED";
 	public static final String PC_SENSOREMOVED = "SENOR_REMOVED";
 
+	public static final String PC_ROOMIDCHANGED = "ROOM_ID_CHANGED";
 	
 	
 	/* START DATAFIELDS */
@@ -37,7 +38,6 @@ public class Room extends AbstractPropertyChangeBean{
 	private ArrayList<Sensor> sensorer = new ArrayList<Sensor>();
 	
 
-
 	
 	/**
 	 *
@@ -50,7 +50,7 @@ public class Room extends AbstractPropertyChangeBean{
 	 */
 
 	public Room(int id, int romNR, String romType, String romInfo, Model model) {
-		this.id = id;
+		this.id=id;
 		this.romNR = romNR;
 		this.romType = romType;
 		this.romInfo = romInfo;
@@ -130,7 +130,6 @@ public class Room extends AbstractPropertyChangeBean{
 	 */
 	public void addSensor(Sensor sensor) {
 		//TODO Sjekk at denne funker
-		int oldValue = this.sensorer.size();
 		this.sensorer.add(sensor);
 		sensor.addPropertyChangeListener(this);
 		pcs.firePropertyChange(PC_SENSORADDED, null, sensor);
@@ -169,6 +168,14 @@ public class Room extends AbstractPropertyChangeBean{
 		}
 		
 		return s;
+		
+	}
+
+
+	public void setID(int id) {
+		int oldValue = this.id;
+		this.id=id;
+		pcs.firePropertyChange(PC_ROOMIDCHANGED, oldValue, this.id);
 		
 	}
 	

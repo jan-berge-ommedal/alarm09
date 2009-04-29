@@ -24,7 +24,7 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListDataListener;
 
-import connection.ModelEditControll;
+import connection.ModelEditController;
 import help.AlarmHelp;
 
 
@@ -56,7 +56,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	private ConnectionStatusPanel csp;
 	private JButton replaceSensor;
 	private JButton changeBattery;
-	private ModelEditControll mec;
+	private ModelEditController mec;
 	private JButton viewSensor;
 	private JButton editRoom;
 	
@@ -64,7 +64,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	 * Her følger diverse konstruktører som alle kaller initialize på et senere tidspunkt
 	 */
 	
-	public LACgui(ModelEditControll controller){
+	public LACgui(ModelEditController controller){
 		this.mec = controller;
 		this.mec.addPropertyChangeListener(this);
 		this.model = mec.getModel();
@@ -323,17 +323,16 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 						String roin = roomIn.getText();
 						String roty = roomTy.getText();
 						
-						Room r = mec.insertRoom(model.getID(), ronr, roty, roin);
-						Sensor s = mec.insertSensor(r.getID(), false, 100);
+						Room room = new Room(-1,ronr,roty,roin,model);
+						Sensor sensor = new Sensor(-1,false,100,LAC.getTime(),room,true);
+						
+						
 					}
 					catch(NullPointerException npe) {
 						System.err.println("nullpointerex");
 					} catch (NumberFormatException nfe) {
 						System.err.println("numberformatex");
-					} catch (IOException LOLio) {
-						System.err.println("ioex");
-					}
-	
+					} 
 					
 				}
 			});
@@ -735,7 +734,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	 *
 	 */
 	class SensorAttributesListener implements ActionListener {
-		private ModelEditControll mec;
+		private ModelEditController mec;
 		private JFrame frame;
 		private ComboBoxAdapter cba;
 		
@@ -745,7 +744,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		 * @param mec
 		 * @param roomsList
 		 */
-		public SensorAttributesListener(JFrame frame, ModelEditControll mec, ComboBoxAdapter cba) {
+		public SensorAttributesListener(JFrame frame, ModelEditController mec, ComboBoxAdapter cba) {
 			this.frame = frame;
 			this.mec = mec; 
 			this.cba = cba;
@@ -754,12 +753,10 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		public void actionPerformed(ActionEvent e) {
 			try {
 				Room r = cba.getSelectedRoom();
-				mec.insertSensor(r.getID(), false, 100);
+				Sensor sensor = new Sensor(-1,false,100,LAC.getTime(),r,true);
 				System.out.println("Sensor ble lagt til logisk!"); //testlinje
 				this.frame.dispose();
 				System.out.println("Hovedvindu skal vises!"); //testlinje
-			} catch (IOException e1) {
-				System.err.println("Could not create Sensor due to an IO-error");
 			} catch (NullPointerException npe) {
 				System.err.println("Could not create Sensor due to no rooms existing/being selected");
 				noElementSelected();
@@ -770,7 +767,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		System.out.println("Gui received change");
-		if(evt.getSource() instanceof ModelEditControll){
+		if(evt.getSource() instanceof ModelEditController){
 			model = mec.getModel();			
 			// Burde muligens gjøres annerledes
 			this.frame.dispose();
@@ -778,5 +775,4 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		}
 	}
 }
-=======
->>>>>>> .r304
+

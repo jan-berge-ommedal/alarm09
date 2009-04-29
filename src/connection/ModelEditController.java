@@ -16,7 +16,7 @@ import model.Sensor;
 
 
 
-public abstract class ModelEditControll extends AbstractPropertyChangeBean {
+public abstract class ModelEditController extends AbstractPropertyChangeBean {
 	public static final String PC_MODELCHANGE = "MODELCHANGE";
 	protected Model model;
 	
@@ -49,9 +49,10 @@ public abstract class ModelEditControll extends AbstractPropertyChangeBean {
 		Model oldValue = this.model;
 		if(this.model!=null)this.model.removePropertyChangeListener(this);
 		this.model = model;
-		if(model!=null)model.addPropertyChangeListener(this);
+		if(this.model!=null)this.model.addPropertyChangeListener(this);
 		pcs.firePropertyChange(PC_MODELCHANGE, oldValue, this.model);
 	}
+	
 	
 	/**
 	 * This method checks if some sensors has an alarm 

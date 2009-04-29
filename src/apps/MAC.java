@@ -20,8 +20,9 @@ import javax.swing.event.ListDataListener;
 
 import connection.ConnectionImplementation;
 import connection.ConnectionStatusWrapper;
+import connection.LACProtocol;
 import connection.MACProtocol;
-import connection.ModelEditControll;
+import connection.ModelEditController;
 import connection.TCPConnection;
 import connection.ConnectionStatusWrapper.ConnectionStatus;
 
@@ -53,6 +54,8 @@ public class MAC{
 	
 	public static final int SERVERPORT = 666;
 	public static final String MACIP = "localhost";
+	
+	private static final int TIMEOUT = 600000;
 	
 	
 	
@@ -88,7 +91,8 @@ public class MAC{
 	
 	private void loadAdapters() {
 		for(int id : database.getIDs()){
-			adapters.add(new LACAdapter(this, id));
+			LACAdapter adapter = new LACAdapter(this,id);
+			adapters.add(adapter);
 		}
 	}
 	
@@ -121,7 +125,8 @@ public class MAC{
 	 * @author Jan Berge Ommedal
 	 *
 	 */
-	public class LACAdapter extends ModelEditControll implements ActionListener{
+	public class LACAdapter extends ModelEditController implements ActionListener{
+		
 		private MAC mac;
 		private LACAdapterThread thread;
 		
@@ -130,8 +135,8 @@ public class MAC{
 		
 		public LACAdapter(MAC mac, int id) {
 			this.mac = mac;
-			this.setModel(database.getLACModel(id));
-			timer = new Timer(20000,this);
+			database.getLACModel(id,this);
+			timer = new Timer(TIMEOUT,this);
 		}
 		
 		
@@ -164,9 +169,63 @@ public class MAC{
 	
 	
 
-		public void propertyChange(PropertyChangeEvent arg0) {
+		public void propertyChange(PropertyChangeEvent e) {
+			super.propertyChange(e);
+			if(e.getSource() instanceof Sensor){
+				Sensor sensor = (Sensor) e.getSource();
+				if(e.getPropertyName().equals(Sensor.PC_EVENTADDED)){
+					Event event = (Event) e.getNewValue();
+					try {
+						MACProtocol.newEvent(event, thread.connection);
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+					event.setID(database.insertEvent(event.getID(), event.getEventType()));				
+				}else{
+					try {
+						MACProtocol.updateSensor(sensor, thread.connection);
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}			
+			}else if(e.getSource() instanceof Room){
+				Room  room = (Room)e.getSource();
+					if(e.getPropertyName().equals(Room.PC_SENSORADDED)){
+						Sensor sensor = (Sensor) e.getNewValue();
+						try {
+							MACProtocol.newSensor(sensor, thread.connection);
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+						sensor.setID(database.insertSensor(sensor.getRoom().getID(), sensor.isAlarmState(), sensor.getBattery()));
+					}else{
+						try {
+							MACProtocol.updateRoom(room, thread.connection);
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+			}else if(e.getSource() instanceof Model){
+				Model model = (Model) e.getSource();
+				if(e.getPropertyName().equals(Model.PC_ROOMADDED)){
+					Room room = (Room) e.getNewValue();
+					try {
+						MACProtocol.newRoom(room, thread.connection);
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+					try {
+						room.setID(database.insertRoom(model.getID(), room.getRomNR(), room.getRomType(), room.getRomInfo()));
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+				}else{
+					MACProtocol.updateModel(model, thread.connection);
+				}
+			}
 			
-			System.err.println("Handle This");
 		}
 
 
@@ -306,11 +365,12 @@ public class MAC{
 
 
 		public void run(){
-			while(running){
+			while(true){
 				Connection newConnection = null;
 		
 				try {
 					newConnection = macConnection.accept();
+					
 					
 					String idString = newConnection.receive();
 					if(idString.startsWith("ID")){
@@ -339,13 +399,12 @@ public class MAC{
 					}else if(idString.startsWith("NEW")){//NY LAC, ber om ID
 						//THE LAC CREATE A NEW MODEL IN DB
 						String adress = idString.substring(3);
-						int returnid = database.insertLAC(adress);
 						try {
+							int returnid = database.insertLAC(adress);
 							newConnection.send(""+returnid);
-							Model m = new Model();
-							m.setID(returnid);
 							LACAdapter adapter = new LACAdapter(mac,returnid);
-							adapter.setModel(m);
+							Model m = new Model(adapter);
+							m.setID(returnid);
 							adapter.initializeConnection(newConnection);
 							adapters.add(adapter);
 						} catch (ConnectException e) {
@@ -354,19 +413,23 @@ public class MAC{
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}finally{
+							newConnection.send("NAK");
 						}
 					}
-				}catch (BindException e) {
-					System.err.println("Port in use. Exiting");
+				} catch (BindException e1) {
+					System.err.println("The MAC is unable to open port. It will now close");
 					System.exit(0);
-				}catch (SocketTimeoutException e1) {
-						// TODO Auto-generated catch block
+				} catch (SocketTimeoutException e1) {
+					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				}
-				
 						
 		}
 		}

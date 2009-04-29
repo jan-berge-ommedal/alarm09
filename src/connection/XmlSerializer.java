@@ -54,9 +54,13 @@ public class XmlSerializer {
 		return root.toXML();
 	}
 	// Takes a String and sets the modelattributes
-	public static Model toModel(String xml) throws ParseException {
+	public static Model toModel(String xml, ModelEditController controller) throws ParseException {
 		System.out.println(xml + "\n");
-		Model aModel = new Model();
+		Model aModel = new Model(controller);
+		
+		//We don't want that the controller handles propertychangeEvents, when setting ut the model
+		aModel.removePropertyChangeListener(controller);
+		
 		String[] xmls = xml.split("<");
 		aModel.setID(Integer.parseInt(xmls[2].substring(3)));
 		aModel.setAdresse(xmls[4].substring(7));
@@ -89,7 +93,6 @@ public class XmlSerializer {
 			else if(roomteller == 7){fire = xmls[i].substring(8);}
 			else if(roomteller == 9){
 				r = new Room(en, to, tre, fire, aModel);
-				aModel.addRoom(r);
 			}
 			// Checks for sensors
 			if(xmls[i].equals("Sensors>")){
@@ -102,7 +105,6 @@ public class XmlSerializer {
 			else if(sensorteller == 7){to = Integer.parseInt(xmls[i].substring(8));}
 			else if(sensorteller == 9){
 				s = new Sensor(en, seks, to,fem, aModel.getRooms().get(aModel.getRooms().size()-1), true);
-				aModel.getRooms().get(aModel.getRooms().size()-1).addSensor(s);
 			}
 			// Checks for events
 			if(xmls[i].equals("events>")){
@@ -120,12 +122,13 @@ public class XmlSerializer {
 			else if(eventteller == 7){
 				
 				Event e = new Event(en,sju,fem, s);
-				aModel.getRooms().get(aModel.getRooms().size() -1).getSensorer().get(aModel.getRooms().get(aModel.getRooms().size() -1).getSensorer().size()-1).addEvent(e);
 			}
 			
 		
 		}
 		
+		//After the setup is complete, the controller should handle changes
+		aModel.addPropertyChangeListener(controller);
 		
 		return aModel;
 	}
@@ -172,7 +175,7 @@ public class XmlSerializer {
 	}
 
 	public static String toXmlRoom(Room room) {
-		String s = " " + Integer.toString(room.getID()) + " " + Integer.toString(room.getRomNR()) + " " + room.getRomType() + " " + room.getRomInfo() + " " + room.getModel().getID(); 
+		String s = " " + Integer.toString(room.getID()) + "#" + Integer.toString(room.getRomNR()) + "#" + room.getRomType() + "#" + room.getRomInfo() + "#" + room.getModel().getID(); 
 		return s;
 	}
 
@@ -183,7 +186,7 @@ public class XmlSerializer {
 		String d = Integer.toString(sensor.getBattery());
 		String e = Integer.toString(sensor.getRoom().getID());
 		
-		return " " + a + " " + b + " " + c + " " + d + " " + e;
+		return "#" + a + "#" + b + "#" + c + "#" + d + "#" + e;
 	}
 
 	public static Element insertXmlSensor(Sensor s) {
@@ -232,7 +235,7 @@ public class XmlSerializer {
 		String a = Integer.toString(event.getSensor().getID());
 		String b = event.getEventType().toString();
 		String c = Integer.toString(event.getSensor().getRoom().getID());
-		return " " + a + " " + b + " " + c;
+		return "#"+ event.getID() + "#" + a + "#" + b + "#" + c + "#" + event.getTime();
 	}
 
 

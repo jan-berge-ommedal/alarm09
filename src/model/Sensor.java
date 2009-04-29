@@ -13,7 +13,7 @@ import javax.swing.Timer;
 
 import model.Event.EventType;
 
-import connection.ModelEditControll;
+import connection.ModelEditController;
 
 import apps.LAC;
 
@@ -28,7 +28,10 @@ import apps.LAC;
 
 public class Sensor extends AbstractPropertyChangeBean{
 	
+	public static final String PC_IDCHANGED= "ID_CHANGED";
+	
 	public static final String PC_EVENTADDED = "EVENT_ADDED";
+	public static final String PC_EVENTREMOVED = "EVENT_REMOVED";
 	
 	/* START DATAFIELDS */
 	private int id;
@@ -61,13 +64,17 @@ public class Sensor extends AbstractPropertyChangeBean{
 		this.battery=battery;
 		this.installationDate=installationDate;
 		this.room=room;
+		
+		room.addSensor(this);
+		
 		if(startSensor){
-			addEvent(new Event(Event.EventType.STARTUP,this));	
+			new Event(-1,Event.EventType.STARTUP,LAC.getTime(),this);	
 			Thread t = new Thread(){
 				/**
 		 		* A thread that decreases the remaining batterytime
 				*/
 				public void run(){
+					/*
 					while(true){
 						if(getBattery()>0)setBattery(getBattery()-5);
 						try {
@@ -76,11 +83,12 @@ public class Sensor extends AbstractPropertyChangeBean{
 							e.printStackTrace();
 						}
 					}
+					*/
 				}
 			};
 			t.start();
 		}
-		room.addSensor(this);
+		
 	}
 	
 	
@@ -185,9 +193,9 @@ public class Sensor extends AbstractPropertyChangeBean{
 	 * @param batteryRemaining remaining battery - and int between 0 and 100
 	 * @throws IOException 
 	 */
-	public void replaceBattery(ModelEditControll mec) throws IOException {
+	public void replaceBattery(ModelEditController mec) throws IOException {
 		setBattery(100);
-		this.addEvent(new Event(Event.EventType.BATTERYREPLACEMENT,this));
+		this.addEvent(new Event(-1,Event.EventType.BATTERYREPLACEMENT,LAC.getTime(),this));
 	}
 	
 	
@@ -229,7 +237,7 @@ public class Sensor extends AbstractPropertyChangeBean{
 		
 		boolean booleanResult = batteryOk && !isAlarmState();
 		if(booleanResult)result+="Ok, ";
-		this.addEvent(new Event((booleanResult ? EventType.SUCCESSFULTEST : EventType.FAILEDTEST),this));
+		this.addEvent(new Event(-1,(booleanResult ? EventType.SUCCESSFULTEST : EventType.FAILEDTEST),LAC.getTime(),this));
 		System.out.println(result);
 		return booleanResult;
 	}
@@ -264,6 +272,22 @@ public class Sensor extends AbstractPropertyChangeBean{
 		int oldValue = this.battery;
 		this.battery=battery;
 		pcs.firePropertyChange("BATTERY", oldValue, this.battery);
+	}
+
+
+
+	public void setID(int id) {
+		int oldValue = this.id;
+		this.id=id;
+		pcs.firePropertyChange(PC_IDCHANGED, oldValue, this.id);
+		
+	}
+
+
+
+	public void removeEvent(Event event) {
+		if(events.remove(event))pcs.firePropertyChange(PC_EVENTREMOVED, null, event);
+		
 	}
 }
  

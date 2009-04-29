@@ -2,6 +2,8 @@ package database;
 
 import java.sql.*;
 
+import connection.ModelEditController;
+
 import model.Event;
 import model.Model;
 import model.Room;
@@ -49,9 +51,11 @@ public class Database {
 		}
 	}
 	
-	public Model getLACModel(int id) {
+	public Model getLACModel(int id,ModelEditController controller) {
 		
-		Model m = new Model();
+		Model m = new Model(controller);
+		//The controller should not handle changes when loading the model from database
+		m.removePropertyChangeListener(controller);
 		m.setID(id);
 		
 		try {
@@ -80,19 +84,20 @@ public class Database {
 
 					// construct and add sensor to room
 					Sensor s = new Sensor(sensors.getInt("id"), sensors.getBoolean("alarmState"),sensors.getInt("batteryStatus"), sensors.getTimestamp("installationDate"),room,false);
-					room.addSensor(s);
 					
 				}
 				
 				
 				// add room to model's room-list
-				m.addRoom(room);
 				
 			}
 				
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		
+		//After loading is complete, the controller will listen to changes in the model
+		m.addPropertyChangeListener(controller);
 	
 		return m;
 		
@@ -168,9 +173,9 @@ public class Database {
 	
 	
 	// uten oppdatering av installationDate
-	public void updateSensor(int ID, boolean alarmState, int batteryStatus){
+	public void updateSensor(int ID, boolean alarmState, int batteryStatus) throws SQLException{
 
-		try {
+
 
 			int alarmStateInt = alarmState ? 1 : 0;
 			
@@ -178,16 +183,13 @@ public class Database {
 					 						",batteryStatus  = '" + batteryStatus  + "'" +
 						  "WHERE id = "+ID);
 			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	
 			
 	}
 
 	// m/ oppdatering av installationDate
-	public void updateSensor(int ID, boolean alarmState, int batteryStatus, Timestamp installationDate){
+	public void updateSensor(int ID, boolean alarmState, int batteryStatus, Timestamp installationDate) throws SQLException{
 
-		try {
 
 			int alarmStateInt = alarmState ? 1 : 0;
 			
@@ -195,10 +197,7 @@ public class Database {
 					 						",batteryStatus  = '" + batteryStatus  + "'" +
 					 						",installationDate   = '" + installationDate.toString()  + "'" +
 						  "WHERE id = "+ID);
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	
 			
 	}
 
@@ -206,11 +205,10 @@ public class Database {
 	
 	
 
-	public int insertLAC(String adress){
+	public int insertLAC(String adress) throws SQLException{
 
 		int id = -1;
 		
-		try {
 			
 			executeUpdate("INSERT INTO LAC (adress) VALUES ('"+adress+"')");
 			
@@ -219,9 +217,7 @@ public class Database {
 			rs.next();
 			id = rs.getInt("id");
 			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+
 
 		return id;
 		
@@ -229,11 +225,10 @@ public class Database {
 	
 	
 	
-	public int insertRoom(int LACID, int romNR, String romType, String romInfo){
+	public int insertRoom(int LACID, int romNR, String romType, String romInfo) throws SQLException{
 		
 		int id = -1;
 		
-		try {
 			
 			executeUpdate("INSERT INTO Rom (LACID, romNR, romType, romInfo ) VALUES ("+LACID+","+romNR+",'"+romType+"','"+romInfo+"')");
 			
@@ -242,9 +237,7 @@ public class Database {
 			rs.next();
 			id = rs.getInt("id");
 			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+	
 
 		return id;
 		
@@ -362,29 +355,27 @@ public class Database {
 		return ids;
 	}
 	
-	public static void main(String[] args){
-		
+
+
+	public static void main(String[] args) {
+		Database database;
 		try {
-			
-			Database db = new Database("mysql.stud.ntnu.no","janberge_admin","1234","janberge_db");
-			
-			int io = 0;
-			// testos:
-			// db.emptyTables();
-			// io = db.insertLAC("Rundt svingen");
-			// io = db.insertRoom(2, 5, "", "");
-			// io = db.insertSensor(1,true,50);
-			System.out.println(io);
-			
-			Model m = db.getLACModel(1);
-			System.out.println(m.toString());
-		} catch (Exception e) {
-			// e.printStackTrace();
-			System.err.println("Could not connect to database (fra main)");
+			database = new Database("mysql.stud.ntnu.no","janberge_admin","1234","janberge_db");
+			database.emptyTables();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 	}
-
-
 	
 }

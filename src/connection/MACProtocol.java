@@ -1,5 +1,6 @@
 package connection;
 
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.sql.Timestamp;
@@ -29,12 +30,14 @@ public class MACProtocol {
 					adapter.getConnection().send(XmlSerializer.toXml(adapter.getModel()));
 				}
 				else if(receive.substring(0, 9).equals("UPDATELAC")){
-					String[] s = receive.split(" ");
+					//FIXME kan ikke splitte på whitespace
+					String[] s = receive.split("#");
 					adapter.getModel().setAdresse(s[2]);
 					adapter.getModel().setID(Integer.parseInt(s[1]));
+					sendACK(adapter.getConnection());
 				}
 				else if(receive.substring(0, 10).equals("UPDATEROOM")){
-					String[] s = receive.split(" ");
+					String[] s = receive.split("#");
 					
 					Room r = null;
 					for (Room room : adapter.getModel().getRooms()) {
@@ -48,7 +51,7 @@ public class MACProtocol {
 					r.setRomInfo(s[4]);
 				}
 				else if(receive.substring(0, 12).equals("UPDATESENSOR")){
-					String[] s = receive.split(" ");
+					String[] s = receive.split("#");
 					boolean b = (s[2].equals("true")) ? true : false;
 					Room r = null;
 					for (Room room : adapter.getModel().getRooms()) {
@@ -69,66 +72,80 @@ public class MACProtocol {
 					se.setInstallationDate(XmlSerializer.makeTimestamp(s[4]));
 				}
 				else if(receive.substring(0, 10).equals("INSERTROOM")){
-					String[] s = receive.split(" ");
-					int lacID = Integer.parseInt(s[5]);
-					int romNr = Integer.parseInt(s[2]);
-					String romType = s[3];
-					String romInfo = s[4];
+					
+					//FIXME du kan ikke splitte på whitespace, da feltene kan inneholde mellomrom
+					String[] s = receive.split("#");
+					int lacID = Integer.parseInt(s[4]);
+					int romNr = Integer.parseInt(s[1]);
+					String romType = s[2];
+					String romInfo = s[3];
 					int modelID = adapter.getModel().getID();
 
+	
 					
 					//Konstruktører legger nå automatisk rommet som barn av modellen
 					Room room = new Room(-1,romNr, romType, romInfo, adapter.getModel());
 					
-					
-					adapter.getConnection().send("" + room.getID());
+					sendACK(adapter.getConnection());
 					
 				}
 				else if(receive.substring(0, 12).equals("INSERTSENSOR")){
-					String[] s = receive.split(" ");
+
+					String[] s = receive.split("#");
 					boolean b = (s[2].equals("true")) ? true : false;
-					int romID = Integer.parseInt(s[1]);
-					int battery = Integer.parseInt(s[5]);
+					int romID = Integer.parseInt(s[5]);
+					int battery = Integer.parseInt(s[4]);
 					
 					Room room = adapter.getModel().getRoom(romID);
 					
+					Timestamp t = Timestamp.valueOf(s[3]);
 					
-					//FIXME Opprettelsestidspunkt må sendes med fra LACProtocol
+	
 					
 					//Konstruktører legger nå automatisk sensoren som barn av rommet
-					Sensor se = new Sensor(-1, b, battery,LAC.getTime(),room,false); 
+					Sensor se = new Sensor(-1, b, battery, t,room,false); 
 					
-					adapter.getConnection().send(Integer.toString(se.getID()));
+					sendACK(adapter.getConnection());
 
 				}
 				else if(receive.substring(0, 11).equals("INSERTEVENT")){
-					String[] s = receive.split(" ");
+					String[] s = receive.split("#");
 					EventType et = null;
 					for(EventType e : EventType.values()){
-						if(s[2].equals(e.toString()))
+						if(s[3].equals(e.toString()))
 							et = e;
 					}
 					
 					Model m = adapter.getModel();
 					
-					//FIXME sensorID må sendes fra LACsiden
-					Sensor sensor = adapter.getModel().getSensor(0);
+					int eventID = Integer.parseInt(s[1]);
+					Timestamp timestamp = Timestamp.valueOf(s[5]);
 					
-					//FIXME opprettelsestidspunkt må sendes fra LAC
+					
+					Sensor sensor = adapter.getModel().getSensor(Integer.parseInt(s[2]));
+					
 					//Eventkonstruktøren legger automatisk event til som barn av sensor
-					Event e = new Event(-1,et,LAC.getTime(),sensor);
+					Event e = new Event(eventID,et,timestamp,sensor);
 					
-					adapter.getConnection().send(Integer.toString(e.getID()));
+					sendACK(adapter.getConnection());
 				}
 				
 			} catch (Exception e) {
-				if(receive.startsWith("INSERT")){
-					adapter.getConnection().send(Integer.toString(-1));
-				}
-				else{
 					adapter.getConnection().send("NAK");
-				}
+				
 			}
+		
+	}
+	private static void sendACK(Connection connection) {
+		try {
+			connection.send("ACK");
+		} catch (ConnectException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 	public static void newRoom(Room r, Connection c) throws IOException{
@@ -140,7 +157,7 @@ public class MACProtocol {
 	}
 	
 	public static void newSensor(Sensor s, Connection c) throws IOException{
-		String st = "NEWSENSOR" + " " + s.getID() + " " + s.isAlarmState() + " " + s.getInstallationDate().toString() + " " + s.getBattery() + " " + s.getRoom().getID();
+		String st = "NEWSENSOR" + "#" + s.getID() + "#" + s.isAlarmState() + "#" + s.getInstallationDate().toString() + "#" + s.getBattery() + "#" + s.getRoom().getID();
 		c.send(st);
 		if(c.receive().equals("NAK")){
 			throw new IOException("Received a NAK in MACProtocol");
@@ -148,7 +165,7 @@ public class MACProtocol {
 	}
 	
 	public static void newEvent(Event e, Connection c) throws IOException{
-		String s = "NEWEVENT" + " " + e.getID() + " " + e.getEventType().toString() + " " + e.getTime().toString() + " " +  e.getSensor().getRoom().getID() + " " + e.getSensor().getID();
+		String s = "NEWEVENT" + "#" + e.getID() + "#" + e.getEventType().toString() + "#" + e.getTime().toString() + "#" +  e.getSensor().getRoom().getID() + "#" + e.getSensor().getID();
 		c.send(s);
 		if(c.receive().equals("NAK")){
 			throw new IOException("Received a NAK in MACProtocol");
@@ -156,7 +173,7 @@ public class MACProtocol {
 	}
 	
 	public static void updateRoom(Room r, Connection c) throws IOException{
-		String s = "UPDATEROOM" + " " + r.getID() + " " + r.getRomNR() + " " + r.getRomType() + " " + r.getRomInfo();
+		String s = "UPDATEROOM" + "#" + r.getID() + "#" + r.getRomNR() + "#" + r.getRomType() + "#" + r.getRomInfo();
 		c.send(s);
 		if(c.receive().equals("NAK")){
 			throw new IOException("Received a NAK in MACProtocol");
@@ -164,7 +181,7 @@ public class MACProtocol {
 	}
 	
 	public static void updateSensor(Sensor s, Connection c) throws IOException{
-		String st = "UPDATESENSOR" + " " + s.getID() + " " + s.isAlarmState() + " " + s.getInstallationDate().toString() + " " + s.getBattery();
+		String st = "UPDATESENSOR" + "#" + s.getID() + "#" + s.isAlarmState() + "#" + s.getInstallationDate().toString() + "#" + s.getBattery();
 		c.send(st);
 		if(c.receive().equals("NAK")){
 			throw new IOException("Received a NAK in MACProtocol");
@@ -176,6 +193,10 @@ public class MACProtocol {
 		if(c.receive().equals("NAK")){
 			throw new IOException("Received a NAK in MACProtocol");
 		}
+	}
+	public static void updateModel(Model model, Connection connection) {
+		//FIXME
+		
 	}
 
 }

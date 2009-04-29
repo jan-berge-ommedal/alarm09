@@ -4,7 +4,7 @@ import model.Model;
 import model.Room;
 import model.Sensor;
 import junit.framework.TestCase;
-import connection.ModelEditControll;
+import connection.ModelEditController;
 import apps.LAC;
 import apps.MAC;
 
@@ -24,12 +24,11 @@ public class InteractionTests extends TestCase{
 		LAC lac = new LAC(lacid,false);
 		
 		
-		ModelEditControll sender = lac;
-		ModelEditControll receiver = mac.getLACAdapterList().getElementLACAdapterAt(lacid);
+		ModelEditController sender = lac;
+		ModelEditController receiver = mac.getLACAdapterList().getElementLACAdapterAt(lacid-1);
 		
-		
+		standardTimeout();
 		assertEquals(receiver.getModel().getID(), sender.getModel().getID());
-		
 		assertEquals(receiver.getModel().toString(), sender.getModel().toString());
 		
 		Model senderModel = sender.getModel();
@@ -40,9 +39,9 @@ public class InteractionTests extends TestCase{
  		senderModel.setAdresse(testString);
  		
  		standardTimeout();
- 		assertEquals(receiverModel.getAdresse(), senderModel.getAdresse());
+ 		assertEquals(senderModel.getAdresse(),receiverModel.getAdresse());
 		
- 		Room room = new Room(-1, 0, "testString", "testString", receiverModel);
+ 		Room room = new Room(-1, 0, "testString", "testString", senderModel);
  		
  		senderModel.addRoom(room);
  		
@@ -85,7 +84,7 @@ public class InteractionTests extends TestCase{
 
 	private void standardTimeout() {
 		try {
-			Thread.sleep(2000);
+			Thread.sleep(3000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

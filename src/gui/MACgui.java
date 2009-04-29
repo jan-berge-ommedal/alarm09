@@ -15,9 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
-import log.Log;
-
-import connection.ModelEditControll;
+import connection.ModelEditController;
 
 import apps.MAC;
 import apps.MAC.LACAdapter;
@@ -34,7 +32,6 @@ public class MACgui extends JPanel implements Values, ActionListener, PropertyCh
 	
 	private JButton checkMarked;
 	private JButton openLac;
-	private JButton printLog;
 	private JLabel lacs;
 	private JList lacList;
 	//private JButton 'Generate and print an event report for one or more sensors for all LACs or a set of LACs'
@@ -44,6 +41,7 @@ public class MACgui extends JPanel implements Values, ActionListener, PropertyCh
 	private ConnectionStatusPanel databaseStatusPanel;
 	
 	private MAC mac;
+	private Object printLog;
 	
 	public MACgui(MAC mac) {
 		this.mac = mac;
@@ -64,10 +62,6 @@ public class MACgui extends JPanel implements Values, ActionListener, PropertyCh
 		openLac.addActionListener(this);
 		openLac.setMargin(asdf);
 		
-		printLog = new JButton("Print log");
-		printLog.setMargin(asdf);
-		printLog.addActionListener(this);
-		
 		lacs = new JLabel("LACs");
 		Font f = new Font("Dialog", Font.PLAIN, 20);
 		lacs.setFont(f);
@@ -77,11 +71,9 @@ public class MACgui extends JPanel implements Values, ActionListener, PropertyCh
 		pane.add(checkMarked);
 		pane.add(lacs);
 		pane.add(openLac);
-		pane.add(printLog);
 		lacs.setBounds(LEFT_SPACE, TOP_SPACE + BUTTON_HEIGHT + 2*DEFAULT_SPACE, 100, 20);
 		checkMarked.setBounds(LEFT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_LONG_WIDTH, BUTTON_HEIGHT);
 		openLac.setBounds(LEFT_SPACE + BUTTON_LONG_WIDTH + DEFAULT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_LONG_WIDTH, BUTTON_HEIGHT);
-		printLog.setBounds(LEFT_SPACE + BUTTON_LONG_WIDTH + BUTTON_LONG_WIDTH + BUTTON_LONG_WIDTH, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_LONG_WIDTH, BUTTON_HEIGHT);
 		
 		databaseStatusPanel = new ConnectionStatusPanel(mac.getDatabaseConnectionWrapper());
 		databaseStatusPanel.setBounds(500, 50, 200, 50);
@@ -141,7 +133,7 @@ public class MACgui extends JPanel implements Values, ActionListener, PropertyCh
 			
 		}
 		else if (e.getSource() == openLac) {
-			ModelEditControll temp = (ModelEditControll)lacList.getSelectedValue();
+			ModelEditController temp = (ModelEditController)lacList.getSelectedValue();
 			if(temp != null) {
 				new LACgui(temp);
 			}
@@ -150,7 +142,7 @@ public class MACgui extends JPanel implements Values, ActionListener, PropertyCh
 			}
 		}
 		else if (e.getSource() == printLog) {
-			ModelEditControll temp = (ModelEditControll)lacList.getSelectedValue();
+			ModelEditController temp = (ModelEditController)lacList.getSelectedValue();
 			if(temp != null) {				
 				Log.printReport(temp.getModel(), true);
 			}

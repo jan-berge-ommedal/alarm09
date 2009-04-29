@@ -3,7 +3,7 @@ package model;
 import java.io.IOException;
 import java.sql.Timestamp;
 
-import connection.ModelEditControll;
+import connection.ModelEditController;
 
 import apps.LAC;
 
@@ -29,21 +29,6 @@ public class Event {
 	
 	
 	
-	/**
-	 * 
-	 * 
-	 * @param eventType
-	 * @param time
-	 * @param s
-	 */
-
-	public Event(EventType eventType, Sensor sensor) {
-		this.eventType = eventType;
-		this.time = LAC.getTime();
-		this.id = nextEventID++;
-		
-		this.sensor.addEvent(this);
-	}
 	
 	public Event(int id, EventType eventType, Timestamp time,Sensor sensor) {
 		this.eventType = eventType;
@@ -55,6 +40,10 @@ public class Event {
 		this.sensor.addEvent(this);
 	}
 	
+	public void setID(int insertEvent) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	public Sensor getSensor() {
 		return sensor;
@@ -84,5 +73,7 @@ public class Event {
 		s+="Event: "+id+" - "+eventType+" - "+time;
 		return s;
 	}
+
+	
 }
  

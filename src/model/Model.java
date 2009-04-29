@@ -11,6 +11,8 @@ import javax.swing.DefaultListModel;
 import javax.swing.ListModel;
 import javax.swing.event.ListDataListener;
 
+import connection.ModelEditController;
+
 import apps.LAC;
 
 /**
@@ -23,8 +25,10 @@ import apps.LAC;
 
 public class Model extends AbstractPropertyChangeBean{
  
-	private static final String PC_ROOMADDED = null;
-	private static final String PC_ROOMREMOVED = null;
+	public static final String PC_ROOMADDED = "ROOMADDED";
+	private static final String PC_ROOMREMOVED = "ROOMREMOVED";
+	
+	private static final String PC_MODELIDCHANGED = "MODEL_ID_CHANGED";
 	/* START DATAFIELDS */
 	private int id;
 	private String adress = "<adress>";
@@ -32,12 +36,9 @@ public class Model extends AbstractPropertyChangeBean{
 	
 	
 	private ArrayList<Room> rooms = new ArrayList<Room>();
-	private ArrayList<PropertyChangeListener> listeners = new ArrayList<PropertyChangeListener>();
 	
-	private PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-
-	public Model() {
-		pcs.addPropertyChangeListener(this);
+	public Model(ModelEditController controller) {
+		controller.setModel(this);
 	}
 	
 	/* SECTION OF SIMPLE GET & SET */
@@ -51,11 +52,13 @@ public class Model extends AbstractPropertyChangeBean{
 	 * @param id
 	 */
 	
+	
 	public void setID(int id) {
 		int oldValue = this.id;
 		this.id = id;
-		pcs.firePropertyChange("LACID", oldValue, id);
+		pcs.firePropertyChange(PC_MODELIDCHANGED, oldValue, id);
 	}
+	
 	
 	public String getAdresse() {
 		return adress;
@@ -105,24 +108,6 @@ public class Model extends AbstractPropertyChangeBean{
 	
 	
 	
-	/**
-	 * Adds the specified PropertyChangeListener listener to receive change-events from this model.
-	 *  
-	 * @param listener the listener
-	 */
-	public void addPropertyChangeListener(PropertyChangeListener listener){
-		listeners.add(listener);
-	}
-	
-	/**
-	 * Stops the given PropertyChangeListener from listening to this model.
-	 *  
-	 * @param listener the listener
-	 */
-	public void removePropertyChangeListener(Object object) {
-		listeners.remove(object);
-		
-	}
 
 
 	
@@ -137,14 +122,6 @@ public class Model extends AbstractPropertyChangeBean{
 	}
 
 
-	 @Override
-	public void propertyChange(PropertyChangeEvent e) {
-		for(PropertyChangeListener pcl : listeners){
-			pcl.propertyChange(e);
-		}
-		
-		
-	}
 	
 
 	public Sensor[] getSensors() {
@@ -157,22 +134,7 @@ public class Model extends AbstractPropertyChangeBean{
 		return list.toArray(new Sensor[list.size()]);
 	}
 	
-	public static void main(String[] args) {
-		Model m = new Model();
-		m.addPropertyChangeListener(new PropertyChangeListener(){
-
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				System.out.println(evt.getSource());
-			}
-			
-		});
-		Room r = new Room(0,53,"sdfg","swddfsg",m);
-		m.addRoom(r);
-		r.setRomInfo("sdfssdd");
-		r.setRomInfo("sdfssdd");
-		r.setRomInfo("sdfssdd2");
-	}
+	
 
 	public Sensor getSensor(int i) {
 		Sensor result = null;

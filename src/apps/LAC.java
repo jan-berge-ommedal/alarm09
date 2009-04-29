@@ -26,7 +26,7 @@ import com.mysql.jdbc.jdbc2.optional.ConnectionWrapper;
 import connection.ConnectionImplementation;
 import connection.ConnectionStatusWrapper;
 import connection.LACProtocol;
-import connection.ModelEditControll;
+import connection.ModelEditController;
 import connection.TCPConnection;
 import connection.ConnectionStatusWrapper.ConnectionStatus;
 
@@ -45,7 +45,7 @@ import no.ntnu.fp.net.co.Connection;
  */
 
 
-public class LAC extends ModelEditControll{
+public class LAC extends ModelEditController{
 	private Connection connection;
 	
 	private LACgui gui;
@@ -85,10 +85,9 @@ public class LAC extends ModelEditControll{
 		String reveiceID = connection.receive();
 		System.out.println(reveiceID);
 		int modelID = Integer.parseInt(reveiceID);
-		Model m = new Model();
+		Model m = new Model(this);
 		m.setID(modelID);
 		m.setAdresse(defaultAdres);
-		this.setModel(m);
 	}
 	
 	/**
@@ -107,7 +106,7 @@ public class LAC extends ModelEditControll{
 				System.err.println("Refused by the MAC. Exiting");
 				System.exit(0);
 			}
-			setModel(LACProtocol.receiveCompleteModel(connection, id));
+			LACProtocol.receiveCompleteModel(connection, id,this);
 		} catch (ParseException e) {
 			System.err.println("Could not load model");
 		} catch (ConnectException e) {
@@ -169,19 +168,17 @@ public class LAC extends ModelEditControll{
 	// @Override
 	public void propertyChange(PropertyChangeEvent e) {
 		super.propertyChange(e);
-		System.out.println("Model changed: "+e);
 		if(e.getSource() instanceof Sensor){
 			Sensor sensor = (Sensor) e.getSource();
 			if(e.getPropertyName().equals(Sensor.PC_EVENTADDED)){
 				Event event = (Event) e.getNewValue();
 				try {
-					LACProtocol.insertEvent(connection, event);
-				} catch (ConnectException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					LACProtocol.insertEvent(connection, event,this);
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					System.err.println("LAC: The event was not inserted sucessfully on th MAC. Removing it on the LAC..");
+					model.removePropertyChangeListener(this);
+					sensor.removeEvent(event);
+					model.addPropertyChangeListener(this);
 				}
 				
 			}else{
@@ -200,13 +197,18 @@ public class LAC extends ModelEditControll{
 				if(e.getPropertyName().equals(Room.PC_SENSORADDED)){
 					Sensor sensor = (Sensor)e.getNewValue();
 					try {
-						LACProtocol.insertSensor(connection, sensor);
-					} catch (ConnectException e1) {
-						e1.printStackTrace();
+						LACProtocol.insertSensor(connection, sensor,this);
 					} catch (IOException e1) {
-						e1.printStackTrace();
+						System.err.println("LAC: The sensor was not inserted sucessfully on th MAC. Removing it on the LAC..");
+						model.removePropertyChangeListener(this);
+						room.removeSensor(sensor);
+						model.addPropertyChangeListener(this);
 					}
+				}else if(e.getPropertyName().equals(Room.PC_SENSORADDED)){
+				
+					
 				}else{
+				
 					try {
 						LACProtocol.updateRoom(connection, room);
 					} catch (ConnectException e1) {
@@ -219,15 +221,29 @@ public class LAC extends ModelEditControll{
 				}
 		}else if(e.getSource() instanceof Model){
 			Model model = (Model) e.getSource();
-			try {
-				LACProtocol.updateLAC(connection, model);
-			} catch (ConnectException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+			if(e.getPropertyName().equals(Model.PC_ROOMADDED)){
+				Room room = (Room) e.getNewValue();
+				try {
+					LACProtocol.insertRoom(connection, room,this);
+				} catch (IOException e1) {
+					System.err.println("LAC: The room was not inserted sucessfully on th MAC. Removing it on the LAC.. ");
+					model.removePropertyChangeListener(this);
+					model.removeRoom(room);
+					model.addPropertyChangeListener(this);
+					
+				}
+			}else{
+				try {
+					LACProtocol.updateLAC(connection, model);
+				} catch (ConnectException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
+			
 		}
 		
 	}
@@ -334,7 +350,10 @@ public class LAC extends ModelEditControll{
 		}
 		
 		public void run(){
-			while(true){
+			//FIXME
+			/*
+			while(false){
+				
 				if(!LACProtocol.connectionCheck(connection)){
 					connectionWrapper.setConnectionStatus(ConnectionStatus.DISCONNECTED);
 					try {
@@ -343,7 +362,10 @@ public class LAC extends ModelEditControll{
 						e.printStackTrace();
 					}
 					connectWithRetry();
-				}else{
+				}
+				
+				else{
+				
 					try {
 						Thread.sleep(10000);
 					} catch (InterruptedException e) {
@@ -353,6 +375,7 @@ public class LAC extends ModelEditControll{
 				
 					
 			}
+			*/
 		}
 	}
 }

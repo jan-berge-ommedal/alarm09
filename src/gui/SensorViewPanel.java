@@ -151,13 +151,7 @@ public class SensorViewPanel implements Values {
 
 	}
 
-	/**
-	 * main for testing av sensorviewpanel
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		viewSensorEvents(new Sensor(2, true, 50, new Timestamp(0), new Room(2, 32, "Hus", "Stort",  new Model()), true));
-	}
+	
 	
 	private static model.Event[] giveArray() {
 		if (sensor != null) {

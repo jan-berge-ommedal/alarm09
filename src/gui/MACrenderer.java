@@ -13,7 +13,7 @@ import javax.swing.ListCellRenderer;
 import model.Model;
 import model.Sensor;
 
-import connection.ModelEditControll;
+import connection.ModelEditController;
 import connection.ConnectionStatusWrapper.ConnectionStatus;
 
 import apps.LAC;
@@ -49,7 +49,7 @@ public class MACrenderer extends DefaultListCellRenderer implements ListCellRend
 		panel.setLayout(null);
 		if(selected)panel.setBackground(colorSelected);
 		
-		ModelEditControll element = (ModelEditControll)object;
+		ModelEditController element = (ModelEditController)object;
 		Model m = element.getModel();
 		
 		
