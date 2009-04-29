@@ -34,7 +34,7 @@ public class MACProtocol extends AbstractApplicationProtocol {
 				//FIXME kan ikke splitte på whitespace
 				String modelstring = removeFlag(receive, UPDATEMODEL);
 				
-				Model model = XmlSerializer.toModel(modelstring);
+				Model model = XmlSerializer.toModel(modelstring, controller);
 				
 				sendACK(c);
 			}
@@ -42,7 +42,7 @@ public class MACProtocol extends AbstractApplicationProtocol {
 				
 				String roomstring = removeFlag(receive, UPDATEROOM);
 				
-				Room room = XmlSerializer.toRoom(roomstring);
+				Room room = XmlSerializer.toRoom(roomstring, controller.getModel());
 				
 				sendACK(c);
 			}
@@ -58,7 +58,7 @@ public class MACProtocol extends AbstractApplicationProtocol {
 				
 				String roomstring = removeFlag(receive, INSERTROOM);
 				
-				Room room = XmlSerializer.toRoom(roomstring);
+				Room room = XmlSerializer.toRoom(roomstring, controller.getModel());
 				
 				//Konstruktører legger nå automatisk rommet som barn av modellen
 				//Room room = new Room(-1,romNr, romType, romInfo, adapter.getModel());
