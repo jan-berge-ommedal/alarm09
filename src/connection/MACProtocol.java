@@ -79,8 +79,7 @@ public class MACProtocol extends AbstractApplicationProtocol {
 				se.setInstallationDate(XmlSerializer.makeTimestamp(s[4]));
 			}
 			else if(receive.substring(0, 10).equals("INSERTROOM")){
-				
-				//FIXME du kan ikke splitte på whitespace, da feltene kan inneholde mellomrom
+
 				String[] s = receive.split("#");
 				int lacID = Integer.parseInt(s[4]);
 				int romNr = Integer.parseInt(s[1]);
@@ -138,7 +137,7 @@ public class MACProtocol extends AbstractApplicationProtocol {
 			}
 			
 		} catch (Exception e) {
-				this.sendNAK(connection);
+				this.sendNAK(c);
 			
 		}
 
@@ -154,7 +153,7 @@ public class MACProtocol extends AbstractApplicationProtocol {
 
 	@Override
 	public void insertRoom(ModelEditController controller,Connection c, Room r) throws ConnectException, IOException {
-		String s = "NEWROOM" + " " + r.getID() + " " + r.getRomNR() + " " + r.getRomType() + " " + r.getRomInfo();
+		String s = "NEWROOM" + "#" + r.getID() + "#" + r.getRomNR() + "#" + r.getRomType() + "#" + r.getRomInfo();
 		c.send(s);
 		receiveACK(c);
 	}
@@ -175,9 +174,12 @@ public class MACProtocol extends AbstractApplicationProtocol {
 	}
 
 	@Override
-	public void updateModel(ModelEditController controller, Connection connection) throws ConnectException, IOException {
+	public void updateModel(ModelEditController controller, Connection c) throws ConnectException, IOException {
 		// TODO Auto-generated method stub
-		
+		Model m = controller.getModel();
+		String st = "UPDATEMODEL" + "#" + m.getID() + "#" + m.getAdresse();
+		c.send(st);
+		receiveACK(c);
 	}
 
 	@Override
