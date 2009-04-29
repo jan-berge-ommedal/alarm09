@@ -70,7 +70,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		this.mec = controller;
 		this.mec.addPropertyChangeListener(this);
 		this.model = mec.getModel();
-		this.initialize(true);
+		this.initialize();
 	}
 	
 	/**
@@ -81,23 +81,28 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		return this.model;
 	}
 	
+	
 	/**
 	 * Standard setter
 	 * @param model - den nye modellen til LACguiet
 	 */
+	/*
 	public void setModel(Model model) {
 		this.model = model;
 		this.sensorList.setModel(new ModelListAdapter(model));
 		this.frame.dispose();
-		this.initialize(true);
+		this.initialize();
 	}
+	*/
 	
 	/**
 	 * Denne metoden oppfører seg som en hjelpemetode til konstruktøren som genererer GUIet. Dersom
 	 * den kalles med true vil den sette guiet til å følge en modell
 	 * @param model - en boolean som sier noe om guiet har en modell eller ikke
 	 */
-	private void initialize(boolean model) {
+	private void initialize() {
+		boolean model = false;
+		if(this.model!=null)model=true;
 		
 		Insets asdf = new Insets(0,0,0,0);
 		JPanel pane = new JPanel();
@@ -806,7 +811,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 			model = mec.getModel();			
 			// Burde muligens gjøres annerledes
 			this.frame.dispose();
-			initialize(true);
+			initialize();
 		}
 	}
 }
