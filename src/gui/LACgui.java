@@ -9,42 +9,41 @@ import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
-
 import model.*;
 import model.Event.EventType;
 import apps.LAC;
-
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.ListDataListener;
-
 import connection.ModelEditController;
-import help.AlarmHelp;
-
 
 /**
- * 
+ * Denne klassen håndterer vinduet som presenteres fra en LAC maskin
  * @author Olannon
- * 
- * denne klassen håndterer vinduet som presenteres fra en LAC maskin
- *
  */
 @SuppressWarnings("serial")
 public class LACgui extends JPanel implements Values, ActionListener, PropertyChangeListener {
 	
+	//frame
 	private JFrame frame;
+	
+	//knapper
 	private JButton installSensor;
 	private JButton saveLog;
 	private JButton checkSensors;
+	private JButton viewSensor;
+	private JButton editRoom;
+	private JButton replaceSensor;
+	private JButton changeBattery;
+	
+	//labels
 	private JLabel sensors;
-	private JList sensorList;
-	private Model model;
 	private JLabel adresse;
 	private JLabel id;
 	private JLabel sensorID;
@@ -53,12 +52,15 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	private JLabel sensorStatus;
 	private JLabel batteryStatus;
 	private JLabel date;
+	
+	//sensorlisten
+	private JList sensorList;
+	
+	//diverse underliggende logikk
 	private ConnectionStatusPanel csp;
-	private JButton replaceSensor;
-	private JButton changeBattery;
+	private Model model;
 	private ModelEditController mec;
-	private JButton viewSensor;
-	private JButton editRoom;
+	private String adress;
 	
 	/*
 	 * Her følger diverse konstruktører som alle kaller initialize på et senere tidspunkt
@@ -71,10 +73,18 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		this.initialize(true);
 	}
 	
+	/**
+	 * Standard getter
+	 * @return Model - den underliggende modellen til LACguiet
+	 */
 	public Model getModel() {
 		return this.model;
 	}
 	
+	/**
+	 * Standard setter
+	 * @param model - den nye modellen til LACguiet
+	 */
 	public void setModel(Model model) {
 		this.model = model;
 		this.sensorList.setModel(new ModelListAdapter(model));
@@ -137,12 +147,23 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		viewSensor.setMargin(asdf);
 		viewSensor.setVisible(true);
 		sensors = new JLabel("Sensors");
-		//if (model && this.model.getAdresse() != null) {
-		//	adresse = new JLabel(this.model.getAdresse());
-		//}
-		//else {
-			adresse = new JLabel("Addr. ikke valgt");
-		//}
+		
+		adresse = new JLabel("");
+		try {
+			adresse = new JLabel(this.model.getAdresse());
+		} catch (NullPointerException npe) {
+			System.err.println("nullpointerex ved getAdresse");
+			npe.printStackTrace();
+		}
+		String input = "";
+		if (adresse.getText().equals(input)) {
+			try {
+				input = JOptionPane.showInputDialog("Set adress");
+			} catch (NullPointerException npe) {
+				input = JOptionPane.showInputDialog("Set adress");
+			}
+		}
+		
 		Font f = new Font("Dialog", Font.PLAIN, 20);
 		sensors.setFont(f);
 		adresse.setFont(f);
@@ -385,7 +406,8 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	}
 	
 	/**
-	 * Åpner vindu slik at rom kan editeres
+	 * Åpner vindu slik at et rom kan editeres
+	 * @param sensor - en sensor som sier noe om hvilket rom det er snakk om
 	 */
 	public void editRoom(final Sensor sensor) {
 		//oppretter frame etc
@@ -542,7 +564,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	/**
 	 * Lager et infovindu som sier fra dersom sensorattributtene ikke
 	 * er kompatible
-	 * @param numbers - hvis true er talla lol, hvis false nullpointer
+	 * @param numbers - hvis true er det ikke skrevet tall, hvis false er tekstfeltet tomt
 	 */
 	public static void sensorAttributeError(boolean numbers) {
 		final JFrame frame = new JFrame();
@@ -573,7 +595,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	}
 	
 	/**
-	 * Slenger opp en infoboks som bekrefter at resultatet er lagret i loggen. Bruker ikke values
+	 * Slenger opp en infoboks som bekrefter at resultatet er lagret i loggen
 	 */
 	public static void logSaved() {
 		final JFrame frame = new JFrame("Congratulations");
@@ -598,8 +620,8 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	}
 	
 	/**
-	 * Slenger opp en infoboks som bekrefter at sensorene er i orden
-	 * 
+	 * Slenger opp en infoboks som bekrefter/avkrefter at sensorene er i orden
+	 * @param boolean - true vil si at alt er i orden mens false vil si at det ikke er det
 	 */
 	public static void sensorsChecked(boolean ok) {
 		final JFrame frame = new JFrame();
@@ -629,6 +651,9 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		panel.add(y);
 	}
 	
+	/**
+	 * Metode som sier fra at sensorene ikke er sjekka fordi ingen har blitt valgt/er tilgjengelige
+	 */
 	public static void sensorsChecked() {
 		final JFrame frame = new JFrame();
 		JPanel panel  = new JPanel();
