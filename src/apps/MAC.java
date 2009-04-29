@@ -199,7 +199,7 @@ public class MAC{
 						} catch (IOException e1) {
 							e1.printStackTrace();
 						}
-						sensor.setID(database.insertSensor(sensor.getRoom().getID(), sensor.isAlarmState(), sensor.getBattery()));
+
 					}else{
 						try {
 							protocol.updateRoom(this,thread.connection,room);

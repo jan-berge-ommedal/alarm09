@@ -28,13 +28,13 @@ public class MACProtocol extends AbstractApplicationProtocol {
 				c.send("CHECK");
 			}
 			else if(receive.startsWith("GETMODEL")){
-				c.send(XmlSerializer.toXml(adapter.getModel()));
+				c.send(XmlSerializer.toXmlComplete(adapter.getModel()));
 			}
 			else if(checkFlag(receive, UPDATEMODEL)){
 				//FIXME kan ikke splitte på whitespace
 				String modelstring = removeFlag(receive, UPDATEMODEL);
 				
-				Model model = XmlSerializer.toModel(modelstring, controller);
+				Model model = XmlSerializer.toModelComplete(modelstring, controller);
 				
 				sendACK(c);
 			}

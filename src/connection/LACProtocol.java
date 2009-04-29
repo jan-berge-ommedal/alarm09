@@ -102,7 +102,7 @@ public class LACProtocol extends AbstractApplicationProtocol{
 	
 	@Override
 	public void insertEvent(ModelEditController controller, Connection connection, Event event) throws ConnectException, IOException {
-		connection.send(INSERTEVENT + XmlSerializer.toXml(event));
+		connection.send(INSERTEVENT + XmlSerializer.toEventString(event));
 		
 		//Recieve and discard insertCommand from MAC, send ACK
 		String insertStringFromMAC = connection.receive();
@@ -129,7 +129,7 @@ public class LACProtocol extends AbstractApplicationProtocol{
 
 	@Override
 	public void insertRoom(ModelEditController controller, Connection connection, Room room) throws ConnectException, IOException {
-		connection.send(INSERTROOM + XmlSerializer.toXmlRoom(room));
+		connection.send(INSERTROOM + XmlSerializer.toRoomString(room));
 		
 		//Recieve and discard insertCommand from MAC, send ACK
 		String insertStringFromMAC = connection.receive();
@@ -148,7 +148,7 @@ public class LACProtocol extends AbstractApplicationProtocol{
 
 	@Override
 	public void insertSensor(ModelEditController controller, Connection connection, Sensor sensor) throws ConnectException, IOException {
-		connection.send(INSERTSENSOR + XmlSerializer.toXmlSensor(sensor));
+		connection.send(INSERTSENSOR + XmlSerializer.toSensorString(sensor));
 		
 		//Recieve and discard insertCommand from MAC, send ACK
 		String insertStringFromMAC = connection.receive();
@@ -172,28 +172,28 @@ public class LACProtocol extends AbstractApplicationProtocol{
 	
 	@Override
 	public void updateEvent(ModelEditController controller, Connection connection ,  Event event) throws ConnectException, IOException {
-		connection.send(UPDATEMODEL + XmlSerializer.toXml(event));
+		connection.send(UPDATEMODEL + XmlSerializer.toEventString(event));
 		receiveACK(connection);
 	}
 
 	@Override
 	public void updateModel(ModelEditController controller, Connection connection) throws ConnectException, IOException {
 		Model model = controller.getModel();
-		connection.send(UPDATEMODEL + XmlSerializer.toXml(model));
+		connection.send(UPDATEMODEL + XmlSerializer.toModelString(model));
 		receiveACK(connection);
 	}
 
 	@Override
 	public void updateRoom(ModelEditController controller, Connection connection, Room room) throws IOException {
 		Model model = controller.getModel();
-		connection.send(UPDATEROOM + XmlSerializer.toXmlRoom(room));
+		connection.send(UPDATEROOM + XmlSerializer.toRoomString(room));
 		receiveACK(connection);
 		
 	}
 
 	@Override
 	public void updateSensor(ModelEditController controller, Connection connection, Sensor sensor) throws IOException {
-		connection.send("UPDATESENSOR" + XmlSerializer.toXmlSensor(sensor));
+		connection.send("UPDATESENSOR" + XmlSerializer.toSensorString(sensor));
 		receiveACK(connection);
 		// TODO Auto-generated method stub
 		
@@ -206,7 +206,7 @@ public class LACProtocol extends AbstractApplicationProtocol{
 		if(s == "-1"){
 			throw new IOException("Received a NAK in LACProtocol");
 		}
-		return XmlSerializer.toModel(s,controller);
+		return XmlSerializer.toModelComplete(s,controller);
 	}
 
 	
