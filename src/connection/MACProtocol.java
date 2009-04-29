@@ -107,6 +107,7 @@ public class MACProtocol extends AbstractApplicationProtocol {
 
 	@Override
 	public void insertSensor(ModelEditController controller,Connection c, Sensor s) throws ConnectException, IOException {
+		//FIXME
 		String st = "NEWSENSOR" + "#" + s.getID() + "#" + s.isAlarmState() + "#" + s.getInstallationDate().toString() + "#" + s.getBattery() + "#" + s.getRoom().getID();
 		c.send(st);
 		receiveACK(c);

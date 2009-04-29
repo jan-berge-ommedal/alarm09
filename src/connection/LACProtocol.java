@@ -133,13 +133,21 @@ public class LACProtocol extends AbstractApplicationProtocol{
 		
 		//Recieve and discard insertCommand from MAC, send ACK
 		String insertStringFromMAC = connection.receive();
-		checkFlag(insertStringFromMAC,INSERTROOM);
-		sendACK(connection);
+		if(!checkFlag(insertStringFromMAC,INSERTROOM)){
+			sendNAK(connection);
+			throw new IOException("Flags didnt match");
+		}else
+			sendACK(connection);
 		
 		//Receive and handle updateCommand from MAC (But check the flag)
 		String updateMessage = connection.receive();
-		checkFlag(insertStringFromMAC,UPDATEROOM);
-		handleMSG(updateMessage, controller, connection);
+		if(!checkFlag(insertStringFromMAC,UPDATEROOM)){
+			sendNAK(connection);
+			throw new IOException("Flags didnt match");
+		}else{
+			handleMSG(updateMessage, controller, connection);
+		}
+		
 		
 		//Receive last ACK from MAC, stating that the sensor was successfully created on both sides
 		receiveACK(connection);
@@ -152,13 +160,21 @@ public class LACProtocol extends AbstractApplicationProtocol{
 		
 		//Recieve and discard insertCommand from MAC, send ACK
 		String insertStringFromMAC = connection.receive();
-		checkFlag(insertStringFromMAC,INSERTSENSOR);
-		sendACK(connection);
+		if(!checkFlag(insertStringFromMAC,INSERTSENSOR)){
+			sendNAK(connection);
+			throw new IOException("Flags didnt match");
+		}else
+			sendACK(connection);
 		
 		//Receive and handle updateCommand from MAC (But check the flag)
 		String updateMessage = connection.receive();
-		checkFlag(insertStringFromMAC,INSERTSENSOR);
-		handleMSG(updateMessage, controller, connection);
+		if(!checkFlag(insertStringFromMAC,UPDATESENSOR)){
+			sendNAK(connection);
+			throw new IOException("Flags didnt match");
+		}else{
+			handleMSG(updateMessage, controller, connection);
+		}
+		
 		
 		//Receive last ACK from MAC, stating that the sensor was successfully created on both sides
 		receiveACK(connection);

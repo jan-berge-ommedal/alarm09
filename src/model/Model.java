@@ -118,6 +118,7 @@ public class Model extends AbstractPropertyChangeBean{
 		for(Room r : rooms){
 			result+="\t"+r.toString()+"\n";
 		}
+		result+="\n\n";
 		return result;
 	}
 
