@@ -150,8 +150,11 @@ public class MACgui extends JPanel implements Values, ActionListener, PropertyCh
 			}
 		}
 		else if (e.getSource() == writeLog) {
-			ModelEditController[] templog = (ModelEditController[])lacList.getSelectedValues();
-			if(templog.length != 0){ 
+			Object[] templog = lacList.getSelectedValues();
+			for (Object o: templog) {
+				o = (ModelEditController)o;
+			}
+			if (templog.length != 0) { 
 				Model[] tempplog = new Model[templog.length];
 				for(int i = 0; i < templog.length; i++) {
 					tempplog[i] = templog[i].getModel();
