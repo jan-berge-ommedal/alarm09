@@ -10,9 +10,16 @@ import no.ntnu.fp.net.co.Connection;
 
 public abstract class AbstractApplicationProtocol {
 	
-	protected static final String INSERTSENSOR = "NEWSENSOR";
-	protected static final String INSERTROOM = "NEWSENSOR";
+	protected static final String INSERTSENSOR = "INSERTSENSOR";
+	protected static final String UPDATESENSOR = "UPDATESENSOR";
 	
+	protected static final String INSERTROOM = "INSERTROOM";
+	protected static final String UPDATEROOM = "UPDATEROOM";
+	
+	protected static final String INSERTEVENT = "INSERTEVENT";
+	protected static final String UPDATEEVENT = "UPDATEEVENT";
+	
+	protected static final String UPDATEMODEL = "UPDATEMODEL";
 	
 	protected static void receiveACK(Connection connection) throws IOException {
 		if(!connection.receive().equals("ACK")){
@@ -34,8 +41,25 @@ public abstract class AbstractApplicationProtocol {
 		
 	}
 	
-	public void checkFlag(String msg, String flag) throws IOException {
-		if(!msg.startsWith(flag))throw new IOException("Not implemented");
+	protected static void sendNAK(Connection connection) {
+		try {
+			connection.send("ACK");
+		} catch (ConnectException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	protected String removeFlag(String msg, String flag){
+		return msg.substring(flag.length());
+	}
+	
+	public boolean checkFlag(String msg, String flag){
+		return msg.startsWith(flag);
 	}
 	
 	public abstract void insertSensor(ModelEditController controller, Connection connection, Sensor sensor) throws ConnectException, IOException;
@@ -45,7 +69,7 @@ public abstract class AbstractApplicationProtocol {
 	public abstract void updateModel(ModelEditController controller, Connection connection) throws ConnectException, IOException;
 	public abstract void updateRoom(ModelEditController controller, Connection connection, Room room) throws IOException;
 	public abstract void updateSensor(ModelEditController controller, Connection connection, Sensor sensor) throws IOException;
-	public abstract void updateEvent(ModelEditController controller, Connection connection, Event event);
+	public abstract void updateEvent(ModelEditController controller, Connection connection, Event event) throws ConnectException, IOException;
 	
 	public abstract void handleMSG(String msg, ModelEditController controller,Connection connection);
 }

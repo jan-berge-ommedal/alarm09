@@ -35,7 +35,7 @@ public class XmlSerializer {
 	 * 
 	 * @param aModel the model that is made to a  XmlString
 	 */
-	public static String toXml(Model aModel) {
+	public static String toXmlComplete(Model aModel) {
 		Element root = new Element("LAC");
 		
 		Element id = new Element("id");
@@ -231,11 +231,25 @@ public class XmlSerializer {
 		return events;
 	}
 
-	public static String toXmlEvent(Event event) {
+	public static String toXml(Event event) {
 		String a = Integer.toString(event.getSensor().getID());
 		String b = event.getEventType().toString();
 		String c = Integer.toString(event.getSensor().getRoom().getID());
 		return "#"+ event.getID() + "#" + a + "#" + b + "#" + c + "#" + event.getTime();
+	}
+	
+	
+	public static String toXml(Model model) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public static Room toRoom(String roomString) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public static Sensor toSensor(String sensorString) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

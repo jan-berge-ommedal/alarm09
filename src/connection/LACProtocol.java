@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 
 import com.sun.org.apache.xml.internal.serializer.ToXMLSAXHandler;
+import com.sun.xml.internal.bind.v2.runtime.XMLSerializer;
 
 import apps.LAC;
 
@@ -25,28 +26,29 @@ public class LACProtocol extends AbstractApplicationProtocol{
 		LAC lac = (LAC) controller;
 		
 		try {
-			String[] s = msg.split("#");
-			
-			if(s[0].equals("NEWROOM")){
-				int id = Integer.parseInt(s[1]);
-				int romNR  = Integer.parseInt(s[2]);
-				String romType = s[3];
-				String romInfo = s[4];
-				lac.getModel().addRoom(new Room(id, romNR, romType, romInfo, lac.getModel()));
-			}
-			else if(s[0].equals("NEWSENSOR")){
-				int id = Integer.parseInt(s[1]);
-				boolean alarmState = (true ? s[2].equals("true"): false);
-				Timestamp installationDate = XmlSerializer.makeTimestamp(s[3]);
-				int battery = Integer.parseInt(s[4]);
-				Room room = null;
+			if(checkFlag(msg, INSERTROOM)){
+				String roomString = removeFlag(msg, INSERTROOM);
 				
-				for (Room r : lac.getModel().getRooms()) {
-					if(r.getID() == Integer.parseInt(s[5])) room = r;
-				}
-				room.addSensor(new Sensor(id, alarmState, battery, installationDate, room, true));
+				//The room is automatically inserted into the model by the constructor invoked by the XMLSerializer
+				Room room = XmlSerializer.toRoom(roomString);
+				
+				sendACK(connection);
+				
 			}
-			else if(s[0].equals("NEWEVENT")){
+			else if(checkFlag(msg, INSERTSENSOR)){
+				
+				String sensorString = removeFlag(msg, INSERTROOM);
+				
+				//The sensor is automatically inserted into the model by the constructor invoked by the XMLSerializer
+				Sensor room = XmlSerializer.toSensor(sensorString);
+				
+				sendACK(connection);
+			}
+			else if(checkFlag(msg, INSERTEVENT)){
+				String sensorString = removeFlag(msg, INSERTEVENT);
+				
+				//The sensor is automatically inserted into the model by the constructor invoked by the XMLSerializer
+				
 				int id = Integer.parseInt(s[1]);
 				EventType eventtype = null;
 				for (EventType e : EventType.values()) {
@@ -114,29 +116,65 @@ public class LACProtocol extends AbstractApplicationProtocol{
 	
 	@Override
 	public void insertEvent(ModelEditController controller, Connection connection, Event event) throws ConnectException, IOException {
-		connection.send("INSERTEVENT" + XmlSerializer.toXmlEvent(event));
+		connection.send(INSERTEVENT + XmlSerializer.toXml(event));
+		
+		//Recieve and discard insertCommand from MAC, send ACK
+		String insertStringFromMAC = connection.receive();
+		if(!checkFlag(insertStringFromMAC,INSERTEVENT)){
+			sendNAK(connection);
+			throw new IOException("Flags didnt match");
+		}else
+			sendACK(connection);
+		
+		//Receive and handle updateCommand from MAC (But check the flag)
+		String updateMessage = connection.receive();
+		if(!checkFlag(insertStringFromMAC,UPDATEEVENT)){
+			sendNAK(connection);
+			throw new IOException("Flags didnt match");
+		}else{
+			handleMSG(updateMessage, controller, connection);
+		}
+		
+		
+		//Receive last ACK from MAC, stating that the sensor was successfully created on both sides
 		receiveACK(connection);
 		
 	}
 
 	@Override
 	public void insertRoom(ModelEditController controller, Connection connection, Room room) throws ConnectException, IOException {
-		connection.send("INSERTROOM" + XmlSerializer.toXmlRoom(room));
+		connection.send(INSERTROOM + XmlSerializer.toXmlRoom(room));
+		
+		//Recieve and discard insertCommand from MAC, send ACK
+		String insertStringFromMAC = connection.receive();
+		checkFlag(insertStringFromMAC,INSERTROOM);
+		sendACK(connection);
+		
+		//Receive and handle updateCommand from MAC (But check the flag)
+		String updateMessage = connection.receive();
+		checkFlag(insertStringFromMAC,UPDATEROOM);
+		handleMSG(updateMessage, controller, connection);
+		
+		//Receive last ACK from MAC, stating that the sensor was successfully created on both sides
 		receiveACK(connection);
 		
 	}
 
 	@Override
 	public void insertSensor(ModelEditController controller, Connection connection, Sensor sensor) throws ConnectException, IOException {
-		connection.send("INSERTSENSOR" + XmlSerializer.toXmlSensor(sensor));
+		connection.send(INSERTSENSOR + XmlSerializer.toXmlSensor(sensor));
 		
+		//Recieve and discard insertCommand from MAC, send ACK
 		String insertStringFromMAC = connection.receive();
 		checkFlag(insertStringFromMAC,INSERTSENSOR);
 		sendACK(connection);
 		
+		//Receive and handle updateCommand from MAC (But check the flag)
 		String updateMessage = connection.receive();
+		checkFlag(insertStringFromMAC,INSERTSENSOR);
 		handleMSG(updateMessage, controller, connection);
 		
+		//Receive last ACK from MAC, stating that the sensor was successfully created on both sides
 		receiveACK(connection);
 		
 	}
@@ -147,22 +185,22 @@ public class LACProtocol extends AbstractApplicationProtocol{
 
 	
 	@Override
-	public void updateEvent(ModelEditController controller, Connection connection ,  Event event) {
-		// TODO Auto-generated method stub
-		
+	public void updateEvent(ModelEditController controller, Connection connection ,  Event event) throws ConnectException, IOException {
+		connection.send(UPDATEMODEL + XmlSerializer.toXml(event));
+		receiveACK(connection);
 	}
 
 	@Override
 	public void updateModel(ModelEditController controller, Connection connection) throws ConnectException, IOException {
 		Model model = controller.getModel();
-		connection.send("UPDATELAC" + "#" + Integer.toString(model.getID()) + "#" + model.getAdresse());
+		connection.send(UPDATEMODEL + XmlSerializer.toXml(model));
 		receiveACK(connection);
 	}
 
 	@Override
 	public void updateRoom(ModelEditController controller, Connection connection, Room room) throws IOException {
 		Model model = controller.getModel();
-		connection.send("UPDATEROOM" + XmlSerializer.toXmlRoom(room));
+		connection.send(UPDATEROOM + XmlSerializer.toXmlRoom(room));
 		receiveACK(connection);
 		
 	}

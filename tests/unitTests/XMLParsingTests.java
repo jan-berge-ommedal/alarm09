@@ -41,7 +41,7 @@ public class XMLParsingTests extends TestCase{
 		
 		System.out.println(m);
 		
-		String xmlParse = XmlSerializer.toXml(m);
+		String xmlParse = XmlSerializer.toXmlComplete(m);
 		Model m2;
 		try {
 			m2 = XmlSerializer.toModel(xmlParse);
