@@ -15,6 +15,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
+import log.Log;
+
 import connection.ModelEditController;
 
 import apps.MAC;
@@ -41,7 +43,7 @@ public class MACgui extends JPanel implements Values, ActionListener, PropertyCh
 	private ConnectionStatusPanel databaseStatusPanel;
 	
 	private MAC mac;
-	private Object printLog;
+	private Log printLog;
 	
 	public MACgui(MAC mac) {
 		this.mac = mac;
