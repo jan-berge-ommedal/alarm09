@@ -7,6 +7,8 @@ import java.util.Date;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import connection.ModelEditController;
+
 import model.Model;
 
 public class Log {
@@ -63,6 +65,7 @@ public class Log {
 				// Create file 
 				FileWriter fstream = new FileWriter("Log/MAC-" + dato.getDate() + "." + dato.getMonth() + "-" + dato.getHours() + dato.getMinutes() + ".log");
 				BufferedWriter out = new BufferedWriter(fstream);
+
 				for(Model modeller:model) {
 					out.write(modeller.toString());
 				}
