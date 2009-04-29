@@ -68,7 +68,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		this.mec = controller;
 		this.mec.addPropertyChangeListener(this);
 		this.model = mec.getModel();
-		this.initialize(false);
+		this.initialize(true);
 	}
 	
 	public Model getModel() {
@@ -83,7 +83,8 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	}
 	
 	/**
-	 * 
+	 * Denne metoden oppfører seg som en hjelpemetode til konstruktøren som genererer GUIet. Dersom
+	 * den kalles med true vil den sette guiet til å følge en modell
 	 * @param model - en boolean som sier noe om guiet har en modell eller ikke
 	 */
 	private void initialize(boolean model) {
@@ -136,12 +137,12 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		viewSensor.setMargin(asdf);
 		viewSensor.setVisible(true);
 		sensors = new JLabel("Sensors");
-		if (model && this.model.getAdresse() != null) {
-			adresse = new JLabel(this.model.getAdresse());
-		}
-		else {
-			adresse = new JLabel("Ikke valgt");
-		}
+		//if (model && this.model.getAdresse() != null) {
+		//	adresse = new JLabel(this.model.getAdresse());
+		//}
+		//else {
+			adresse = new JLabel("Addr. ikke valgt");
+		//}
 		Font f = new Font("Dialog", Font.PLAIN, 20);
 		sensors.setFont(f);
 		adresse.setFont(f);
@@ -176,6 +177,8 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		pane.add(changeBattery);
 		pane.add(viewSensor);
 		pane.add(editRoom);
+		
+		adresse.setBounds(LEFT_SPACE + 4*BUTTON_WIDTH + 4*DEFAULT_SPACE, TOP_SPACE, 2*LABEL_WIDTH, 2*LABEL_HEIGHT);
 		installSensor.setBounds(LEFT_SPACE, TOP_SPACE, BUTTON_WIDTH+3*DEFAULT_SPACE, BUTTON_HEIGHT);
 		//saveLog.setBounds(LEFT_SPACE + BUTTON_WIDTH + DEFAULT_SPACE, TOP_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		sensors.setBounds(LEFT_SPACE, TOP_SPACE + BUTTON_HEIGHT + 2*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
@@ -189,21 +192,28 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		sensorStatus.setBounds(LEFT_SPACE + 3*LIST_LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		batteryStatus.setBounds(LEFT_SPACE + 3*LIST_LABEL_WIDTH + LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		date.setBounds(LEFT_SPACE + 3*LABEL_WIDTH+2*LIST_LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
-		csp.setBounds(LEFT_SPACE + 4*BUTTON_WIDTH + 4*DEFAULT_SPACE, TOP_SPACE, 2*LABEL_WIDTH, 2*LABEL_HEIGHT);
+		csp.setBounds(LEFT_SPACE + 4*BUTTON_WIDTH + 4*DEFAULT_SPACE, TOP_SPACE + BUTTON_HEIGHT + 2*DEFAULT_SPACE, 2*LABEL_WIDTH, 2*LABEL_HEIGHT);
 		editRoom.setBounds(LEFT_SPACE + LIST_WIDTH - BUTTON_WIDTH, 700 - TOP_SPACE - 4*BUTTON_HEIGHT - 3*DEFAULT_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		
 		/*
 		 * Initialiserer JListen
 		 */
 		sensorList = new BlinkingList();
+		this.id = new JLabel("ingen ID valgt");
 		if (model) { //hvis initialize kalles med en model settes listen til å være med elementene
 			sensorList.setModel(new ModelListAdapter(this.model));
-			String id = "LAC ID:  " + this.mec.getModel().getID();
-			this.id = new JLabel(id);
-			this.id.setFont(f);
+			try {
+				String id = "LAC ID:  " + this.mec.getModel().getID();
+				this.id = new JLabel(id);
+				this.id.setFont(f);	
+			} catch (NullPointerException npe) {
+				System.err.println("nullpointerex når LAC ID skulle settes: trace følger under");
+				npe.printStackTrace();
+				System.out.println("-------------TRACE DONE-----------");
+			}
 		}
 		if (!model) {
-			this.id = new JLabel("ingen id valgt");
+			this.id.setText("kall uten model, ingen ID");
 		}
 		this.id.setVisible(true);
 		pane.add(this.id);
