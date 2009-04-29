@@ -64,9 +64,9 @@ public class MACgui extends JPanel implements Values, ActionListener, PropertyCh
 		openLac = new JButton("Open LAC view");
 		openLac.addActionListener(this);
 		openLac.setMargin(asdf);
-		openLac = new JButton("Write log");
-		openLac.addActionListener(this);
-		openLac.setMargin(asdf);
+		writeLog = new JButton("Write log");
+		writeLog.addActionListener(this);
+		writeLog.setMargin(asdf);
 
 		lacs = new JLabel("LACs");
 		Font f = new Font("Dialog", Font.PLAIN, 20);
