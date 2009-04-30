@@ -253,11 +253,11 @@ public class XmlSerializer {
 	public static String toSensorString(Sensor sensor) {
 		String a = Integer.toString(sensor.getID());
 		String b = (sensor.isAlarmState() ? "true" : "false");
-		String c = sensor.getInstallationDate().toString();
+		long c = sensor.getInstallationDate().getTime();
 		String d = Integer.toString(sensor.getBattery());
 		String e = Integer.toString(sensor.getRoom().getID());
 		
-		return "#" + a + "#" + b + "#" + c + "#" + d + "#" + e + "#" + sensor.getInstallationDate().getTime();
+		return "#" + a + "#" + b + "#" + c + "#" + d + "#" + e;
 	}
 	public static Sensor toSensor(String sensorString,Model model) {
 		
@@ -265,7 +265,7 @@ public class XmlSerializer {
 		boolean alarm = (s[2].equals("true") ? true : false);
 		int battery = Integer.parseInt(s[4]);
 		
-		Timestamp time = new Timestamp(Long.parseLong(s[6]));
+		Timestamp time = new Timestamp(Long.parseLong(s[3]));
 		
 		int roomID = Integer.parseInt(s[5]);
 		

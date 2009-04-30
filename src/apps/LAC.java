@@ -338,6 +338,7 @@ public class LAC extends ModelEditController{
 			//Receive and handle updateCommand from MAC (But check the flag)
 			System.out.println("Next Command will be handled");
 			String updateMessage = connection.receive();
+			System.out.println("received updateMessage: "+updateMessage);
 			if(!checkFlag(updateMessage,UPDATEEVENT)){
 				sendNAK(connection);
 				throw new IOException("Flags didnt match");
@@ -371,6 +372,7 @@ public class LAC extends ModelEditController{
 			//Receive and handle updateCommand from MAC (But check the flag)
 			System.out.println("Next Command will be handled");
 			String updateMessage = connection.receive();
+			System.out.println("received updateMessage: "+updateMessage);
 			if(!checkFlag(updateMessage,UPDATEROOM)){
 				sendNAK(connection);
 				throw new IOException("Flags didnt match");
@@ -403,6 +405,7 @@ public class LAC extends ModelEditController{
 			//Receive and handle updateCommand from MAC (But check the flag)
 			System.out.println("Next Command will be handled");
 			String updateMessage = connection.receive();
+			System.out.println("received updateMessage: "+updateMessage);
 			if(!checkFlag(updateMessage,UPDATESENSOR)){
 				sendNAK(connection);
 				throw new IOException("Flags didnt match");
