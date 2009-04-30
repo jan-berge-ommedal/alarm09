@@ -320,7 +320,7 @@ public class LAC extends ModelEditController{
 		
 		@Override
 		public synchronized void insertEvent(ModelEditController controller, Connection connection, Event event) throws ConnectException, IOException {
-			System.out.println("LAC: INSERT EVENT\n----------\n");
+			System.out.println("----------\nLAC: INSERT EVENT\n\n");
 			String sendString = INSERTEVENT + XmlSerializer.toEventString(event);
 			System.out.println("Sending: "+sendString);
 			connection.send(sendString);
@@ -354,7 +354,7 @@ public class LAC extends ModelEditController{
 
 		@Override
 		public synchronized void insertRoom(ModelEditController controller, Connection connection, Room room) throws ConnectException, IOException {
-			System.out.println("LAC: INSERT ROOM\n----------\n");
+			System.out.println("----------\nLAC: INSERT ROOM\n\n");
 			String sendString = INSERTROOM + XmlSerializer.toRoomString(room);
 			System.out.println("Sending: "+sendString);
 			connection.send(sendString);
@@ -386,7 +386,7 @@ public class LAC extends ModelEditController{
 
 		@Override
 		public synchronized void insertSensor(ModelEditController controller, Connection connection, Sensor sensor) throws ConnectException, IOException {
-			System.out.println("LAC: INSERT SENSOR\n----------\n");
+			System.out.println("----------\nLAC: INSERT SENSOR\n\n");
 			String sendString = INSERTSENSOR + XmlSerializer.toSensorString(sensor);
 			System.out.println("Sending: "+sendString);
 			connection.send(sendString);
