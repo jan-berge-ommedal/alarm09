@@ -50,15 +50,7 @@ public abstract class AbstractApplicationProtocol {
 		System.out.println("got ACK");
 	}
 	
-	private void receiveACKOrFlag(Connection connection, String flag) throws ConnectException, IOException {
-		System.out.println("waiting for ACK or correct flag");
-		String receive = connection.receive();
-		if(! (checkFlag(receive, flag) || receive.equals("ACK"))){
-			System.out.println("got NAK");
-			throw new IOException("Received a NAK");
-		}
-		System.out.println("got ACK (or flag)");
-	}
+	
 	
 	protected static void sendACK(Connection connection) {
 		try {
@@ -277,10 +269,11 @@ public abstract class AbstractApplicationProtocol {
 			discardNextCommand=false;
 			return;
 		}
-		System.out.println("Running Sensor-Update");
+		System.out.println("Running Event-Update");
 		String eventString = UPDATEEVENT + constructUpdateHeader(id, elementTag, oldValue, newValue);
 		connection.send(eventString);
-		receiveACKOrFlag(connection,UPDATEEVENT);
+		receiveACK(connection);
+		System.out.println("End Event-Update");
 		
 	}
 
@@ -293,7 +286,7 @@ public abstract class AbstractApplicationProtocol {
 		System.out.println("Running Model-Update");
 		String eventString = UPDATEMODEL + constructUpdateHeader(id, elementTag, oldValue, newValue);
 		connection.send(eventString);
-		receiveACKOrFlag(connection,UPDATEMODEL);
+		receiveACK(connection);
 		System.out.println("End Model-Update");
 	}
 
@@ -306,8 +299,8 @@ public abstract class AbstractApplicationProtocol {
 		System.out.println("Running Room-Update");
 		String eventString = UPDATEROOM + constructUpdateHeader(id, elementTag, oldValue, newValue);
 		connection.send(eventString);
-		receiveACKOrFlag(connection,UPDATEROOM);
-		System.out.println("End Sensor-Update");
+		receiveACK(connection);
+		System.out.println("End Room-Update");
 	}
 
 
@@ -319,7 +312,7 @@ public abstract class AbstractApplicationProtocol {
 		System.out.println("Running Sensor-Update");
 		String eventString = UPDATESENSOR + constructUpdateHeader(id, elementTag, oldValue, newValue);
 		connection.send(eventString);
-		receiveACKOrFlag(connection,UPDATESENSOR);
+		receiveACK(connection);
 		System.out.println("End Sensor-Update");
 	}
 
