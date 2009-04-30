@@ -43,6 +43,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	private JButton editRoom;
 	private JButton replaceSensor;
 	private JButton changeBattery;
+	private JButton editAdresse;
 	
 	//labels
 	private JLabel sensors;
@@ -62,6 +63,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	private ConnectionStatusPanel csp;
 	private Model model;
 	private ModelEditController mec;
+	private String adress;
 	
 	/*
 	 * Her f�lger diverse konstrukt�rer som alle kaller initialize p� et senere tidspunkt
@@ -134,6 +136,9 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		checkSensors = new JButton("Check Sensors");
 		checkSensors.addActionListener(this);
 		checkSensors.setMargin(asdf);
+		editAdresse = new JButton("Edit Adress");
+		editAdresse.addActionListener(this);
+		editAdresse.setMargin(asdf);
 		
 		//knapper som kun gjelder dersom et listelement er valgt
 		replaceSensor = new JButton("Replace Sensor");
@@ -154,12 +159,13 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		viewSensor.setVisible(true);
 		sensors = new JLabel("Sensors");
 		
-		adresse = new JLabel("");
+		adresse = new JLabel("OMG LOL");
 		try {
-			adresse.setText(this.mec.getModel().getAdresse());
+			this.adress = this.mec.getModel().getAdresse();
+			adresse.setText(adress);
 		} catch (NullPointerException npe) {
 			System.err.println("nullpointerex ved getAdresse");
-			//npe.printStackTrace();
+			npe.printStackTrace();
 		}
 		
 		Font f = new Font("Dialog", Font.PLAIN, 20);
@@ -196,8 +202,10 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		pane.add(changeBattery);
 		pane.add(viewSensor);
 		pane.add(editRoom);
+		pane.add(editAdresse);
 		
-		adresse.setBounds(LEFT_SPACE + 4*BUTTON_WIDTH + 4*DEFAULT_SPACE, TOP_SPACE, 2*LABEL_WIDTH, 2*LABEL_HEIGHT);
+		adresse.setBounds(LEFT_SPACE + LIST_WIDTH - BUTTON_WIDTH - DEFAULT_SPACE - 2*LABEL_WIDTH, TOP_SPACE, 2*LABEL_WIDTH, 2*LABEL_HEIGHT);
+		editAdresse.setBounds(LEFT_SPACE + LIST_WIDTH - BUTTON_WIDTH, TOP_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		installSensor.setBounds(LEFT_SPACE, TOP_SPACE, BUTTON_WIDTH+3*DEFAULT_SPACE, BUTTON_HEIGHT);
 		saveLog.setBounds(LEFT_SPACE + BUTTON_WIDTH + DEFAULT_SPACE, 700 - TOP_SPACE - 2*BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT);
 		sensors.setBounds(LEFT_SPACE, TOP_SPACE + BUTTON_HEIGHT + 2*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
@@ -211,7 +219,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		sensorStatus.setBounds(LEFT_SPACE + 3*LIST_LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		batteryStatus.setBounds(LEFT_SPACE + 3*LIST_LABEL_WIDTH + LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
 		date.setBounds(LEFT_SPACE + 3*LABEL_WIDTH+2*LIST_LABEL_WIDTH, TOP_SPACE + 2*BUTTON_HEIGHT + 4*DEFAULT_SPACE, LABEL_WIDTH, LABEL_HEIGHT);
-		csp.setBounds(LEFT_SPACE + 4*BUTTON_WIDTH + 4*DEFAULT_SPACE, TOP_SPACE + BUTTON_HEIGHT + 2*DEFAULT_SPACE, 2*LABEL_WIDTH, 2*LABEL_HEIGHT);
+		csp.setBounds(LEFT_SPACE + 4*BUTTON_WIDTH + 4*DEFAULT_SPACE + (int)(0.5*BUTTON_WIDTH), TOP_SPACE + BUTTON_HEIGHT + 2*DEFAULT_SPACE, 2*LABEL_WIDTH, 2*LABEL_HEIGHT);
 		editRoom.setBounds(LEFT_SPACE + LIST_WIDTH - BUTTON_WIDTH, 700 - TOP_SPACE - 4*BUTTON_HEIGHT - 3*DEFAULT_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
 		
 		/*
@@ -759,6 +767,21 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 			}
 			else {
 				noElementSelected();
+			}
+		}
+		else if (evt.getSource() == editAdresse) { //adressen skal endres
+			String lol = "";
+			try {
+				lol = JOptionPane.showInputDialog("Please enter the new HORSELOL");
+			}
+			catch (NullPointerException npe) {
+				JOptionPane.showMessageDialog(null, "you did not enter a new adress, old adress will not be changed");
+			}
+			try {
+				this.model.setAdresse(lol);
+			}
+			catch (NullPointerException npe) {
+				System.err.println("nullpointerex ved model.setAdresse, adressefeltet vil heller ikke endres da det ikke fyres propertyLOLOLOL");
 			}
 		}
 	}
