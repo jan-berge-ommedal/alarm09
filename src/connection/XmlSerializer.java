@@ -244,7 +244,7 @@ public class XmlSerializer {
 		EventType e = EventType.valueOf(s[3]);
 		Timestamp time = makeTimestamp(s[5]);
 		
-		Sensor sensor = model.getSensor(Integer.parseInt(s[4]));
+		Sensor sensor = model.getSensor(Integer.parseInt(s[2]));
 		
 		Event event = new Event(-1,e,time, sensor);
 		
