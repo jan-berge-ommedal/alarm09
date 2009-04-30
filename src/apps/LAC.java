@@ -321,7 +321,9 @@ public class LAC extends ModelEditController{
 		@Override
 		public synchronized void insertEvent(ModelEditController controller, Connection connection, Event event) throws ConnectException, IOException {
 			System.out.println("LAC: INSERT EVENT\n----------\n");
-			connection.send(INSERTEVENT + XmlSerializer.toEventString(event));
+			String sendString = INSERTEVENT + XmlSerializer.toEventString(event);
+			System.out.println("Sending: "+sendString);
+			connection.send(sendString);
 			
 			//Recieve and discard insertCommand from MAC, send ACK
 			System.out.println("Next Command will be discarded");
@@ -346,13 +348,16 @@ public class LAC extends ModelEditController{
 			
 			//Receive last ACK from MAC, stating that the sensor was successfully created on both sides
 			receiveACK(connection);
+			System.out.println("End insert Event\n---------\n\n");
 			
 		}
 
 		@Override
 		public synchronized void insertRoom(ModelEditController controller, Connection connection, Room room) throws ConnectException, IOException {
 			System.out.println("LAC: INSERT ROOM\n----------\n");
-			connection.send(INSERTROOM + XmlSerializer.toRoomString(room));
+			String sendString = INSERTROOM + XmlSerializer.toRoomString(room);
+			System.out.println("Sending: "+sendString);
+			connection.send(sendString);
 			
 			//Recieve and discard insertCommand from MAC, send ACK
 			System.out.println("Next Command will be discarded");
@@ -375,13 +380,16 @@ public class LAC extends ModelEditController{
 			
 			//Receive last ACK from MAC, stating that the sensor was successfully created on both sides
 			receiveACK(connection);
+			System.out.println("End insert Room\n---------\n\n");
 			
 		}
 
 		@Override
 		public synchronized void insertSensor(ModelEditController controller, Connection connection, Sensor sensor) throws ConnectException, IOException {
 			System.out.println("LAC: INSERT SENSOR\n----------\n");
-			connection.send(INSERTSENSOR + XmlSerializer.toSensorString(sensor));
+			String sendString = INSERTSENSOR + XmlSerializer.toSensorString(sensor);
+			System.out.println("Sending: "+sendString);
+			connection.send(sendString);
 			
 			//Recieve and discard insertCommand from MAC, send ACK
 			System.out.println("Next Command will be discarded");
@@ -404,7 +412,7 @@ public class LAC extends ModelEditController{
 			
 			//Receive last ACK from MAC, stating that the sensor was successfully created on both sides
 			receiveACK(connection);
-			
+			System.out.println("End insert Sensor\n---------\n\n");
 		}
 
 		

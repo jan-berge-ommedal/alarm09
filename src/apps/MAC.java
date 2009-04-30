@@ -431,8 +431,10 @@ public class MAC{
 		public synchronized void insertEvent(ModelEditController controller, Connection connection, Event event) throws ConnectException, IOException {
 			System.out.println("MAC: INSERT EVENT\n----------\n");
 			String eventString = XmlSerializer.toEventString(event);
+			System.out.println("Sending: "+eventString);
 			connection.send(INSERTEVENT + eventString);
 			receiveACK(connection);
+			System.out.println("MAC: End insertEvent()");
 			
 		}
 
@@ -440,8 +442,10 @@ public class MAC{
 		public synchronized void insertRoom(ModelEditController controller, Connection connection, Room room) throws ConnectException, IOException {
 			System.out.println("MAC: INSERT ROOM\n----------\n");
 			String roomString = XmlSerializer.toRoomString(room);
+			System.out.println("Sending: "+roomString);
 			connection.send(INSERTROOM + roomString);
 			receiveACK(connection);
+			System.out.println("MAC: End insertRoom()");
 			
 		}
 
@@ -449,8 +453,10 @@ public class MAC{
 		public synchronized void insertSensor(ModelEditController controller, Connection connection, Sensor sensor) throws ConnectException, IOException {
 			System.out.println("MAC: INSERT SENSOR\n----------\n");
 			String sensorString = XmlSerializer.toSensorString(sensor);
+			System.out.println("Sending: "+sensorString);
 			connection.send(INSERTSENSOR + sensorString);
 			receiveACK(connection);
+			System.out.println("MAC: End insertSensor()");
 		}
 		
 		public Database getDatabase(){
