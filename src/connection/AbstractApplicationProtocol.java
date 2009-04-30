@@ -172,7 +172,7 @@ public abstract class AbstractApplicationProtocol {
 		}else if(checkFlag(msg, UPDATEEVENT)){
 			this.discardNextCommand=true;
 
-			String eventString = removeFlag(msg, INSERTEVENT);
+			String eventString = removeFlag(msg, UPDATEEVENT);
 						
 			String[] updateInfo = deconstructUpdateHeader(eventString);
 			
@@ -196,7 +196,7 @@ public abstract class AbstractApplicationProtocol {
 		}else if(checkFlag(msg, UPDATEMODEL)){
 			this.discardNextCommand=true;
 
-			String modelString = removeFlag(msg, INSERTEVENT);
+			String modelString = removeFlag(msg, UPDATEMODEL);
 			
 			String[] updateInfo = deconstructUpdateHeader(modelString);
 			

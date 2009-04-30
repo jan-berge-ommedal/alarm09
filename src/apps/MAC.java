@@ -136,7 +136,7 @@ public class MAC{
 		
 		
 		public LACAdapter(MAC mac, int id) {
-			super(new MACProtocol());
+			super(protocol);
 			this.mac = mac;
 			database.getLACModel(id,this);
 			timer = new Timer(TIMEOUT,this);
@@ -377,6 +377,10 @@ public class MAC{
 
 
 	public class MACProtocol extends AbstractApplicationProtocol {
+		
+		public MACProtocol() {
+			System.out.println("Constructed MACProtocol");
+		}
 
 		@Override
 		public void handleMSG(String msg, ModelEditController controller, Connection connection){
