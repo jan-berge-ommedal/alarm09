@@ -79,7 +79,7 @@ public class Sensor extends IDElement{
 	public void startSensor(){
 		
 		new Event(-1,Event.EventType.STARTUP,LAC.getTime(),this);	
-		
+		/*
 		Thread t = new Thread(){
 				public void run(){
 					
@@ -95,7 +95,7 @@ public class Sensor extends IDElement{
 			}
 		};
 		t.start();
-		
+		*/
 	}
 	
 	
