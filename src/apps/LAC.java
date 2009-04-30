@@ -335,7 +335,6 @@ public class LAC extends ModelEditController{
 				sendNAK(connection);
 				throw new IOException("Flags didnt match");
 			}else{
-				this.discardNextCommand=true;
 				handleMSG(updateMessage, controller, connection);
 			}
 			
@@ -366,7 +365,6 @@ public class LAC extends ModelEditController{
 				sendNAK(connection);
 				throw new IOException("Flags didnt match");
 			}else{
-				this.discardNextCommand=true;
 				handleMSG(updateMessage, controller, connection);
 			}
 			
@@ -396,7 +394,6 @@ public class LAC extends ModelEditController{
 				sendNAK(connection);
 				throw new IOException("Flags didnt match");
 			}else{
-				this.discardNextCommand=true;
 				handleMSG(updateMessage, controller, connection);
 			}
 			

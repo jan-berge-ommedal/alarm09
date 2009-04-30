@@ -96,6 +96,7 @@ public abstract class AbstractApplicationProtocol {
 		Model model = controller.getModel();
 		
 		if(checkFlag(msg, UPDATESENSOR)){
+			this.discardNextCommand=true;
 			String eventString = removeFlag(msg, UPDATESENSOR);
 			
 			String[] updateInfo = deconstructUpdateHeader(eventString);
@@ -131,11 +132,15 @@ public abstract class AbstractApplicationProtocol {
 			
 			if(ok)
 				sendACK(connection);
-			else
+			else{
 				sendNAK(connection);
+				System.err.println("Dette skal aldri skje");
+			}
 		}
 		
 		else if(checkFlag(msg, UPDATEROOM)){
+			this.discardNextCommand=true;
+
 			String roomString = removeFlag(msg, UPDATEROOM);
 
 			String[] updateInfo = deconstructUpdateHeader(roomString);
@@ -161,10 +166,13 @@ public abstract class AbstractApplicationProtocol {
 			}
 			if(ok)
 				sendACK(connection);
-			else
+			else{
 				sendNAK(connection);
-			
+				System.err.println("Dette skal aldri skje");
+			}
 		}else if(checkFlag(msg, UPDATEEVENT)){
+			this.discardNextCommand=true;
+
 			String eventString = removeFlag(msg, INSERTEVENT);
 						
 			String[] updateInfo = deconstructUpdateHeader(eventString);
@@ -182,9 +190,13 @@ public abstract class AbstractApplicationProtocol {
 			
 			if(ok)
 				sendACK(connection);
-			else
+			else{
 				sendNAK(connection);
+				System.err.println("Dette skal aldri skje");
+			}
 		}else if(checkFlag(msg, UPDATEMODEL)){
+			this.discardNextCommand=true;
+
 			String modelString = removeFlag(msg, INSERTEVENT);
 			
 			String[] updateInfo = deconstructUpdateHeader(modelString);
@@ -201,8 +213,10 @@ public abstract class AbstractApplicationProtocol {
 			
 			if(ok)
 				sendACK(connection);
-			else
+			else{
 				sendNAK(connection);
+				System.err.println("Dette skal aldri skje");
+			}
 		}
 	}
 	
