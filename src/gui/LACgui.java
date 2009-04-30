@@ -65,10 +65,6 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	private ModelEditController mec;
 	private String adress;
 	
-	/*
-	 * Her f�lger diverse konstrukt�rer som alle kaller initialize p� et senere tidspunkt
-	 */
-	
 	public LACgui(ModelEditController controller){
 		this.mec = controller;
 		this.mec.addPropertyChangeListener(this);
@@ -83,7 +79,6 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	public Model getModel() {
 		return this.model;
 	}
-	
 	
 	/**
 	 * Standard setter
@@ -105,8 +100,9 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	 */
 	private void initialize() {
 		boolean model = false;
-		if(this.model!=null)model=true;
-		
+		if (this.model != null) {
+			model=true;
+		}
 		Insets asdf = new Insets(0,0,0,0);
 		JPanel pane = new JPanel();
 		frame = new JFrame("LAC");
@@ -114,8 +110,6 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setContentPane(pane);
 		frame.setVisible(true);
-		
-		
 		frame.addWindowListener(new WindowAdapter()
 		{
 		      public void windowClosing(WindowEvent e)
