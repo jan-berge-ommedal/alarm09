@@ -174,21 +174,6 @@ public class MAC{
 
 	
 
-
-		@Override
-		public void deleteAllEvents(Sensor sensor) {
-			database.removeSensorsEvents(sensor.getID());
-			sensor.deleteAllEvents();
-			System.err.println("Delete not implemented in AppProtocol");
-			/*
-			try {
-				//protocol.deleteAllEvents(thread.connection,sensor);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			*/
-		}
-
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			if(arg0.getSource()==timer){

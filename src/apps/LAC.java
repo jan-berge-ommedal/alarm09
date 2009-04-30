@@ -189,12 +189,7 @@ public class LAC extends ModelEditController{
 		}
 	}
 	
-	@Override
-	public void deleteAllEvents(Sensor sensor) {
-		sensor.deleteAllEvents();
-		//protocol.deleteSensorEvents(sensor);
-		System.out.println("Delete not implemented in protocol");
-	}
+	
 
 	
 	
@@ -331,6 +326,7 @@ public class LAC extends ModelEditController{
 			//Recieve and discard insertCommand from MAC, send ACK
 			System.out.println("Next Command will be discarded");
 			String insertStringFromMAC = connection.receive();
+			System.out.println("Got: "+insertStringFromMAC);
 			if(!checkFlag(insertStringFromMAC,INSERTEVENT)){
 				sendNAK(connection);
 				throw new IOException("Flags didnt match");

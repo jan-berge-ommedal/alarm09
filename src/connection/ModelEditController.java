@@ -107,7 +107,6 @@ public abstract class ModelEditController extends AbstractPropertyChangeSupport 
 	
 
 
-	public abstract void deleteAllEvents(Sensor sensor);
 
 	
 	public abstract void close();

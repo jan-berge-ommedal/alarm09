@@ -727,8 +727,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 				sensor.setBattery(100);
 				sensor.setInstallationDate(LAC.getTime());
 				sensor.setAlarmState(false);
-				mec.deleteAllEvents(sensor);
-				new Event(-1, EventType.STARTUP, LAC.getTime(), sensor);
+				//new Event(-1, EventType.REPLACEMENT, LAC.getTime(), sensor);
 			}
 			else { //liste har ikke selected item
 				noElementSelected();
