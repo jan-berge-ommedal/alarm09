@@ -17,16 +17,17 @@ import apps.LAC;
  *
  */
 
-public class Room extends AbstractPropertyChangeBean{
+public class Room extends IDElement{
 	
 	public static final String PC_SENSORADDED = "SENSOR_ADDED";
 	public static final String PC_SENSOREMOVED = "SENOR_REMOVED";
 
-	public static final String PC_ROOMIDCHANGED = "ROOM_ID_CHANGED";
+	public static final String PC_ROOMNRCHANGED = "ROOM_NR_CHANGED";
+	public static final String PC_ROOMTYPECHANGED = "ROOM_TYPE_CHANGED";
+	public static final String PC_ROOMINFOCHANGED = "ROOM_INFO_CHANGED";
 	
 	
 	/* START DATAFIELDS */
-	private int id;
 	private int romNR;
 	private String romType;
 	private String romInfo;
@@ -50,7 +51,7 @@ public class Room extends AbstractPropertyChangeBean{
 	 */
 
 	public Room(int id, int romNR, String romType, String romInfo, Model model) {
-		this.id=id;
+		super(id);
 		this.romNR = romNR;
 		this.romType = romType;
 		this.romInfo = romInfo;
@@ -66,9 +67,7 @@ public class Room extends AbstractPropertyChangeBean{
 		return model;
 	}
 
-	public int getID() {
-		return id;
-	}
+
 
 
 	public int getRomNR() {
@@ -129,10 +128,10 @@ public class Room extends AbstractPropertyChangeBean{
 	 * @param notifyListeners true if listeners should be notified
 	 */
 	public void addSensor(Sensor sensor) {
-		//TODO Sjekk at denne funker
+		int oldSize = this.sensorer.size();
 		this.sensorer.add(sensor);
 		sensor.addPropertyChangeListener(this);
-		pcs.firePropertyChange(PC_SENSORADDED, null, sensor);
+		pcs.firePropertyChange(PC_SENSORADDED, oldSize, sensor);
 	}
 	
 	/**
@@ -141,8 +140,9 @@ public class Room extends AbstractPropertyChangeBean{
 	 */
 	
 	public void removeSensor(Sensor sensor) {
+		int oldSize = this.sensorer.size();
 		sensor.removePropertyChangeListener(this);
-		if(sensorer.remove(sensor))pcs.firePropertyChange(PC_SENSOREMOVED, null, sensor);
+		if(sensorer.remove(sensor))pcs.firePropertyChange(PC_SENSOREMOVED, oldSize, sensor);
 	}
 	
 	/**
@@ -162,7 +162,7 @@ public class Room extends AbstractPropertyChangeBean{
 	
 	public String toString(){
 		String s = "";
-		s+="Room: "+romType+" "+id+" - "+romNR+" - "+romInfo+"\n";
+		s+="Room: "+romType+" "+getID()+" - "+romNR+" - "+romInfo+"\n";
 		for(Sensor sens : sensorer){
 			s+="\t\t"+sens.toString()+"\n";
 		}
@@ -171,14 +171,6 @@ public class Room extends AbstractPropertyChangeBean{
 		
 	}
 
-
-	public void setID(int id) {
-		int oldValue = this.id;
-		this.id=id;
-		pcs.firePropertyChange(PC_ROOMIDCHANGED, oldValue, this.id);
-		
-	}
-	
 
 	
 	

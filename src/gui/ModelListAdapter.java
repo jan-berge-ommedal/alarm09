@@ -1,4 +1,4 @@
-package model;
+package gui;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -6,6 +6,10 @@ import java.util.ArrayList;
 
 import javax.swing.ListModel;
 import javax.swing.event.ListDataListener;
+
+import model.Model;
+import model.Room;
+import model.Sensor;
 
 public class ModelListAdapter implements ListModel{
 	private Model model;

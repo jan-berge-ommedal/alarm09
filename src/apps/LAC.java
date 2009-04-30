@@ -23,11 +23,12 @@ import javax.swing.JOptionPane;
 
 import com.mysql.jdbc.jdbc2.optional.ConnectionWrapper;
 
+import connection.AbstractApplicationProtocol;
 import connection.ConnectionImplementation;
 import connection.ConnectionStatusWrapper;
-import connection.LACProtocol;
 import connection.ModelEditController;
 import connection.TCPConnection;
+import connection.XmlSerializer;
 import connection.ConnectionStatusWrapper.ConnectionStatus;
 
 import model.Event;
@@ -64,12 +65,17 @@ public class LAC extends ModelEditController{
 	 * 
 	 */
 	public LAC(boolean useGUI) {
+		super(new LACProtocol());
 		if(useGUI)gui = new LACgui(this);
 		connection = new TCPConnection(STARTPORT);
 		connectWithRetry();
 		
 		try {
-			createNewLAC();
+			connection.send("NEW"+defaultAdres);
+			String reveiceID = connection.receive();
+			int modelID = Integer.parseInt(reveiceID);
+			Model m = new Model(this,modelID);
+			m.setAdresse(defaultAdres);
 		} catch (ConnectException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -80,21 +86,12 @@ public class LAC extends ModelEditController{
 	}
 
 
-	private void createNewLAC() throws ConnectException, IOException {
-		connection.send("NEW"+defaultAdres);
-		String reveiceID = connection.receive();
-		System.out.println(reveiceID);
-		int modelID = Integer.parseInt(reveiceID);
-		Model m = new Model(this);
-		m.setID(modelID);
-		m.setAdresse(defaultAdres);
-	}
-	
 	/**
 	 * This constructor is used when loading a LAC for storage
 	 * @param id an int, the stored id of the LAC
 	 */
 	public LAC(int id,boolean useGUI) {
+		super(new LACProtocol());
 		if(useGUI)gui = new LACgui(this);
 		connectWithRetry();
 
@@ -165,90 +162,6 @@ public class LAC extends ModelEditController{
 	
 
 
-	// @Override
-	public void propertyChange(PropertyChangeEvent e) {
-		super.propertyChange(e);
-		if(e.getSource() instanceof Sensor){
-			Sensor sensor = (Sensor) e.getSource();
-			if(e.getPropertyName().equals(Sensor.PC_EVENTADDED)){
-				Event event = (Event) e.getNewValue();
-				try {
-					protocol.insertEvent(this,connection, event);
-				} catch (IOException e1) {
-					System.err.println("LAC: The event was not inserted sucessfully on th MAC. Removing it on the LAC..");
-					model.removePropertyChangeListener(this);
-					sensor.removeEvent(event);
-					model.addPropertyChangeListener(this);
-				}
-				
-			}else{
-				try {
-					protocol.updateSensor(this,connection, sensor);
-				} catch (ConnectException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}			
-		}else if(e.getSource() instanceof Room){
-			Room  room = (Room)e.getSource();
-				if(e.getPropertyName().equals(Room.PC_SENSORADDED)){
-					Sensor sensor = (Sensor)e.getNewValue();
-					try {
-						protocol.insertSensor(this, connection,sensor);
-					} catch (IOException e1) {
-						System.err.println("LAC: The sensor was not inserted sucessfully on th MAC. Removing it on the LAC..");
-						model.removePropertyChangeListener(this);
-						room.removeSensor(sensor);
-						model.addPropertyChangeListener(this);
-					}
-				}else if(e.getPropertyName().equals(Room.PC_SENSORADDED)){
-				
-					
-				}else{
-				
-					try {
-						protocol.updateRoom(this,connection, room);
-					} catch (ConnectException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-				}
-		}else if(e.getSource() instanceof Model){
-			Model model = (Model) e.getSource();
-			if(e.getPropertyName().equals(Model.PC_ROOMADDED)){
-				Room room = (Room) e.getNewValue();
-				try {
-					protocol.insertRoom(this,connection, room);
-				} catch (IOException e1) {
-					System.err.println("LAC: The room was not inserted sucessfully on th MAC. Removing it on the LAC.. ");
-					model.removePropertyChangeListener(this);
-					model.removeRoom(room);
-					model.addPropertyChangeListener(this);
-					
-				}
-			}else{
-				try {
-					protocol.updateModel(this,connection);
-				} catch (ConnectException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-			
-		}
-		
-	}
-	
-
 
 	public static void main(String[] args) {
 		boolean run = true;
@@ -293,45 +206,7 @@ public class LAC extends ModelEditController{
 	}
 
 
-/*
 
-	@Override
-	public Sensor insertSensor(int roomID, boolean alarmState, int batteyStatus)
-			throws IOException {
-		Room r = null;
-		for(Room room : this.getModel().getRooms()){
-			if(room.getID()==roomID)r=room;
-		}
-		if(r==null)throw new IOException("Could not find room");
-		int receiveID = LACProtocol.insertSensor(roomID, alarmState, batteyStatus);
-		Sensor sensor = new Sensor(receiveID,alarmState,batteyStatus,LAC.getTime(),r,true);
-		return sensor;
-	}
-
-	
-
-	@Override
-	public Room insertRoom(int modelID, int roomNr, String roomType,String roomInfo) throws IOException {
-		if(modelID!=this.getModel().getID())throw new IOException("Error");
-		
-		int receiveID = LACProtocol.insertRoom(connection, roomNr,roomType,roomInfo);
-		Room r = new Room(receiveID,roomNr,roomType,roomInfo,this.getModel());
-		
-		
-		return r;
-	}
-
-	@Override
-	public Event insertEvent(int roomID, int sensorID, EventType eventType)	throws IOException {
-		
-		for()
-		LACProtocol.insertEvent(connection, roomID, sensorID, eventType);
-		
-		Event e = new Event(eventType.add)
-		return null;
-	}
-
-*/
 	@Override
 	public void close() {
 		try {
@@ -379,5 +254,193 @@ public class LAC extends ModelEditController{
 			*/
 		}
 	}
+
+
+	@Override
+	protected Connection getConnection() {
+		return connection;
+	}
+
+
+	public static class LACProtocol extends AbstractApplicationProtocol{
+
+
+
+		@Override
+		public void handleMSG(String msg, ModelEditController controller,Connection connection) {
+			super.handleMSG(msg, controller, connection); // The abstract part of the protocol handles updateCases!
+			
+			LAC lac = (LAC) controller;
+			Model model = controller.getModel();
+			try {
+				if(checkFlag(msg, INSERTROOM)){
+					String roomString = removeFlag(msg, INSERTROOM);
+					
+					//The room is automatically inserted into the model by the constructor invoked by the XMLSerializer
+					Room room = XmlSerializer.toRoom(roomString,controller.getModel());
+					
+					sendACK(connection);
+					
+				}
+				else if(checkFlag(msg, INSERTSENSOR)){
+					
+					String roomString = removeFlag(msg, INSERTROOM);
+					
+					//The sensor is automatically inserted into the model by the constructor invoked by the XMLSerializer
+					Sensor room = XmlSerializer.toSensor(roomString,controller.getModel());
+					
+					sendACK(connection);
+				}
+				else if(checkFlag(msg, INSERTEVENT)){
+					String eventString = removeFlag(msg, INSERTEVENT);
+
+					Event event = XmlSerializer.toEvent(eventString,controller.getModel());
+					
+					sendACK(connection);
+
+				}
+				
+				
+				else if(false){
+					// DELETE EVENT MBY???
+				
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+					sendNAK(connection);
+			
+			}
+			
+		}
+		
+		
+		@Override
+		public synchronized void insertEvent(ModelEditController controller, Connection connection, Event event) throws ConnectException, IOException {
+			System.out.println("LAC: INSERT EVENT\n----------\n");
+			connection.send(INSERTEVENT + XmlSerializer.toEventString(event));
+			
+			//Recieve and discard insertCommand from MAC, send ACK
+			System.out.println("Next Command will be discarded");
+			String insertStringFromMAC = connection.receive();
+			if(!checkFlag(insertStringFromMAC,INSERTEVENT)){
+				sendNAK(connection);
+				throw new IOException("Flags didnt match");
+			}else
+				sendACK(connection);
+			
+			//Receive and handle updateCommand from MAC (But check the flag)
+			System.out.println("Next Command will be handled");
+			String updateMessage = connection.receive();
+			if(!checkFlag(updateMessage,UPDATEEVENT)){
+				sendNAK(connection);
+				throw new IOException("Flags didnt match");
+			}else{
+				this.discardNextCommand=true;
+				handleMSG(updateMessage, controller, connection);
+			}
+			
+			
+			//Receive last ACK from MAC, stating that the sensor was successfully created on both sides
+			receiveACK(connection);
+			
+		}
+
+		@Override
+		public synchronized void insertRoom(ModelEditController controller, Connection connection, Room room) throws ConnectException, IOException {
+			System.out.println("LAC: INSERT ROOM\n----------\n");
+			connection.send(INSERTROOM + XmlSerializer.toRoomString(room));
+			
+			//Recieve and discard insertCommand from MAC, send ACK
+			System.out.println("Next Command will be discarded");
+			String insertStringFromMAC = connection.receive();
+			if(!checkFlag(insertStringFromMAC,INSERTROOM)){
+				sendNAK(connection);
+				throw new IOException("Flags didnt match");
+			}else
+				sendACK(connection);
+			
+			//Receive and handle updateCommand from MAC (But check the flag)
+			System.out.println("Next Command will be handled");
+			String updateMessage = connection.receive();
+			if(!checkFlag(updateMessage,UPDATEROOM)){
+				sendNAK(connection);
+				throw new IOException("Flags didnt match");
+			}else{
+				this.discardNextCommand=true;
+				handleMSG(updateMessage, controller, connection);
+			}
+			
+			//Receive last ACK from MAC, stating that the sensor was successfully created on both sides
+			receiveACK(connection);
+			
+		}
+
+		@Override
+		public synchronized void insertSensor(ModelEditController controller, Connection connection, Sensor sensor) throws ConnectException, IOException {
+			System.out.println("LAC: INSERT SENSOR\n----------\n");
+			connection.send(INSERTSENSOR + XmlSerializer.toSensorString(sensor));
+			
+			//Recieve and discard insertCommand from MAC, send ACK
+			System.out.println("Next Command will be discarded");
+			String insertStringFromMAC = connection.receive();
+			if(!checkFlag(insertStringFromMAC,INSERTSENSOR)){
+				sendNAK(connection);
+				throw new IOException("Flags didnt match");
+			}else
+				sendACK(connection);
+			
+			//Receive and handle updateCommand from MAC (But check the flag)
+			System.out.println("Next Command will be handled");
+			String updateMessage = connection.receive();
+			if(!checkFlag(updateMessage,UPDATESENSOR)){
+				sendNAK(connection);
+				throw new IOException("Flags didnt match");
+			}else{
+				this.discardNextCommand=true;
+				handleMSG(updateMessage, controller, connection);
+			}
+			
+			//Receive last ACK from MAC, stating that the sensor was successfully created on both sides
+			receiveACK(connection);
+			
+		}
+
+		
+
+
+		public static Model receiveCompleteModel(Connection connection, int modelid, ModelEditController controller) throws ConnectException, IOException, ParseException {
+			connection.send("GETMODEL"+modelid);
+			String s = connection.receive();
+			if(s == "-1"){
+				throw new IOException("Received a NAK in LACProtocol");
+			}
+			return XmlSerializer.toModelComplete(s,controller);
+		}
+
+		
+		
+		
+
+		
+		public static boolean connectionCheck(Connection connection) {
+			try {
+				connection.send("CHECK");
+				receiveACK(connection);
+			} catch (IOException e) {
+				return false;
+			}
+			return true;
+		
+		}
+
+
+
+
+		
+		
+
+
+	}
+
 }
  

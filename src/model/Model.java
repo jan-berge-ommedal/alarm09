@@ -23,41 +23,29 @@ import apps.LAC;
  *
  */
 
-public class Model extends AbstractPropertyChangeBean{
+public class Model extends IDElement{
  
 	public static final String PC_ROOMADDED = "ROOMADDED";
-	private static final String PC_ROOMREMOVED = "ROOMREMOVED";
+	public static final String PC_ROOMREMOVED = "ROOMREMOVED";
 	
-	private static final String PC_MODELIDCHANGED = "MODEL_ID_CHANGED";
+	public static final String PC_ADDRESS = "ADDRESSCHANGE";
+	
+	
 	/* START DATAFIELDS */
-	private int id;
-	private String adress = "<adress>";
+
+	private String adress = "An Address";
 	/* END DATAFIELDS */
 	
 	
 	private ArrayList<Room> rooms = new ArrayList<Room>();
 	
-	public Model(ModelEditController controller) {
+	public Model(ModelEditController controller, int id) {
+		super(id);
 		controller.setModel(this);
 	}
 	
 	/* SECTION OF SIMPLE GET & SET */
 	
-	public int getID() {
-		return id;
-	}
-
-	/**
-	 * 
-	 * @param id
-	 */
-	
-	
-	public void setID(int id) {
-		int oldValue = this.id;
-		this.id = id;
-		pcs.firePropertyChange(PC_MODELIDCHANGED, oldValue, id);
-	}
 	
 	
 	public String getAdresse() {
@@ -72,7 +60,7 @@ public class Model extends AbstractPropertyChangeBean{
 	public void setAdresse(String adresse) {
 		String oldValue = this.adress;
 		this.adress = adresse;		
-		pcs.firePropertyChange("ADDRESS", oldValue, adresse);
+		pcs.firePropertyChange(PC_ADDRESS, oldValue, adresse);
 	}
 	
 	
@@ -83,10 +71,10 @@ public class Model extends AbstractPropertyChangeBean{
 	
 	
 	public void addRoom(Room room){
-		// TODO SJEKK AT DENNE FUNKER
+		int oldSize = rooms.size();
 		room.addPropertyChangeListener(this);
 		rooms.add(room);
-		pcs.firePropertyChange(PC_ROOMADDED, null, room);
+		pcs.firePropertyChange(PC_ROOMADDED, oldSize, room);
 	}
 	
 	/**
@@ -95,8 +83,9 @@ public class Model extends AbstractPropertyChangeBean{
 	 */
 	
 	public void removeRoom(Room room){
+		int oldSize = rooms.size();
 		room.removePropertyChangeListener(this);
-		if(rooms.remove(room))pcs.firePropertyChange(PC_ROOMREMOVED, null, room);
+		if(rooms.remove(room))pcs.firePropertyChange(PC_ROOMREMOVED, oldSize, room);
 	}
 
 
@@ -113,7 +102,7 @@ public class Model extends AbstractPropertyChangeBean{
 	
 	public String toString(){
 		String result = "Model\n---------------\n";
-		result+="ID: "+id+"\n";
+		result+="ID: "+getID()+"\n";
 		result+="Adresse: "+adress+"\n";
 		for(Room r : rooms){
 			result+="\t"+r.toString()+"\n";
@@ -138,19 +127,34 @@ public class Model extends AbstractPropertyChangeBean{
 	
 
 	public Sensor getSensor(int i) {
-		Sensor result = null;
 		for(Sensor s : this.getSensors()){
-			if(s.getID()==i)result=s;
+			if(s.getID()==i)return s;
 		}
-		return result;
+		return null;
 	}
 
 	public Room getRoom(int romID) {
-		Room result = null;
 		for(Room r : rooms){
-			if(r.getID()==romID)result=r;
+			if(r.getID()==romID)return r;
 		}
-		return result;
+		return null;
+	}
+	
+	public Event[] getEvents(){
+		ArrayList<Event> list = new ArrayList<Event>();
+		for(Sensor s : getSensors()){
+			for(Event e : s.getEvents()){
+				list.add(e);
+			}
+		}
+		return list.toArray(new Event[list.size()]);
+	}
+
+	public Event getEvent(int eventID) {
+		for(Event e : getEvents()){
+			if(e.getID()==eventID)return e;
+		}
+		return null;
 	}
 }
  

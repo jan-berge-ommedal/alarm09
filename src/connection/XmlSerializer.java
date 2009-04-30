@@ -135,13 +135,16 @@ public class XmlSerializer {
 	// Takes a String and sets the modelattributes
 	public static Model toModelComplete(String xml, ModelEditController controller) throws ParseException {
 		System.out.println(xml + "\n");
-		Model aModel = new Model(controller);
+		
+		
+		
+		String[] xmls = xml.split("<");
+		int modelID = Integer.parseInt(xmls[2].substring(3));
+		Model aModel = new Model(controller, modelID);
 		
 		//We don't want that the controller handles propertychangeEvents, when setting ut the model
 		aModel.removePropertyChangeListener(controller);
 		
-		String[] xmls = xml.split("<");
-		aModel.setID(Integer.parseInt(xmls[2].substring(3)));
 		aModel.setAdresse(xmls[4].substring(7));
 		
 		int roomteller = 100;
@@ -183,7 +186,8 @@ public class XmlSerializer {
 			else if(sensorteller == 5){fem = makeTimestamp(xmls[i].substring(10));}
 			else if(sensorteller == 7){to = Integer.parseInt(xmls[i].substring(8));}
 			else if(sensorteller == 9){
-				s = new Sensor(en, seks, to,fem, aModel.getRooms().get(aModel.getRooms().size()-1), true);
+				s = new Sensor(en, seks, to,fem, aModel.getRooms().get(aModel.getRooms().size()-1));
+				s.startSensor();
 			}
 			// Checks for events
 			if(xmls[i].equals("events>")){
@@ -219,9 +223,9 @@ public class XmlSerializer {
 	public static Room toRoom(String roomString,Model model) {
 		// TODO Auto-generated method stub
 		String s[] = roomString.split("#");
-		int roomNR = Integer.parseInt(s[2]);
-		String roomType = s[3];
-		String roomInfo = s[4];
+		int roomNR = Integer.parseInt(s[1]);
+		String roomType = s[2];
+		String roomInfo = s[3];
 		
 		Room room = new Room(-1, roomNR, roomType, roomInfo, model);
 		
@@ -236,7 +240,6 @@ public class XmlSerializer {
 	
 	
 	public static Event toEvent(String eventString,Model model) {
-		// TODO Auto-generated method stub
 		String s[] = eventString.split("#");
 		EventType e = EventType.valueOf(s[3]);
 		Timestamp time = makeTimestamp(s[5]);
@@ -264,20 +267,19 @@ public class XmlSerializer {
 		
 		Timestamp time = new Timestamp(Long.parseLong(s[6]));
 		
-		Room room = null;
-		for (Room r : model.getRooms()) {
-			if(r.getID() == Integer.parseInt(s[5])){
-				room = r;
-				break;
-			}
-		}
+		int roomID = Integer.parseInt(s[5]);
 		
-		Sensor sensor = new Sensor(-1, alarm, battery, time, room, true);
+		Room room = model.getRoom(roomID);
+		
+		if(room==null)System.err.println("XMLSERIALIZER: 271 - Fant ikke romID");
+	
+		
+		Sensor sensor = new Sensor(-1, alarm, battery, time, room);
 		
 		return sensor;
 	}
 	public static String toModelString(Model model) {
-		return "<MODEL><ID>"+model.getID()+"</ID><ADDRES>"+model.getAdresse()+"</ADDRES></MODEL>";
+		return model.getID() + "#" + model.getAdresse();
 	}
 
 	

@@ -160,7 +160,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 			adresse.setText(this.mec.getModel().getAdresse());
 		} catch (NullPointerException npe) {
 			System.err.println("nullpointerex ved getAdresse");
-			npe.printStackTrace();
+			//npe.printStackTrace();
 		}
 		String input = "";
 		if (adresse.getText().equals(input)) {
@@ -362,7 +362,8 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 						String roty = roomTy.getText();
 						
 						Room room = new Room(-1,ronr,roty,roin,model);
-						Sensor sensor = new Sensor(-1,false,100,LAC.getTime(),room,true);
+						Sensor sensor = new Sensor(-1,false,100,LAC.getTime(),room);
+						sensor.startSensor();
 						
 						
 					}
@@ -736,7 +737,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 				sensor.setInstallationDate(LAC.getTime());
 				sensor.setAlarmState(false);
 				mec.deleteAllEvents(sensor);
-				sensor.addEvent(new Event(0, EventType.STARTUP, LAC.getTime(), sensor));
+				new Event(-1, EventType.STARTUP, LAC.getTime(), sensor);
 			}
 			else { //liste har ikke selected item
 				noElementSelected();
@@ -798,7 +799,8 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		public void actionPerformed(ActionEvent e) {
 			try {
 				Room r = cba.getSelectedRoom();
-				Sensor sensor = new Sensor(-1,false,100,LAC.getTime(),r,true);
+				Sensor sensor = new Sensor(-1,false,100,LAC.getTime(),r);
+				sensor.startSensor();
 				System.out.println("Sensor ble lagt til logisk!"); //testlinje
 				this.frame.dispose();
 				System.out.println("Hovedvindu skal vises!"); //testlinje

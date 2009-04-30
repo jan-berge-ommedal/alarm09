@@ -4,10 +4,12 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-public class AbstractPropertyChangeBean implements PropertyChangeListener{
+public class AbstractPropertyChangeSupport implements PropertyChangeListener{
 	
 	protected PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
+	
+	
 
 	/**
 	 * Adds the specified PropertyChangeListener listener to receive change-events from this sensor.

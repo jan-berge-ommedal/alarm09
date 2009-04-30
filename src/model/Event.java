@@ -15,44 +15,35 @@ import apps.LAC;
  * @author Jan Berge Ommedal
  */
 
-public class Event {
+public class Event extends IDElement{
  
 	/* START DATAFELTER */
-	private final int id;
 	private final EventType eventType;
 	private final Timestamp time; 
 	/* SLUTT DATAFELTER */
 	
 	private Sensor sensor;
 	
-	private static int nextEventID = 0;
-	
+
 	
 	
 	
 	public Event(int id, EventType eventType, Timestamp time,Sensor sensor) {
+		super(id);
 		this.eventType = eventType;
 		this.time = time;
-		this.id = id;
 		this.sensor=sensor;
-		if(id>=nextEventID)nextEventID=id+1;
 		
 		this.sensor.addEvent(this);
 	}
 	
-	public void setID(int insertEvent) {
-		// TODO Auto-generated method stub
-		
-	}
+	
 
 	public Sensor getSensor() {
 		return sensor;
 	}
 
 
-	public int getID() {
-		return id;
-	}
 
 	public EventType getEventType() {
 		return eventType;
@@ -70,7 +61,7 @@ public class Event {
 	
 	public String toString(){
 		String s = "";
-		s+="Event: "+id+" - "+eventType+" - "+time;
+		s+="Event: "+getID()+" - "+eventType+" - "+time;
 		return s;
 	}
 

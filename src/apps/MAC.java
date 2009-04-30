@@ -18,17 +18,18 @@ import javax.swing.ListModel;
 import javax.swing.Timer;
 import javax.swing.event.ListDataListener;
 
+import connection.AbstractApplicationProtocol;
 import connection.ConnectionImplementation;
 import connection.ConnectionStatusWrapper;
-import connection.LACProtocol;
-import connection.MACProtocol;
 import connection.ModelEditController;
 import connection.TCPConnection;
+import connection.XmlSerializer;
 import connection.ConnectionStatusWrapper.ConnectionStatus;
 
 import database.Database;
 
 import model.Event;
+import model.IDElement;
 import model.Model;
 import model.Room;
 import model.Sensor;
@@ -135,6 +136,7 @@ public class MAC{
 		
 		
 		public LACAdapter(MAC mac, int id) {
+			super(new MACProtocol());
 			this.mac = mac;
 			database.getLACModel(id,this);
 			timer = new Timer(TIMEOUT,this);
@@ -170,72 +172,7 @@ public class MAC{
 	
 	
 
-		public void propertyChange(PropertyChangeEvent e) {
-			super.propertyChange(e);
-			if(e.getSource() instanceof Sensor){
-				Sensor sensor = (Sensor) e.getSource();
-				if(e.getPropertyName().equals(Sensor.PC_EVENTADDED)){
-					Event event = (Event) e.getNewValue();
-					try {
-						protocol.insertEvent(this, thread.connection,event);
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
-					event.setID(database.insertEvent(event.getID(), event.getEventType()));				
-				}else{
-					try {
-						protocol.updateSensor(this, thread.connection,sensor);
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-				}			
-			}else if(e.getSource() instanceof Room){
-				Room  room = (Room)e.getSource();
-					if(e.getPropertyName().equals(Room.PC_SENSORADDED)){
-						Sensor sensor = (Sensor) e.getNewValue();
-						try {
-							protocol.insertSensor(this, thread.connection,sensor);
-						} catch (IOException e1) {
-							e1.printStackTrace();
-						}
-
-					}else{
-						try {
-							protocol.updateRoom(this,thread.connection,room);
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-					}
-			}else if(e.getSource() instanceof Model){
-				Model model = (Model) e.getSource();
-				if(e.getPropertyName().equals(Model.PC_ROOMADDED)){
-					Room room = (Room) e.getNewValue();
-					try {
-						protocol.insertRoom(this, thread.connection,room);
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
-					try {
-						room.setID(database.insertRoom(model.getID(), room.getRomNR(), room.getRomType(), room.getRomInfo()));
-					} catch (SQLException e1) {
-						e1.printStackTrace();
-					}
-				}else{
-					try {
-						protocol.updateModel(this,thread.connection);
-					} catch (ConnectException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-				}
-			}
-			
-		}
+	
 
 
 		@Override
@@ -399,7 +336,7 @@ public class MAC{
 							}
 						}
 						try {
-							//IF THE GIVEN ID FOUND AND FREE, RETURN "ACK" ELSE RETURN "NAK"
+							//IF THE GIVEN ID FOUND AN-D FREE, RETURN "ACK" ELSE RETURN "NAK"
 							newConnection.send((found ? "ACK" :"NAK"));
 						} catch (ConnectException e) {
 							// TODO Auto-generated catch block
@@ -411,14 +348,11 @@ public class MAC{
 					}else if(idString.startsWith("NEW")){//NY LAC, ber om ID
 						//THE LAC CREATE A NEW MODEL IN DB
 						String adress = idString.substring(3);
+						int returnid =-1;
 						try {
-							int returnid = database.insertLAC(adress);
+							returnid = database.insertLAC(adress);
 							newConnection.send(""+returnid);
-							LACAdapter adapter = new LACAdapter(mac,returnid);
-							Model m = new Model(adapter);
-							m.setID(returnid);
-							adapter.initializeConnection(newConnection);
-							adapters.add(adapter);
+							
 						} catch (ConnectException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -428,8 +362,11 @@ public class MAC{
 						} catch (SQLException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
-						}finally{
-							newConnection.send("NAK");
+						}
+						if(returnid!=-1){
+							LACAdapter adapter = new LACAdapter(mac,returnid);
+							adapter.initializeConnection(newConnection);
+							adapters.add(adapter);
 						}
 					}
 				} catch (BindException e1) {
@@ -452,6 +389,93 @@ public class MAC{
 		new MAC(true);
 	}
 	
+
+
+	public class MACProtocol extends AbstractApplicationProtocol {
+
+		@Override
+		public void handleMSG(String msg, ModelEditController controller, Connection connection){
+			super.handleMSG(msg, controller, connection);
+			LACAdapter adapter = (LACAdapter)controller;
+			
+				if(msg.startsWith("CHECK")){
+					adapter.resetTimeout();
+					sendACK(connection);
+				
+				}
+				else if(msg.startsWith("GETMODEL")){
+					try {
+						connection.send(XmlSerializer.toXmlComplete(adapter.getModel()));
+					} catch (ConnectException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				else if(checkFlag(msg, INSERTROOM)){
+					
+					String roomstring = removeFlag(msg, INSERTROOM);
+					
+					Room room = XmlSerializer.toRoom(roomstring, controller.getModel());
+					
+					sendACK(connection);
+					
+				}
+				else if(checkFlag(msg, INSERTSENSOR)){
+
+					String sensorstring = removeFlag(msg, INSERTSENSOR);
+					
+					Sensor sensor = XmlSerializer.toSensor(sensorstring,controller.getModel());
+					
+					sendACK(connection);
+				}
+				else if(checkFlag(msg, INSERTEVENT)){
+					
+					String eventstring = removeFlag(msg, INSERTEVENT);
+					
+					Event event = XmlSerializer.toEvent(eventstring,controller.getModel());
+					
+					sendACK(connection);
+				}
+				
+
+			
+		}
+
+		@Override
+		public synchronized void insertEvent(ModelEditController controller, Connection connection, Event event) throws ConnectException, IOException {
+			System.out.println("MAC: INSERT EVENT\n----------\n");
+			String eventString = XmlSerializer.toEventString(event);
+			connection.send(INSERTEVENT + eventString);
+			receiveACK(connection);
+			
+		}
+
+		@Override
+		public synchronized void insertRoom(ModelEditController controller, Connection connection, Room room) throws ConnectException, IOException {
+			System.out.println("MAC: INSERT ROOM\n----------\n");
+			String roomString = XmlSerializer.toRoomString(room);
+			connection.send(INSERTROOM + roomString);
+			receiveACK(connection);
+			
+		}
+
+		@Override
+		public synchronized void insertSensor(ModelEditController controller, Connection connection, Sensor sensor) throws ConnectException, IOException {
+			System.out.println("MAC: INSERT SENSOR\n----------\n");
+			String sensorString = XmlSerializer.toSensorString(sensor);
+			connection.send(INSERTSENSOR + sensorString);
+			receiveACK(connection);
+		}
+		
+		public Database getDatabase(){
+			return database;
+		}
+
+		
+
+	}
+
 	
 }
  

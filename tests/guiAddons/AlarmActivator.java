@@ -45,7 +45,7 @@ public class AlarmActivator extends JFrame implements Values{
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setContentPane(pane);
 		this.setVisible(true);
-		
+		this.setTitle("Alarm Activator");
 		
 		sensors = new JLabel("Sensors");
 		sensors.setBounds(18, DEFAULT_SPACE, BUTTON_WIDTH, BUTTON_HEIGHT);
@@ -84,11 +84,10 @@ public class AlarmActivator extends JFrame implements Values{
 	
 	
 	
-	this.setContentPane(pane);
+		this.setContentPane(pane);
 	}
 	
 	public static void main(String[] args) {
-		LAC mac = new LAC(1,false);
 		LAC lac = new LAC(1,true);
 		new AlarmActivator(lac.getModel());
 	}

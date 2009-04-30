@@ -53,7 +53,7 @@ public class Database {
 	
 	public Model getLACModel(int id,ModelEditController controller) {
 		
-		Model m = new Model(controller);
+		Model m = new Model(controller,id);
 		//The controller should not handle changes when loading the model from database
 		m.removePropertyChangeListener(controller);
 		m.setID(id);
@@ -83,7 +83,7 @@ public class Database {
 				while(sensors.next()){
 
 					// construct and add sensor to room
-					Sensor s = new Sensor(sensors.getInt("id"), sensors.getBoolean("alarmState"),sensors.getInt("batteryStatus"), sensors.getTimestamp("installationDate"),room,false);
+					Sensor s = new Sensor(sensors.getInt("id"), sensors.getBoolean("alarmState"),sensors.getInt("batteryStatus"), sensors.getTimestamp("installationDate"),room);
 					
 				}
 				
@@ -155,7 +155,7 @@ public class Database {
 			romType = (romType=="" && dontUpdateEmpties) ? rs.getString("romType") : romType;
 			romInfo = (romInfo=="" && dontUpdateEmpties) ? rs.getString("romInfo") : romInfo;
 
-			executeUpdate("UPDATE LAC SET 	 romNR = " + romNR +
+			executeUpdate("UPDATE Rom SET 	 romNR = " + romNR +
 					 						",romType = '" + romType + "'" +
 					 						",romInfo = '" + romInfo + "'" +
 						  "WHERE ID = "+ID);
@@ -179,7 +179,7 @@ public class Database {
 
 			int alarmStateInt = alarmState ? 1 : 0;
 			
-			executeUpdate("UPDATE LAC SET 	 alarmState  = " + alarmStateInt  +
+			executeUpdate("UPDATE Sensor SET 	 alarmState  = " + alarmStateInt  +
 					 						",batteryStatus  = '" + batteryStatus  + "'" +
 						  "WHERE id = "+ID);
 			
@@ -193,7 +193,7 @@ public class Database {
 
 			int alarmStateInt = alarmState ? 1 : 0;
 			
-			executeUpdate("UPDATE LAC SET 	 alarmState  = " + alarmStateInt  +
+			executeUpdate("UPDATE Sensor SET 	 alarmState  = " + alarmStateInt  +
 					 						",batteryStatus  = '" + batteryStatus  + "'" +
 					 						",installationDate   = '" + installationDate.toString()  + "'" +
 						  "WHERE id = "+ID);
@@ -317,7 +317,7 @@ public class Database {
 
 	public void removeSensorsEvents(int sensorid){
 		try {
-			executeUpdate("DELETE FROM sensorID WHERE id = "+sensorid);
+			executeUpdate("DELETE FROM Sensor WHERE id = "+sensorid);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
