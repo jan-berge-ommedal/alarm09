@@ -28,9 +28,7 @@ public class IDElement extends AbstractPropertyChangeSupport{
 	public void setID(int id) {
 		int oldValue = this.id;
 		this.id = id;
-		if(id==0){
-			System.out.println("and the sinner is....");
-		}
+		
 		
 		pcs.firePropertyChange(PC_IDCHANGED, oldValue, id);
 	}

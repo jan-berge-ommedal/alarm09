@@ -34,6 +34,10 @@ public abstract class ModelEditController extends AbstractPropertyChangeSupport 
 	public ModelEditController(AbstractApplicationProtocol protocol) {
 		this.protocol=protocol;
 	}
+	
+	public AbstractApplicationProtocol getProtocol(){
+		return protocol;
+	}
 
 	/**
 	 * This method tests all sensors 
@@ -105,22 +109,18 @@ public abstract class ModelEditController extends AbstractPropertyChangeSupport 
 	 * @throws IOException
 	 */
 	
-
-
-
-	
-	public abstract void close();
 	
 
 
 	public void propertyChange(PropertyChangeEvent e) {
 		super.propertyChange(e);
+		boolean connected = getConnectionStatusWrapper().getConnectionStatus()==ConnectionStatus.CONNECTED;
 		if(e.getSource() instanceof Sensor){
 			Sensor sensor = (Sensor) e.getSource();
 			if(e.getPropertyName().equals(Sensor.PC_EVENTADDED)){
 				Event event = (Event) e.getNewValue();
 				try {
-					protocol.insertEvent(this, getConnection(),event);
+					if(connected)protocol.insertEvent(this, getConnection(),event);
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
@@ -132,9 +132,10 @@ public abstract class ModelEditController extends AbstractPropertyChangeSupport 
 			}else{
 				//FINN UT HVILKET ELEMENT SOM ER ENDRET
 				String propteryName =  e.getPropertyName();
+				boolean change = false;
 				if(propteryName.equals(IDElement.PC_IDCHANGED)){
 					try {
-						protocol.updateSensor(getConnection(),sensor.getID(),AbstractApplicationProtocol.ELEMENT_ID, e.getOldValue().toString(),e.getNewValue().toString());
+						if(connected)protocol.updateSensor(getConnection(),sensor.getID(),AbstractApplicationProtocol.ELEMENT_ID, e.getOldValue().toString(),e.getNewValue().toString());
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
@@ -142,7 +143,8 @@ public abstract class ModelEditController extends AbstractPropertyChangeSupport 
 					Boolean newState = (Boolean) e.getNewValue();
 					if(newState!=null){
 						try {
-							protocol.updateSensor(getConnection(), sensor.getID(), AbstractApplicationProtocol.ELEMENT_SENSOR_ALARMSTATE, e.getOldValue().toString(), e.getNewValue().toString());
+							if(connected)protocol.updateSensor(getConnection(), sensor.getID(), AbstractApplicationProtocol.ELEMENT_SENSOR_ALARMSTATE, e.getOldValue().toString(), e.getNewValue().toString());
+							change=true;
 						} catch (IOException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
@@ -150,16 +152,26 @@ public abstract class ModelEditController extends AbstractPropertyChangeSupport 
 					}
 				}else if(propteryName.equals(Sensor.PC_INSTALLATIONDATE)){
 					try {
-						protocol.updateSensor(getConnection(), sensor.getID(), AbstractApplicationProtocol.ELEMENT_SENSOR_INSTALLATIONDATE, e.getOldValue().toString(), e.getNewValue().toString());
+						if(connected)protocol.updateSensor(getConnection(), sensor.getID(), AbstractApplicationProtocol.ELEMENT_SENSOR_INSTALLATIONDATE, e.getOldValue().toString(), e.getNewValue().toString());
+						change=true;
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 				}else if(propteryName.equals(Sensor.PC_BATTERY)){
 					try {
-						protocol.updateSensor(getConnection(), sensor.getID(), AbstractApplicationProtocol.ELEMENT_SENSOR_BATTERY, e.getOldValue().toString(), e.getNewValue().toString());
+						if(connected)protocol.updateSensor(getConnection(), sensor.getID(), AbstractApplicationProtocol.ELEMENT_SENSOR_BATTERY, e.getOldValue().toString(), e.getNewValue().toString());
+						change=true;
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+				if(change && protocol instanceof MACProtocol){
+					MACProtocol macProtocol = (MACProtocol) protocol;
+					try {
+						macProtocol.getDatabase().updateSensor(sensor.getID(),sensor.isAlarmState(),sensor.getBattery());
+					} catch (SQLException e1) {
 						e1.printStackTrace();
 					}
 				}
@@ -171,7 +183,7 @@ public abstract class ModelEditController extends AbstractPropertyChangeSupport 
 				String propteryName =  e.getPropertyName();
 				if(propteryName.equals(IDElement.PC_IDCHANGED)){
 						try {
-							protocol.updateEvent(getConnection(),event.getID(),AbstractApplicationProtocol.ELEMENT_ID, e.getOldValue().toString(),e.getNewValue().toString());
+							if(connected)protocol.updateEvent(getConnection(),event.getID(),AbstractApplicationProtocol.ELEMENT_ID, e.getOldValue().toString(),e.getNewValue().toString());
 						} catch (ConnectException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
@@ -188,7 +200,7 @@ public abstract class ModelEditController extends AbstractPropertyChangeSupport 
 				if(e.getPropertyName().equals(Room.PC_SENSORADDED)){
 					Sensor sensor = (Sensor) e.getNewValue();
 					try {
-						protocol.insertSensor(this, getConnection(),sensor);
+						if(connected)protocol.insertSensor(this, getConnection(),sensor);
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
@@ -200,29 +212,37 @@ public abstract class ModelEditController extends AbstractPropertyChangeSupport 
 				}else{
 					try {
 						String propteryName =  e.getPropertyName();
+						boolean change = false;
 						if(propteryName.equals(IDElement.PC_IDCHANGED)){
-							protocol.updateRoom(getConnection(),room.getID(),AbstractApplicationProtocol.ELEMENT_ID, e.getOldValue().toString(),e.getNewValue().toString());
+							if(connected)protocol.updateRoom(getConnection(),room.getID(),AbstractApplicationProtocol.ELEMENT_ID, e.getOldValue().toString(),e.getNewValue().toString());
 						}else if(propteryName.equals(Room.PC_ROOMINFOCHANGED)){
 							try {
-								protocol.updateSensor(getConnection(), room.getID(), AbstractApplicationProtocol.ELEMENT_ROOM_ROOMINFO, e.getOldValue().toString(), e.getNewValue().toString());
+								if(connected)protocol.updateSensor(getConnection(), room.getID(), AbstractApplicationProtocol.ELEMENT_ROOM_ROOMINFO, e.getOldValue().toString(), e.getNewValue().toString());
+								change = true;
 							} catch (IOException e1) {
 								// TODO Auto-generated catch block
 								e1.printStackTrace();
 							}
 						}else if(propteryName.equals(Room.PC_ROOMNRCHANGED)){
 							try {
-								protocol.updateSensor(getConnection(), room.getID(), AbstractApplicationProtocol.ELEMENT_ROOM_ROOMNR, e.getOldValue().toString(), e.getNewValue().toString());
+								if(connected)protocol.updateSensor(getConnection(), room.getID(), AbstractApplicationProtocol.ELEMENT_ROOM_ROOMNR, e.getOldValue().toString(), e.getNewValue().toString());
+								change = true;
 							} catch (IOException e1) {
 								// TODO Auto-generated catch block
 								e1.printStackTrace();
 							}
 						}else if(propteryName.equals(Room.PC_ROOMTYPECHANGED)){
 							try {
-								protocol.updateSensor(getConnection(), room.getID(), AbstractApplicationProtocol.ELEMENT_ROOM_ROOMTY, e.getOldValue().toString(), e.getNewValue().toString());
+								if(connected)protocol.updateSensor(getConnection(), room.getID(), AbstractApplicationProtocol.ELEMENT_ROOM_ROOMTY, e.getOldValue().toString(), e.getNewValue().toString());
+								change = true;
 							} catch (IOException e1) {
 								// TODO Auto-generated catch block
 								e1.printStackTrace();
 							}
+						}
+						if(change && protocol instanceof MACProtocol){
+							MACProtocol macProtocol = (MACProtocol) protocol;
+							macProtocol.getDatabase().updateRoom(room.getID(),room.getRomNR(),room.getRomType(),room.getRomType());
 						}
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
@@ -235,7 +255,7 @@ public abstract class ModelEditController extends AbstractPropertyChangeSupport 
 			if(propteryName.equals(Model.PC_ROOMADDED)){
 				Room room = (Room) e.getNewValue();
 				try {
-					protocol.insertRoom(this, getConnection(),room);
+					if(connected)protocol.insertRoom(this, getConnection(),room);
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
@@ -251,11 +271,13 @@ public abstract class ModelEditController extends AbstractPropertyChangeSupport 
 				System.err.println("Functionallity to remove components not implemented");
 				
 			}else{
+				boolean change = false;
 				if(propteryName.equals(IDElement.PC_IDCHANGED)){
 					System.err.println("ModelEditController line 198: not implemented (Should never be needed;))");
 				}else if(propteryName.equals(Model.PC_ADDRESS)){
 					try {
-						protocol.updateModel(this.getConnection(), model.getID(), AbstractApplicationProtocol.ELEMENT_MODEL_ADDRESS, e.getOldValue().toString(), e.getNewValue().toString());
+						if(connected)protocol.updateModel(this.getConnection(), model.getID(), AbstractApplicationProtocol.ELEMENT_MODEL_ADDRESS, e.getOldValue().toString(), e.getNewValue().toString());
+						change=true;
 					} catch (ConnectException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -263,6 +285,11 @@ public abstract class ModelEditController extends AbstractPropertyChangeSupport 
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
+				}
+				if(change && protocol instanceof MACProtocol){
+					MACProtocol macProtocol = (MACProtocol) protocol;
+					macProtocol.getDatabase().updateLAC(model.getID(), model.getAdresse());
+					
 				}
 		
 			}

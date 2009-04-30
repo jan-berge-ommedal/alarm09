@@ -24,6 +24,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+
+import connection.LACProtocol;
 import connection.ModelEditController;
 
 /**
@@ -115,7 +117,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		{
 		      public void windowClosing(WindowEvent e)
 		      {
-		         mec.close();
+		    	 if(mec instanceof LAC)((LAC)mec).close();
 		      }
 		});
 		
@@ -735,7 +737,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 				sensor.setBattery(100);
 				sensor.setInstallationDate(LAC.getTime());
 				sensor.setAlarmState(false);
-				//new Event(-1, EventType.REPLACEMENT, LAC.getTime(), sensor);
+				new Event(-1, EventType.REPLACEMENT, LAC.getTime(), sensor);
 			}
 			else { //liste har ikke selected item
 				noElementSelected();
@@ -830,9 +832,9 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		if(evt.getSource() instanceof ModelEditController){
 			model = mec.getModel();			
 			// Burde muligens gj�res annerledes
-			this.frame.dispose();
-			initialize();
 		}
+		this.frame.dispose();
+		initialize();
 	}
 }
 

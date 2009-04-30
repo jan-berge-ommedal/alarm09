@@ -37,7 +37,7 @@ public class Sensor extends IDElement{
 	public static final String PC_BATTERY = "BATTERYCHANGED";
 	
 	/* START DATAFIELDS */
-	private Boolean alarmState;
+	private boolean alarmState;
 	private Timestamp installationDate;
 	private int battery = 100;
 	/* END DATAFIELDS */
@@ -135,28 +135,11 @@ public class Sensor extends IDElement{
 	 * @param alarmState true = confirmed alarmed, null= nonconfirmed alarm, false = no alarm
 	 */
 
-	public void setAlarmState(Boolean alarmState) {
-		if(this.alarmState!=alarmState){
-			if(alarmState==null){
-				//TODO TEST SENSOR!!
-				
-				//Alarmen settes til Non Confirmed. Følgende timer setter den til true etter angitt tid 
-				Timer t = new Timer(ALARMCOUNDOWN,new ActionListener(){
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						setAlarmState(true);
-					}
-				});
-				t.setRepeats(false);
-				t.start();
-			}
-			Boolean oldValue = this.alarmState;
+	public void setAlarmState(boolean alarmState) {
+			boolean oldValue = this.alarmState;
+			oldValue=false;
 			this.alarmState = alarmState;
-			// TODO FIX THIS
-			EventType type = (alarmState==null ? EventType.DETECTED : (alarmState ? EventType.ALARM : EventType.FALSEALARM));
-			this.events.add(new Event(0,type,LAC.getTime(),this));
 			pcs.firePropertyChange(PC_ALARMSTATE, oldValue, alarmState);
-		}
 	}
 
 	/**
@@ -282,6 +265,10 @@ public class Sensor extends IDElement{
 		int oldSize = events.size();
 		if(events.remove(event))pcs.firePropertyChange(PC_EVENTREMOVED, oldSize, event);
 		
+	}
+	
+	public void activateAlarm(){
+		setAlarmState(true);
 	}
 }
  

@@ -56,9 +56,7 @@ public class MAC{
 	public static final int SERVERPORT = 666;
 	public static final String MACIP = "localhost";
 	
-	private static final int TIMEOUT = 600000;
 	
-	private final MACProtocol protocol = new MACProtocol();
 	
 	
 	public MAC(boolean useGUI) {
@@ -127,31 +125,25 @@ public class MAC{
 	 * @author Jan Berge Ommedal
 	 *
 	 */
-	public class LACAdapter extends ModelEditController implements ActionListener{
+	public class LACAdapter extends ModelEditController{
 		
 		private MAC mac;
 		private LACAdapterThread thread;
 		
-		private Timer timer;
 		
 		
 		public LACAdapter(MAC mac, int id) {
-			super(protocol);
+			super(new MACProtocol());
 			this.mac = mac;
 			database.getLACModel(id,this);
-			timer = new Timer(TIMEOUT,this);
 		}
 		
 		
 		public void initializeConnection(Connection newConnection) {
 			thread = new LACAdapterThread(this,newConnection);
 			connectionWrapper.setConnectionStatus(ConnectionStatus.CONNECTED);
-			timer.start();
 		}
 		
-		public void resetTimeout(){
-			timer.restart();
-		}
 
 
 		/**
@@ -159,36 +151,20 @@ public class MAC{
 		 * 
 		 */
 		public void stopAdapter(){
-			close();
+			thread.stop();
+			try {
+				thread.closeConnection();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			adapters.remove(this);
 			
 		}
 	
-		
-		@Override
-		public void close() {
-			// Does nothing
-		}
-	
 	
 
 	
-
-		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			if(arg0.getSource()==timer){
-				System.out.println("LACAdapter "+getModel().getID()+": Connection timed out");
-				connectionWrapper.setConnectionStatus(ConnectionStatus.DISCONNECTED);
-				try {
-					thread.closeConnection();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				thread.stop();
-				timer.stop();
-			}
-		}
 
 
 		public Connection getConnection() {
@@ -218,6 +194,7 @@ public class MAC{
 		}
 	
 		private void closeConnection() throws IOException {
+			adapter.getConnectionStatusWrapper().setConnectionStatus(ConnectionStatus.DISCONNECTED);
 			connection.close();
 		}
 
@@ -229,12 +206,16 @@ public class MAC{
 			try {
 				while(true){
 					String msg = connection.receive();
-					protocol.handleMSG(msg,this.adapter,this.connection);
+					this.adapter.getProtocol().handleMSG(msg,this.adapter,this.connection);
 				}
 			} catch (SocketTimeoutException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
-				e.printStackTrace();
+				try {
+					this.closeConnection();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
 			}
 		}
 		
@@ -387,12 +368,7 @@ public class MAC{
 			super.handleMSG(msg, controller, connection);
 			LACAdapter adapter = (LACAdapter)controller;
 			
-				if(msg.startsWith("CHECK")){
-					adapter.resetTimeout();
-					sendACK(connection);
-				
-				}
-				else if(msg.startsWith("GETMODEL")){
+				if(msg.startsWith("GETMODEL")){
 					try {
 						connection.send(XmlSerializer.toXmlComplete(adapter.getModel()));
 					} catch (ConnectException e) {

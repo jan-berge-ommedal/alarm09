@@ -39,17 +39,15 @@ public class TCPConnection implements Connection{
 		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 	}
 
-	private void setupSocket(Socket socket2) throws IOException {
-	}
-
 	public Connection accept() throws IOException, SocketTimeoutException {
 		if(server==null)server = new ServerSocket(port);
 		return new TCPConnection(server.accept());
 	}
 
 	public void close() throws IOException {
-		// TODO Auto-generated method stub
-		
+		out.close();
+		in.close();
+		socket.close();
 	}
 
 

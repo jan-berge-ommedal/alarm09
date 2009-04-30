@@ -38,6 +38,9 @@ public abstract class AbstractApplicationProtocol {
 	public static final String ELEMENT_SENSOR_INSTALLATIONDATE = "<INSTALLATIONDATE>";
 	public static final String ELEMENT_SENSOR_BATTERY = "<BATTERY>";
 	
+	public static final String CLOSE = "CLOSE";
+	
+	
 	protected boolean discardNextCommand = false;
 	
 	
@@ -88,6 +91,7 @@ public abstract class AbstractApplicationProtocol {
 	 * @param msg
 	 * @param controller
 	 * @param connection
+	 * @throws IOException 
 	 */
 	public void handleMSG(String msg, ModelEditController controller,Connection connection){
 		System.out.println("got Command: "+msg);
@@ -96,15 +100,18 @@ public abstract class AbstractApplicationProtocol {
 		
 		if(checkFlag(msg, UPDATESENSOR)){
 			this.discardNextCommand=true;
-			String eventString = removeFlag(msg, UPDATESENSOR);
+			System.out.println("Will discard the propagation of the updateEvent");
+			String sensorString = removeFlag(msg, UPDATESENSOR);
 			
-			String[] updateInfo = deconstructUpdateHeader(eventString);
+			String[] updateInfo = deconstructUpdateHeader(sensorString);
 			
 			boolean ok = true;
 			if(updateInfo[0].equals(ELEMENT_ID)){
-				Sensor sensor = model.getSensor(Integer.parseInt(updateInfo[3]));//Try to find the sensor with the new ID
-				if(sensor==null){//The ID needs update
-					sensor = model.getSensor(Integer.parseInt(updateInfo[2]));//Need to use the old ID to find the sensor
+				Sensor sensor = model.getSensor(Integer.parseInt(updateInfo[2]));//Need to use the old ID to find the sensor	
+				if(sensor==null){
+					System.err.println("Didnt find id");
+					System.err.println(sensorString);
+				}else{
 					sensor.setID(Integer.parseInt(updateInfo[3]));
 				}	
 			}else{
@@ -139,6 +146,7 @@ public abstract class AbstractApplicationProtocol {
 		
 		else if(checkFlag(msg, UPDATEROOM)){
 			this.discardNextCommand=true;
+			System.out.println("Will discard the propagation of the updateEvent");
 
 			String roomString = removeFlag(msg, UPDATEROOM);
 
@@ -146,9 +154,11 @@ public abstract class AbstractApplicationProtocol {
 			
 			boolean ok = true;
 			if(updateInfo[0].equals(ELEMENT_ID)){
-				Room room = model.getRoom(Integer.parseInt(updateInfo[3]));//Try to find the room with the new ID
-				if(room==null){//The ID needs update
-					room = model.getRoom(Integer.parseInt(updateInfo[2]));//Need to use the old ID to find the room
+				Room room = model.getRoom(Integer.parseInt(updateInfo[2]));//Need to use the old ID to find the room
+				if(room==null){
+					System.err.println("Didnt find id");
+					System.err.println(roomString);
+				}else{
 					room.setID(Integer.parseInt(updateInfo[3]));
 				}	
 			}else{
@@ -171,6 +181,7 @@ public abstract class AbstractApplicationProtocol {
 			}
 		}else if(checkFlag(msg, UPDATEEVENT)){
 			this.discardNextCommand=true;
+			System.out.println("Will discard the propagation of the updateEvent");
 
 			String eventString = removeFlag(msg, UPDATEEVENT);
 						
@@ -178,9 +189,11 @@ public abstract class AbstractApplicationProtocol {
 			
 			boolean ok = true;
 			if(updateInfo[0].equals(ELEMENT_ID)){
-				Event event = model.getEvent(Integer.parseInt(updateInfo[3]));//Try to find the room with the new ID
-				if(event==null){//The ID needs update
-					event = model.getEvent(Integer.parseInt(updateInfo[2]));//Need to use the old ID to find the room
+				Event event = model.getEvent(Integer.parseInt(updateInfo[2]));//Need to use the old ID to find the room
+				if(event==null){
+					System.err.println("Didnt find id");
+					System.err.println(eventString);
+				}else{
 					event.setID(Integer.parseInt(updateInfo[3]));
 				}
 			}else{
@@ -195,6 +208,7 @@ public abstract class AbstractApplicationProtocol {
 			}
 		}else if(checkFlag(msg, UPDATEMODEL)){
 			this.discardNextCommand=true;
+			System.out.println("Will discard the propagation of the updateEvent");
 
 			String modelString = removeFlag(msg, UPDATEMODEL);
 			
@@ -202,7 +216,8 @@ public abstract class AbstractApplicationProtocol {
 			
 			boolean ok = true;
 			if(updateInfo[0].equals(ELEMENT_ID)){
-				// An model-id should not be updated
+				this.discardNextCommand=false;
+				System.out.println("Will not discard the propagation of the updateEvent");
 				ok=false;
 			}else if(updateInfo[0].equals(ELEMENT_MODEL_ADDRESS)){
 				model.setAdresse(updateInfo[3]);
@@ -215,6 +230,15 @@ public abstract class AbstractApplicationProtocol {
 			else{
 				sendNAK(connection);
 				System.err.println("Dette skal aldri skje");
+			}
+		}
+		else if(msg.equals(CLOSE)){
+			sendACK(connection);
+			try {
+				connection.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}
@@ -314,6 +338,11 @@ public abstract class AbstractApplicationProtocol {
 		connection.send(eventString);
 		receiveACK(connection);
 		System.out.println("End Sensor-Update");
+	}
+	
+	public synchronized void close(Connection connection) throws ConnectException, IOException {
+		connection.send(CLOSE);
+		receiveACK(connection);
 	}
 
 	
