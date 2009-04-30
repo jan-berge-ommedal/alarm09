@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -452,6 +453,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 					sensor.getRoom().setRomInfo(roin);
 					sensor.getRoom().setRomNR(ronr);
 					sensor.getRoom().setRomType(roty);
+					frame.dispose();
 				}
 				catch (NullPointerException npe) {
 					//evt gi beskjed 
