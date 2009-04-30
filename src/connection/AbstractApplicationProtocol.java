@@ -89,7 +89,14 @@ public abstract class AbstractApplicationProtocol {
 	
 	
 
-	
+	/**
+	 * Denne metoden er overlagret i både lacprotokollen og macprotokollen. Denne metoden brukes her
+	 * for å håndtere updates, dens overlagrede versjoner vil håndtere insert. Dersom protokollklassene 
+	 * skal inserte noe kaller de denne supermetoden.
+	 * @param msg
+	 * @param controller
+	 * @param connection
+	 */
 	public void handleMSG(String msg, ModelEditController controller,Connection connection){
 		System.out.println("got Command: "+msg);
 	
