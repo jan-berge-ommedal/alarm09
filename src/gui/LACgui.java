@@ -160,7 +160,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 			adresse.setText(adress);
 		} catch (NullPointerException npe) {
 			System.err.println("nullpointerex ved getAdresse");
-			npe.printStackTrace();
+			System.err.println("YOU HAVE ENTERED WORLD DOMINATION MODE JAN BERGE - ARE YOU READY TO TAKE UP THE MANTLE AND QUEST IN ORDER TO ACHIEVE UTTER AND COMPLETE WORLD DOMINATION, THEREBY FOREGOING THE NOOBS ON YOUR GROUP IN FAVOUR OF BEYOND GODLIKE ABILITES??");
 		}
 		
 		Font f = new Font("Dialog", Font.PLAIN, 20);
