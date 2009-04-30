@@ -26,7 +26,7 @@ import javax.swing.ListSelectionModel;
 import connection.ModelEditController;
 
 /**
- * Denne klassen hï¿½ndterer vinduet som presenteres fra en LAC maskin
+ * Denne klassen håndterer vinduet som presenteres fra en LAC maskin
  * @author Olannon
  */
 @SuppressWarnings("serial")
@@ -62,7 +62,6 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	private ConnectionStatusPanel csp;
 	private Model model;
 	private ModelEditController mec;
-	private String adress;
 	
 	/*
 	 * Her fï¿½lger diverse konstruktï¿½rer som alle kaller initialize pï¿½ et senere tidspunkt
@@ -161,14 +160,6 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		} catch (NullPointerException npe) {
 			System.err.println("nullpointerex ved getAdresse");
 			//npe.printStackTrace();
-		}
-		String input = "";
-		if (adresse.getText().equals(input)) {
-			try {
-				input = JOptionPane.showInputDialog("Set adress");
-			} catch (NullPointerException npe) {
-				input = JOptionPane.showInputDialog("Set adress");
-			}
 		}
 		
 		Font f = new Font("Dialog", Font.PLAIN, 20);
@@ -364,13 +355,13 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 						Room room = new Room(-1,ronr,roty,roin,model);
 						Sensor sensor = new Sensor(-1,false,100,LAC.getTime(),room);
 						sensor.startSensor();
-						
+						frame.dispose();
 						
 					}
 					catch(NullPointerException npe) {
-						System.err.println("nullpointerex");
+						System.err.println("nullpointerex - skriv inn info i boksene");
 					} catch (NumberFormatException nfe) {
-						System.err.println("numberformatex");
+						System.err.println("numberformatex - skriv inn tall i tallboksen");
 					} 
 					
 				}
