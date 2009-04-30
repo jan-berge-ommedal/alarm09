@@ -155,7 +155,11 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		sensors = new JLabel("Sensors");
 		
 		adresse = new JLabel("OMG LOL");
+		
+		System.err.println("I am now running initiliz for lomgfzorazs");
 		try {
+			System.err.println("My address iz: "+this.model.getAdresse());
+			System.err.println("An other way is to:: "+this.mec.getModel().getAdresse());
 			this.adress = this.model.getAdresse();
 			adresse.setText(adress);
 		} catch (NullPointerException npe) {
