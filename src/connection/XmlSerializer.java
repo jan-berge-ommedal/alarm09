@@ -142,7 +142,7 @@ public class XmlSerializer {
 		int modelID = Integer.parseInt(xmls[2].substring(3));
 		Model aModel = new Model(controller, modelID);
 		
-		//We don't want that the controller handles propertychangeEvents, when setting ut the model
+		//We don't want that the controller handles propertychangeEvents, when setting up the model
 		aModel.removePropertyChangeListener(controller);
 		
 		aModel.setAdresse(xmls[4].substring(7));
@@ -187,7 +187,7 @@ public class XmlSerializer {
 			else if(sensorteller == 7){to = Integer.parseInt(xmls[i].substring(8));}
 			else if(sensorteller == 9){
 				s = new Sensor(en, seks, to,fem, aModel.getRooms().get(aModel.getRooms().size()-1));
-				s.startSensor();
+				
 			}
 			// Checks for events
 			if(xmls[i].equals("events>")){

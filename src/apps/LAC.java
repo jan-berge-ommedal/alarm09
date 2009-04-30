@@ -104,6 +104,8 @@ public class LAC extends ModelEditController{
 				System.exit(0);
 			}
 			LACProtocol.receiveCompleteModel(connection, id,this);
+			startAllSensors();
+			System.out.println(model);
 		} catch (ParseException e) {
 			System.err.println("Could not load model");
 		} catch (ConnectException e) {
@@ -117,6 +119,13 @@ public class LAC extends ModelEditController{
 		thread.start();
 	}
 	
+
+	private void startAllSensors() {
+		for(Sensor s : model.getSensors()){
+			s.startSensor();
+		}
+	}
+
 
 	private void connectWithRetry() {
 		boolean connected = false;
