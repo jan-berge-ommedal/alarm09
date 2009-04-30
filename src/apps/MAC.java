@@ -434,7 +434,7 @@ public class MAC{
 			System.out.println("Sending: "+eventString);
 			connection.send(INSERTEVENT + eventString);
 			receiveACK(connection);
-			System.out.println("MAC: End insertEvent()");
+			System.out.println("MAC: End insertEvent()\n------------\n\n");
 			
 		}
 
@@ -445,7 +445,7 @@ public class MAC{
 			System.out.println("Sending: "+roomString);
 			connection.send(INSERTROOM + roomString);
 			receiveACK(connection);
-			System.out.println("MAC: End insertRoom()");
+			System.out.println("MAC: End insertRoom()\n------------\n\n");
 			
 		}
 
@@ -456,7 +456,7 @@ public class MAC{
 			System.out.println("Sending: "+sensorString);
 			connection.send(INSERTSENSOR + sensorString);
 			receiveACK(connection);
-			System.out.println("MAC: End insertSensor()");
+			System.out.println("MAC: End insertSensor()\n------------\n\n");
 		}
 		
 		public Database getDatabase(){

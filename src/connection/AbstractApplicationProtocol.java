@@ -290,10 +290,11 @@ public abstract class AbstractApplicationProtocol {
 			discardNextCommand=false;
 			return;
 		}
-		System.out.println("Running Sensor-Update");
+		System.out.println("Running Model-Update");
 		String eventString = UPDATEMODEL + constructUpdateHeader(id, elementTag, oldValue, newValue);
 		connection.send(eventString);
 		receiveACKOrFlag(connection,UPDATEMODEL);
+		System.out.println("End Model-Update");
 	}
 
 
@@ -302,10 +303,11 @@ public abstract class AbstractApplicationProtocol {
 			discardNextCommand=false;
 			return;
 		}
-		System.out.println("Running Sensor-Update");
+		System.out.println("Running Room-Update");
 		String eventString = UPDATEROOM + constructUpdateHeader(id, elementTag, oldValue, newValue);
 		connection.send(eventString);
 		receiveACKOrFlag(connection,UPDATEROOM);
+		System.out.println("End Sensor-Update");
 	}
 
 
@@ -318,6 +320,7 @@ public abstract class AbstractApplicationProtocol {
 		String eventString = UPDATESENSOR + constructUpdateHeader(id, elementTag, oldValue, newValue);
 		connection.send(eventString);
 		receiveACKOrFlag(connection,UPDATESENSOR);
+		System.out.println("End Sensor-Update");
 	}
 
 	
