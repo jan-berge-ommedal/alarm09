@@ -27,7 +27,9 @@ public class SensorViewPanel implements Values {
 	private static JList eventList;
 	private static JButton close;
 	private static JButton checkSensor;
-	private static JButton alarm;
+	private static JButton stopAlarm;
+	private static JButton confirmAlarm;
+	private static JButton discardAlarm;
 	private static JScrollPane scrollFrame;
 	
 	
@@ -53,7 +55,9 @@ public class SensorViewPanel implements Values {
 		checkSensor = new JButton("Check Sensor");
 		eventList = new JList();
 		
-		alarm = new JButton("Stop Alarm");
+		stopAlarm = new JButton("Stop Alarm");
+		discardAlarm = new JButton("Discard");
+		confirmAlarm = new JButton("Confirm");
 		
 		scrollFrame = new JScrollPane(eventList);
 		
@@ -102,7 +106,7 @@ public class SensorViewPanel implements Values {
 		);
 		
 		//Alarm action listener
-		alarm.addActionListener(new ActionListener() {
+		stopAlarm.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -113,7 +117,49 @@ public class SensorViewPanel implements Values {
 					    "Alarm stopped!",
 					    "Alarm stopped!",
 					    JOptionPane.INFORMATION_MESSAGE);
-				alarm.setVisible(false);
+				stopAlarm.setVisible(false);
+				//eventList.setListData(giveArray());
+				//eventList.repaint();
+			}
+
+		}
+		);
+		
+		confirmAlarm.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				sensor.setAlarmState(true);
+				
+				//sensor.addEvent(new Event(2, EventType.ALARM, new Timestamp(0), sensor));
+				JOptionPane.showMessageDialog(frame,
+					    "Alarm confirmed!",
+					    "Alarm confirmed!",
+					    JOptionPane.INFORMATION_MESSAGE);
+				confirmAlarm.setVisible(false);
+				discardAlarm.setVisible(false);
+				stopAlarm.setVisible(true);
+				//eventList.setListData(giveArray());
+				//eventList.repaint();
+			}
+
+		}
+		);
+		
+		discardAlarm.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				sensor.setAlarmState(false);
+				
+				//sensor.addEvent(new Event(2, EventType.ALARM, new Timestamp(0), sensor));
+				JOptionPane.showMessageDialog(frame,
+					    "False Alarm!",
+					    "False Alarm!",
+					    JOptionPane.INFORMATION_MESSAGE);
+				stopAlarm.setVisible(false);
+				confirmAlarm.setVisible(false);
+				discardAlarm.setVisible(false);
 				//eventList.setListData(giveArray());
 				//eventList.repaint();
 			}
@@ -129,12 +175,21 @@ public class SensorViewPanel implements Values {
 		scrollFrame.setBounds(LEFT_SPACE, TOP_SPACE, 400, 200);
 		close.setBounds(LEFT_SPACE +300, 300, BUTTON_WIDTH, BUTTON_HEIGHT);
 		checkSensor.setBounds(LEFT_SPACE + 150, 300, BUTTON_WIDTH +25, BUTTON_HEIGHT);
-		alarm.setBounds(LEFT_SPACE, 300, BUTTON_WIDTH + 25, BUTTON_HEIGHT);
+		stopAlarm.setBounds(LEFT_SPACE, 300, BUTTON_WIDTH + 25, BUTTON_HEIGHT);
+		confirmAlarm.setBounds(LEFT_SPACE, 300, BUTTON_WIDTH + 25, BUTTON_HEIGHT);
+		discardAlarm.setBounds(LEFT_SPACE + BUTTON_WIDTH + LEFT_SPACE, 300, BUTTON_WIDTH + 25, BUTTON_HEIGHT);
 
+		stopAlarm.setVisible(false);
+		confirmAlarm.setVisible(false);
+		discardAlarm.setVisible(false);
 		
 		if(sensor != null) {
-			if(!sensor.isAlarmState()) {
-				alarm.setVisible(false);
+			if(sensor.isAlarmState() == null) {
+				confirmAlarm.setVisible(true);
+				discardAlarm.setVisible(true);
+			}
+			else if(sensor.isAlarmState()) {
+				stopAlarm.setVisible(true);
 			}
 		}
 
@@ -144,12 +199,14 @@ public class SensorViewPanel implements Values {
 		
 		panel.add(scrollFrame);
 		panel.add(checkSensor);
-		panel.add(alarm);
+		panel.add(stopAlarm);
 		panel.add(close);
+		panel.add(confirmAlarm);
+		panel.add(discardAlarm);
 		
 		if(sensor == null) {
 			checkSensor.setVisible(false);
-			alarm.setVisible(false);
+			stopAlarm.setVisible(false);
 			eventList.setVisible(false);
 			JLabel noSensor = new JLabel("No sensor loaded!");
 			noSensor.setBounds(LEFT_SPACE, TOP_SPACE, 400, 200);
