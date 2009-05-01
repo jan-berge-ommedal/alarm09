@@ -14,6 +14,7 @@ import java.io.IOException;
 import log.Log;
 import model.*;
 import model.Event.EventType;
+import model.Sensor.Alarm;
 import apps.LAC;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -362,7 +363,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 						String roty = roomTy.getText();
 						
 						Room room = new Room(-1,ronr,roty,roin,model);
-						Sensor sensor = new Sensor(-1,false,100,LAC.getTime(),room);
+						Sensor sensor = new Sensor(-1,Alarm.DEACTIVATED,100,LAC.getTime(),room);
 						sensor.startSensor();
 						frame.dispose();
 						
@@ -736,7 +737,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 				Sensor sensor = (Sensor)sensorList.getSelectedValue();
 				sensor.setBattery(100);
 				sensor.setInstallationDate(LAC.getTime());
-				sensor.setAlarmState(false);
+				sensor.setAlarmState(Alarm.DEACTIVATED);
 				new Event(-1, EventType.REPLACEMENT, LAC.getTime(), sensor);
 			}
 			else { //liste har ikke selected item
@@ -814,7 +815,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		public void actionPerformed(ActionEvent e) {
 			try {
 				Room r = cba.getSelectedRoom();
-				Sensor sensor = new Sensor(-1,false,100,LAC.getTime(),r);
+				Sensor sensor = new Sensor(-1,Alarm.DEACTIVATED,100,LAC.getTime(),r);
 				sensor.startSensor();
 				System.out.println("Sensor ble lagt til logisk!"); //testlinje
 				this.frame.dispose();

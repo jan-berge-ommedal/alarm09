@@ -20,6 +20,7 @@ import model.Model;
 import model.Room;
 import model.Sensor;
 import model.Event.EventType;
+import model.Sensor.Alarm;
 
 public class SensorViewPanel implements Values {
 	
@@ -110,7 +111,7 @@ public class SensorViewPanel implements Values {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				sensor.setAlarmState(false);
+				sensor.setAlarmState(Alarm.DEACTIVATED);
 				
 				//sensor.addEvent(new Event(2, EventType.ALARM, new Timestamp(0), sensor));
 				JOptionPane.showMessageDialog(frame,
@@ -130,7 +131,7 @@ public class SensorViewPanel implements Values {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				sensor.setAlarmState(true);
+				sensor.setAlarmState(Alarm.ACTIVATED);
 				
 				//sensor.addEvent(new Event(2, EventType.ALARM, new Timestamp(0), sensor));
 				JOptionPane.showMessageDialog(frame,
@@ -152,7 +153,7 @@ public class SensorViewPanel implements Values {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				sensor.setAlarmState(false);
+				sensor.setAlarmState(Alarm.DEACTIVATED);
 				
 				//sensor.addEvent(new Event(2, EventType.ALARM, new Timestamp(0), sensor));
 				JOptionPane.showMessageDialog(frame,
@@ -188,12 +189,12 @@ public class SensorViewPanel implements Values {
 		checkSensor.setVisible(true);
 		
 		if(sensor != null) {
-			if(sensor.isAlarmState() == null) {
+			if(sensor.isAlarmState() == Alarm.UNCONFIRMED) {
 				checkSensor.setVisible(false);
 				confirmAlarm.setVisible(true);
 				discardAlarm.setVisible(true);
 			}
-			else if(sensor.isAlarmState()) {
+			else if(sensor.isAlarmState() == Alarm.ACTIVATED) {
 				stopAlarm.setVisible(true);
 			}
 		}

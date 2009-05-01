@@ -27,27 +27,31 @@ import apps.LAC;
  */
 
 public class Sensor extends IDElement{
-	
-	
+
+
 	public static final String PC_EVENTADDED = "EVENT_ADDED";
 	public static final String PC_EVENTREMOVED = "EVENT_REMOVED";
-	
+
 	public static final String PC_ALARMSTATE = "EVENT_REMOVED";
 	public static final String PC_INSTALLATIONDATE = "INSTALLATIONDATECHANGED";
 	public static final String PC_BATTERY = "BATTERYCHANGED";
-	
+
 	/* START DATAFIELDS */
-	private boolean alarmState;
+	private Alarm alarmState;
 	private Timestamp installationDate;
 	private int battery = 100;
 	/* END DATAFIELDS */
-	
+
 	private ArrayList<Event> events = new ArrayList<Event>();
 
 	private Room room;
-	
+
 	public final static int ALARMCOUNDOWN = 15000;
-	
+
+	public enum Alarm {
+		ACTIVATED, DEACTIVATED, UNCONFIRMED
+	}
+
 	/**
 	 * 
 	 * <strong>This constructor is used to load a predefined sensor(already exists in storage)</strong>
@@ -59,30 +63,30 @@ public class Sensor extends IDElement{
 	 * @param room The room containing the sensor
 	 * @param installationDate Installation-date of the sensor
 	 */
-	
-	public Sensor(int id, boolean alarm, int battery, Timestamp installationDate,Room room){
+
+	public Sensor(int id, Alarm alarm, int battery, Timestamp installationDate,Room room){
 		super(id);
 		this.alarmState=alarm;
 		this.battery=battery;
 		this.installationDate=installationDate;
 		this.room=room;
-		
+
 		room.addSensor(this);
-		
-		
-		
+
+
+
 	}
 	/**
-	* A thread that decreases the remaining batterytime
-	*/
-	
+	 * A thread that decreases the remaining batterytime
+	 */
+
 	public void startSensor(){
-		
+
 		new Event(-1,Event.EventType.STARTUP,LAC.getTime(),this);	
 		/*
 		Thread t = new Thread(){
 				public void run(){
-					
+
 					while(true){
 						if(getBattery()>0)setBattery(getBattery()-5);
 						try {
@@ -91,15 +95,15 @@ public class Sensor extends IDElement{
 							e.printStackTrace();
 						}
 					}
-				
+
 			}
 		};
 		t.start();
-		*/
+		 */
 	}
-	
-	
-	
+
+
+
 	/**
 	 * 
 	 * @return the date of install or replacementdate of the sensor
@@ -107,7 +111,7 @@ public class Sensor extends IDElement{
 	public Timestamp getInstallationDate() {
 		return installationDate;
 	}
-	
+
 	/**
 	 * This method is used when the sensor is replaced
 	 * 
@@ -122,12 +126,12 @@ public class Sensor extends IDElement{
 	 * 
 	 * @return the alarmstate of the sensor. True=Alarm, False=No Alarm, Null=Non Confirmed 
 	 */
-	public Boolean isAlarmState() {
+	public Alarm isAlarmState() {
 		return alarmState;
-		
+
 	}
-	
-	
+
+
 	/**
 	 * 
 	 * 
@@ -135,11 +139,25 @@ public class Sensor extends IDElement{
 	 * @param alarmState true = confirmed alarmed, null= nonconfirmed alarm, false = no alarm
 	 */
 
-	public void setAlarmState(boolean alarmState) {
-			boolean oldValue = this.alarmState;
-			//oldValue=false;
-			this.alarmState = alarmState;
-			pcs.firePropertyChange(PC_ALARMSTATE, oldValue, alarmState);
+	public void setAlarmState(Alarm alarmState) {
+		if(this.alarmState == Alarm.ACTIVATED && alarmState == Alarm.DEACTIVATED) {
+			new Event(-1,EventType.FALSEALARM,LAC.getTime(),this);
+		}
+		else if(this.alarmState == Alarm.UNCONFIRMED && alarmState == Alarm.ACTIVATED) {
+			new Event(-1,EventType.ALARM,LAC.getTime(),this);
+		}
+		else if(this.alarmState == Alarm.UNCONFIRMED && alarmState == Alarm.DEACTIVATED) {
+			new Event(-1,EventType.FALSEALARM,LAC.getTime(),this);
+		}
+		else if(this.alarmState == Alarm.DEACTIVATED && alarmState == Alarm.ACTIVATED) {
+			new Event(-1,EventType.ALARM,LAC.getTime(),this);
+		}
+
+
+		Alarm oldValue = this.alarmState;
+		//oldValue=false;
+		this.alarmState = alarmState;
+		pcs.firePropertyChange(PC_ALARMSTATE, oldValue, alarmState);
 	}
 
 	/**
@@ -155,14 +173,14 @@ public class Sensor extends IDElement{
 	 * 
 	 * @param event
 	 */
-	
+
 	public void addEvent(Event event) {
 		int oldSize = events.size();
 		event.addPropertyChangeListener(this);
 		this.events.add(event);
 		pcs.firePropertyChange(PC_EVENTADDED, oldSize, event);
 	}
-	
+
 	/**
 	 * 
 	 * @return an int representing the percentage remaining batterytime 
@@ -170,8 +188,8 @@ public class Sensor extends IDElement{
 	public int getBattery() {
 		return battery;
 	}
-	
-	
+
+
 	/**
 	 * 
 	 * @param batteryRemaining remaining battery - and int between 0 and 100
@@ -181,8 +199,8 @@ public class Sensor extends IDElement{
 		setBattery(100);
 		new Event(-1,Event.EventType.BATTERYREPLACEMENT,LAC.getTime(),this);
 	}
-	
-	
+
+
 	/**
 	 * 
 	 * @return an int representing the number of False alarms   
@@ -194,8 +212,8 @@ public class Sensor extends IDElement{
 		}
 		return count;
 	}
-	
-	
+
+
 	/**
 	 * 
 	 * @return the Mean Time To Failure (MTTF) for this sensor. If the sensor has not failed yet, it returns -1  
@@ -206,7 +224,7 @@ public class Sensor extends IDElement{
 		Timestamp t;
 		return (System.currentTimeMillis()-installationDate.getTime())/nrOfFailures;
 	}
-	
+
 	/**
 	 * This method tests if the sensor has low battery or if there is an alarm
 	 *
@@ -214,30 +232,32 @@ public class Sensor extends IDElement{
 	 */
 	public boolean testSensor() {
 		String result = "Sensortest for Sensor "+getID()+": ";
-		
+
 		boolean batteryOk = getBattery()>20;
 		if(batteryOk)result+="Low battery ";
-		if(!isAlarmState())result+="Alarm ";
-		
-		boolean booleanResult = batteryOk && !isAlarmState();
+		if(isAlarmState() != Alarm.ACTIVATED){
+			result+="Alarm ";
+		}
+
+		boolean booleanResult = batteryOk && (isAlarmState() == Alarm.DEACTIVATED);
 		if(booleanResult)result+="Ok, ";
 		new Event(-1,(booleanResult ? EventType.SUCCESSFULTEST : EventType.FAILEDTEST),LAC.getTime(),this);
 		System.out.println(result);
 		return booleanResult;
 	}
-	
+
 
 	public Room getRoom() {
 		return room;
 	}
-	
+
 	public String toString(){
 		String s = "";
 		s+="Sensor: "+getID()+" - "+alarmState+" - "+battery+" - "+installationDate+"\n";
 		for(Event e : events){
 			s+="\t\t\t"+e.toString()+"\n";
 		}
-		
+
 		return s;
 	}
 
@@ -251,7 +271,7 @@ public class Sensor extends IDElement{
 	 * 
 	 * 	@param battery
 	 */
-	
+
 	public void setBattery(int battery) {
 		int oldValue = this.battery;
 		this.battery=battery;
@@ -264,11 +284,11 @@ public class Sensor extends IDElement{
 	public void removeEvent(Event event) {
 		int oldSize = events.size();
 		if(events.remove(event))pcs.firePropertyChange(PC_EVENTREMOVED, oldSize, event);
-		
+
 	}
-	
+
 	public void activateAlarm(){
-		setAlarmState(true);
+		setAlarmState(Alarm.ACTIVATED);
 	}
 }
- 
+

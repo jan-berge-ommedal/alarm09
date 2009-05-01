@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 
 import model.Sensor;
+import model.Sensor.Alarm;
 
 /**
  * Klasse som genererer komponentente til elementene i listen i LACvinduet (sensorene)
@@ -66,9 +67,9 @@ public class LACrenderer extends DefaultListCellRenderer implements ListCellRend
 		roomNrLAbel.setBounds(roomNAMESIZE+roomTYPESIZE, 0, roomNRSIZE, CELLHEIGHT);
 		JPanel SensorStatus = new JPanel();
 		
-		Boolean alarmstate = s.isAlarmState();
+		Alarm alarmstate = s.isAlarmState();
 		
-		if(alarmstate==null || alarmstate){
+		if(alarmstate==Alarm.UNCONFIRMED || alarmstate == Alarm.ACTIVATED){
 			if(alarmstate==null)
 				SensorStatus.setBackground(((BlinkingList)list).isBlink() ? detectedColorOn : detectedColorOff);
 			else
