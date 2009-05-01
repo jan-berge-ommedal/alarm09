@@ -137,7 +137,7 @@ public class Sensor extends IDElement{
 
 	public void setAlarmState(boolean alarmState) {
 			boolean oldValue = this.alarmState;
-			oldValue=false;
+			//oldValue=false;
 			this.alarmState = alarmState;
 			pcs.firePropertyChange(PC_ALARMSTATE, oldValue, alarmState);
 	}
