@@ -13,6 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import model.Event;
 import model.Model;
@@ -27,6 +28,7 @@ public class SensorViewPanel implements Values {
 	private static JButton close;
 	private static JButton checkSensor;
 	private static JButton alarm;
+	private static JScrollPane scrollFrame;
 	
 	
 	/**
@@ -50,7 +52,12 @@ public class SensorViewPanel implements Values {
 		close = new JButton("Close");
 		checkSensor = new JButton("Check Sensor");
 		eventList = new JList();
+		
 		alarm = new JButton("Stop Alarm");
+		
+		scrollFrame = new JScrollPane(eventList);
+		
+		
 		
 		eventList.setListData(giveArray());
 		
@@ -100,6 +107,7 @@ public class SensorViewPanel implements Values {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				sensor.setAlarmState(false);
+				
 				//sensor.addEvent(new Event(2, EventType.ALARM, new Timestamp(0), sensor));
 				JOptionPane.showMessageDialog(frame,
 					    "Alarm stopped!",
@@ -118,6 +126,7 @@ public class SensorViewPanel implements Values {
 		
 		
 		eventList.setBounds(LEFT_SPACE, TOP_SPACE, 400, 200);
+		scrollFrame.setBounds(LEFT_SPACE, TOP_SPACE, 400, 200);
 		close.setBounds(LEFT_SPACE +300, 300, BUTTON_WIDTH, BUTTON_HEIGHT);
 		checkSensor.setBounds(LEFT_SPACE + 150, 300, BUTTON_WIDTH +25, BUTTON_HEIGHT);
 		alarm.setBounds(LEFT_SPACE, 300, BUTTON_WIDTH + 25, BUTTON_HEIGHT);
@@ -133,7 +142,7 @@ public class SensorViewPanel implements Values {
 		eventList.setVisible(true);
 		panel.setLayout(null);
 		
-		panel.add(eventList);
+		panel.add(scrollFrame);
 		panel.add(checkSensor);
 		panel.add(alarm);
 		panel.add(close);
