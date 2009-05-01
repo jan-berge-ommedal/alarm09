@@ -118,6 +118,7 @@ public class SensorViewPanel implements Values {
 					    "Alarm stopped!",
 					    JOptionPane.INFORMATION_MESSAGE);
 				stopAlarm.setVisible(false);
+				//checkSensor.setVisible(true);
 				//eventList.setListData(giveArray());
 				//eventList.repaint();
 			}
@@ -139,6 +140,7 @@ public class SensorViewPanel implements Values {
 				confirmAlarm.setVisible(false);
 				discardAlarm.setVisible(false);
 				stopAlarm.setVisible(true);
+				checkSensor.setVisible(true);
 				//eventList.setListData(giveArray());
 				//eventList.repaint();
 			}
@@ -160,6 +162,7 @@ public class SensorViewPanel implements Values {
 				stopAlarm.setVisible(false);
 				confirmAlarm.setVisible(false);
 				discardAlarm.setVisible(false);
+				checkSensor.setVisible(true);
 				//eventList.setListData(giveArray());
 				//eventList.repaint();
 			}
@@ -182,9 +185,11 @@ public class SensorViewPanel implements Values {
 		stopAlarm.setVisible(false);
 		confirmAlarm.setVisible(false);
 		discardAlarm.setVisible(false);
+		checkSensor.setVisible(true);
 		
 		if(sensor != null) {
 			if(sensor.isAlarmState() == null) {
+				checkSensor.setVisible(false);
 				confirmAlarm.setVisible(true);
 				discardAlarm.setVisible(true);
 			}
