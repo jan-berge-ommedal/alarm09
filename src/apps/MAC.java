@@ -53,7 +53,7 @@ public class MAC{
 	private MACgui gui;
 	private boolean running = true;
 	
-	public static final int SERVERPORT = 666;
+	public static final int SERVERPORT = 2000;
 	public static final String MACIP = "localhost";
 	
 	
@@ -82,8 +82,8 @@ public class MAC{
 		
 		loadAdapters();
 		
-		macConnection = new TCPConnection(SERVERPORT);
-		//macConnection = new ConnectionImplementation(SERVERPORT);
+		//macConnection = new TCPConnection(SERVERPORT);
+		macConnection = new ConnectionImplementation(SERVERPORT);
 		RunThread thread = new RunThread(this);
 		thread.start();
 	}

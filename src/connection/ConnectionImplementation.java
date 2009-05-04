@@ -109,7 +109,7 @@ public class ConnectionImplementation extends AbstractConnection {
 		}
 		else {
 			this.state = State.CLOSED;
-			throw new IOException("No SYN_ACK flag in packet received connect()");
+			throw new SocketTimeoutException("No SYN_ACK flag in packet received connect()");
 		}
 	}
 
@@ -143,12 +143,12 @@ public class ConnectionImplementation extends AbstractConnection {
 			}
 			else {
 				this.state = State.CLOSED;
-				throw new SocketTimeoutException("SYN not recieved in accept()");
+				throw new IOException("SYN not recieved in accept()");
 			}
 		}
 		else {
 			this.state = State.CLOSED;
-			throw new IOException("No packet recieved in accept()");
+			throw new SocketTimeoutException("No packet recieved in accept()");
 		}
 
 		KtnDatagram i = this.receiveAck();
