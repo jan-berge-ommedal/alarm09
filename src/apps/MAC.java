@@ -344,6 +344,7 @@ public class MAC{
 				} catch (SocketTimeoutException e1) {
 					// TODO Auto-generated catch block
 					//e1.printStackTrace();
+					System.out.println("Waiting for incoming connection...");
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
