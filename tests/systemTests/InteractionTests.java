@@ -43,14 +43,12 @@ public class InteractionTests extends TestCase{
 		
  		Room room = new Room(-1, 0, "testString", "testString", senderModel);
  		
- 		senderModel.addRoom(room);
  		
  		standardTimeout();
  		//IDen skal endres 
  		assertEquals(room.getID()!=-1,true);
  		assertEquals(receiver.getModel().toString(), sender.getModel().toString());
 		
- 		
  		room.setRomInfo("newInfo");
  		
  		standardTimeout();
@@ -64,21 +62,6 @@ public class InteractionTests extends TestCase{
  		standardTimeout();
  		assertEquals(receiver.getModel().toString(), sender.getModel().toString());
 	
- 		/*
- 		senderModel.removeRoom(room);
- 		standardTimeout();
- 		assertEquals(receiver.getModel().toString(), sender.getModel().toString());
- 		
- 		Sensor s = new Sensor(-1,true,100,LAC.getTime(),room);
- 		room.addSensor(s);
- 		
- 		senderModel.addRoom(room);
- 		standardTimeout();
- 		//Når et rom med tilhørende sensorer addes, må dette skje på begge sider. Iden til sensor må også settes
- 		assertEquals(senderModel.getSensor(-1)!=null, true);
- 		assertEquals(senderModel.getSensor(-1).getID()!=-1, true);
- 		assertEquals(receiver.getModel().toString(), sender.getModel().toString());
- 		*/
  	 		
  		
 	}

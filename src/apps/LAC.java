@@ -70,6 +70,7 @@ public class LAC extends ModelEditController{
 	public LAC(boolean useGUI) {
 		super(new LACProtocol());
 		if(useGUI)gui = new LACgui(this);
+		//connection = new ConnectionImplementation(STARTPORT);
 		connection = new TCPConnection(STARTPORT);
 		connectWithRetry();
 		

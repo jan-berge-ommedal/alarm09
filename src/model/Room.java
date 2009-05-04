@@ -83,7 +83,7 @@ public class Room extends IDElement{
 	public void setRomNR(int romNR) {
 		int oldValue = this.romNR;
 		this.romNR = romNR;
-		pcs.firePropertyChange("ROMNR", oldValue, romNR);
+		pcs.firePropertyChange(PC_ROOMNRCHANGED, oldValue, romNR);
 
 	}
 
@@ -99,7 +99,7 @@ public class Room extends IDElement{
 	public void setRomType(String romType) {
 		String oldValue = this.romType;
 		this.romType = romType;
-		pcs.firePropertyChange("SENSORADDED", oldValue, romType);
+		pcs.firePropertyChange(PC_ROOMTYPECHANGED, oldValue, romType);
 	}
 
 	public String getRomInfo() {
@@ -114,7 +114,7 @@ public class Room extends IDElement{
 	public void setRomInfo(String romInfo) {
 		String oldValue = this.romInfo;
 		this.romInfo = romInfo;
-		pcs.firePropertyChange("ROOMINFO", oldValue, romInfo);
+		pcs.firePropertyChange(PC_ROOMINFOCHANGED, oldValue, romInfo);
 	}
 
 	public ArrayList<Sensor> getSensorer() {

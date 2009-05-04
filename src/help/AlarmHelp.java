@@ -1,6 +1,8 @@
 package help;
+import no.ntnu.fp.net.co.Connection;
+import connection.AbstractApplicationProtocol;
+import connection.LACProtocol;
 import connection.ModelEditController;
-import unitTests.XMLParsingTests.DefaultModelEditController;
 import model.Model;
 import model.Room;
 import model.Sensor;
@@ -22,5 +24,10 @@ public class AlarmHelp {
 		return m;
 	}
 
-
+	public static ModelEditController getDefaultModelController(){
+		return new DefaultModelController();
+	}
+	
+	
+	
 }

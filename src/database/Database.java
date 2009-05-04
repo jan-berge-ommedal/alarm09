@@ -9,6 +9,7 @@ import model.Model;
 import model.Room;
 import model.Sensor;
 import model.Event.EventType;
+import model.Sensor.Alarm;
 
 /**
  * 
@@ -83,7 +84,7 @@ public class Database {
 				while(sensors.next()){
 
 					// construct and add sensor to room
-					Sensor s = new Sensor(sensors.getInt("id"), sensors.getBoolean("alarmState"),sensors.getInt("batteryStatus"), sensors.getTimestamp("installationDate"),room);
+					Sensor s = new Sensor(sensors.getInt("id"), Sensor.Alarm.valueOf(sensors.getString("alarmState")),sensors.getInt("batteryStatus"), sensors.getTimestamp("installationDate"),room);
 					
 				}
 				
@@ -173,34 +174,17 @@ public class Database {
 	
 	
 	// uten oppdatering av installationDate
-	public void updateSensor(int ID, boolean alarmState, int batteryStatus) throws SQLException{
+	public void updateSensor(int ID, Alarm alarm, int batteryStatus, Timestamp timestamp) throws SQLException{
 
-
-
-			int alarmStateInt = alarmState ? 1 : 0;
 			
-			executeUpdate("UPDATE Sensor SET 	 alarmState  = " + alarmStateInt  +
-					 						",batteryStatus  = '" + batteryStatus  + "'" +
-						  "WHERE id = "+ID);
+			executeUpdate("UPDATE Sensor SET 	 alarmState  = '" + alarm.toString()  +
+					 						"' ,batteryStatus  = '" + batteryStatus  + "'," + 
+					 						"installationDate = '"+timestamp.toString()+"'"+
+						  " WHERE id = "+ID);
 			
 	
 			
 	}
-
-	// m/ oppdatering av installationDate
-	public void updateSensor(int ID, boolean alarmState, int batteryStatus, Timestamp installationDate) throws SQLException{
-
-
-			int alarmStateInt = alarmState ? 1 : 0;
-			
-			executeUpdate("UPDATE Sensor SET 	 alarmState  = " + alarmStateInt  +
-					 						",batteryStatus  = '" + batteryStatus  + "'" +
-					 						",installationDate   = '" + installationDate.toString()  + "'" +
-						  "WHERE id = "+ID);
-	
-			
-	}
-
 	
 	
 	
@@ -245,16 +229,15 @@ public class Database {
 	
 	
 
-	public int insertSensor(int romID, boolean alarmState, int batteryStatus){
+	public int insertSensor(int romID, Alarm alarm, int batteryStatus){
 		
 
 		int id = -1;
 		
 		try {
 
-			int alarmStateInt = alarmState ? 1 : 0;
 				
-			executeUpdate("INSERT INTO Sensor (romID, installationDate, alarmState, batteryStatus) VALUES ("+romID+",NULL,"+alarmStateInt+","+batteryStatus+")");
+			executeUpdate("INSERT INTO Sensor (romID, installationDate, alarmState, batteryStatus) VALUES ("+romID+",NULL,'"+alarm.toString()+"',"+batteryStatus+")");
 
 			String query = "SELECT MAX(id) AS id FROM Sensor GROUP BY NULL";
 			ResultSet rs = executeQuery(query);

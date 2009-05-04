@@ -1,4 +1,6 @@
 package unitTests;
+import help.AlarmHelp;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.sql.Timestamp;
@@ -14,6 +16,7 @@ import model.Model;
 import model.Room;
 import model.Sensor;
 import model.Event.EventType;
+import model.Sensor.Alarm;
 
 
 public class ModelTests extends TestCase implements PropertyChangeListener {
@@ -28,11 +31,11 @@ public class ModelTests extends TestCase implements PropertyChangeListener {
 	 * 
 	 */
 	public void testModelListening(){
-		Model m = new Model();
+		Model m = new Model(AlarmHelp.getDefaultModelController(),0);
 		Room r = new Room(0,5,"TYPE","INFO",m);
 		
-		Sensor s1 = new Sensor(0,false,50,LAC.getTime(),r,false);
-		Sensor s2 = new Sensor(1,false,50,LAC.getTime(),r,false);
+		Sensor s1 = new Sensor(0,Alarm.DEACTIVATED,50,LAC.getTime(),r);
+		Sensor s2 = new Sensor(1,Alarm.DEACTIVATED,50,LAC.getTime(),r);
 		
 		m.addPropertyChangeListener(this);
 		m.setID(5);
@@ -43,20 +46,19 @@ public class ModelTests extends TestCase implements PropertyChangeListener {
 		
 		//Tester at eventsa er riktig navngitt
 		m.setID(4);
-		assertEquals("Property not correctly named", "LACID", lastEvent.getPropertyName());
+		assertEquals("Property not correctly named", Model.PC_IDCHANGED, lastEvent.getPropertyName());
 		m.setAdresse("asdfsadf");
-		assertEquals("Property not correctly named", "ADDRESS", lastEvent.getPropertyName());
+		assertEquals("Property not correctly named", Model.PC_ADDRESS, lastEvent.getPropertyName());
 		r.setRomInfo("NEW INFO");
-		assertEquals("Property not correctly named", "ROOMINFO", lastEvent.getPropertyName());
+		assertEquals("Property not correctly named", Room.PC_ROOMINFOCHANGED, lastEvent.getPropertyName());
 		r.setRomNR(9);
-		assertEquals("Property not correctly named", "ROOMNR", lastEvent.getPropertyName());
+		assertEquals("Property not correctly named", Room.PC_ROOMNRCHANGED, lastEvent.getPropertyName());
 		r.setRomType("NEW TYPE");
-		assertEquals("Property not correctly named", "ROOMTYPE", lastEvent.getPropertyName());
+		assertEquals("Property not correctly named", Room.PC_ROOMTYPECHANGED, lastEvent.getPropertyName());
 		
 		
 		
 		lastEvent = null;
-		m.addPropertyChangeListener(this);
 		m.removePropertyChangeListener(this);
 		m.setID(5);
 
@@ -79,13 +81,13 @@ public class ModelTests extends TestCase implements PropertyChangeListener {
 	 */
 	//FIXME Simon: MTTF-test
 	public void testMTTF(){
-		Model m = new Model();
+		Model m = new Model(AlarmHelp.getDefaultModelController(),0);
 		Room r = new Room(1, 12, "Pokerrom", "Dette er et svett pokerrom", m);
 		long currentTime = System.currentTimeMillis();
 		Timestamp currentTimeTimestamp = new Timestamp(currentTime);
 		long currentTimeOffset = currentTime + 50000;
 		
-		Sensor s = new Sensor(2, false, 100, currentTimeTimestamp , r, true);
+		Sensor s = new Sensor(2, Alarm.DEACTIVATED, 100, currentTimeTimestamp , r);
 		m.addRoom(r);
 		r.addSensor(s);
 		
@@ -94,16 +96,13 @@ public class ModelTests extends TestCase implements PropertyChangeListener {
 		assertEquals(s.computeMTTF(), -1);
 		
 		Event e1 = new Event(2,EventType.FALSEALARM,currentTimeTimestamp, s);
-		s.addEvent(e1);
 		assertEquals("MTTF wrong",true,checkNearness(s.computeMTTF(),expected ));
 		
 		Event e2 = new Event(3,EventType.FALSEALARM,currentTimeTimestamp, s);
-		s.addEvent(e2);
 		expected = 25000;
 		assertEquals("MTTF wrong", true, checkNearness(s.computeMTTF(),expected ));
 		
 		Event e3 = new Event(4,EventType.FALSEALARM,currentTimeTimestamp, s);
-		s.addEvent(e2);
 		expected = 16667;
 		assertEquals("MTTF wrong", true, checkNearness(s.computeMTTF(),expected ));
 	}

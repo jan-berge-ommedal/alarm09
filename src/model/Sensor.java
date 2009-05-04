@@ -46,7 +46,7 @@ public class Sensor extends IDElement{
 
 	private Room room;
 
-	public final static int ALARMCOUNDOWN = 15000;
+	private static final int COUNTDOWNDELAY = 30000;
 
 	public enum Alarm {
 		ACTIVATED, DEACTIVATED, UNCONFIRMED
@@ -83,14 +83,14 @@ public class Sensor extends IDElement{
 	public void startSensor(){
 
 		new Event(-1,Event.EventType.STARTUP,LAC.getTime(),this);	
-		/*
+		
 		Thread t = new Thread(){
 				public void run(){
 
 					while(true){
 						if(getBattery()>0)setBattery(getBattery()-5);
 						try {
-							Thread.currentThread().sleep(5000);
+							Thread.currentThread().sleep(20000);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
@@ -99,7 +99,7 @@ public class Sensor extends IDElement{
 			}
 		};
 		t.start();
-		 */
+		 
 	}
 
 
@@ -126,7 +126,7 @@ public class Sensor extends IDElement{
 	 * 
 	 * @return the alarmstate of the sensor. True=Alarm, False=No Alarm, Null=Non Confirmed 
 	 */
-	public Alarm isAlarmState() {
+	public Alarm getAlarmState() {
 		return alarmState;
 
 	}
@@ -139,25 +139,31 @@ public class Sensor extends IDElement{
 	 * @param alarmState true = confirmed alarmed, null= nonconfirmed alarm, false = no alarm
 	 */
 
-	public void setAlarmState(Alarm alarmState) {
-		if(this.alarmState == Alarm.ACTIVATED && alarmState == Alarm.DEACTIVATED) {
-			new Event(-1,EventType.FALSEALARM,LAC.getTime(),this);
-		}
-		else if(this.alarmState == Alarm.UNCONFIRMED && alarmState == Alarm.ACTIVATED) {
-			new Event(-1,EventType.ALARM,LAC.getTime(),this);
-		}
-		else if(this.alarmState == Alarm.UNCONFIRMED && alarmState == Alarm.DEACTIVATED) {
-			new Event(-1,EventType.FALSEALARM,LAC.getTime(),this);
-		}
-		else if(this.alarmState == Alarm.DEACTIVATED && alarmState == Alarm.ACTIVATED) {
-			new Event(-1,EventType.ALARM,LAC.getTime(),this);
-		}
-
-
+	public void setAlarmState(Alarm alarmState,boolean createNewEvent) {
 		Alarm oldValue = this.alarmState;
 		//oldValue=false;
 		this.alarmState = alarmState;
 		pcs.firePropertyChange(PC_ALARMSTATE, oldValue, alarmState);
+		
+		if(createNewEvent){
+			if(this.alarmState == Alarm.ACTIVATED && oldValue == Alarm.DEACTIVATED) {
+				new Event(-1,EventType.ALARM,LAC.getTime(),this);
+			}
+			else if(this.alarmState == Alarm.UNCONFIRMED && oldValue == Alarm.ACTIVATED) {
+				//new Event(-1,EventType.ALARM,LAC.getTime(),this);
+			}
+			else if(this.alarmState == Alarm.UNCONFIRMED && oldValue == Alarm.DEACTIVATED) {
+				//new Event(-1,EventType.FALSEALARM,LAC.getTime(),this);
+				new CountdownTimer(COUNTDOWNDELAY);
+				
+			}
+			else if(this.alarmState == Alarm.DEACTIVATED && oldValue == Alarm.UNCONFIRMED) {
+				new Event(-1,EventType.FALSEALARM,LAC.getTime(),this);
+			
+			}
+		}
+
+	
 	}
 
 	/**
@@ -235,11 +241,11 @@ public class Sensor extends IDElement{
 
 		boolean batteryOk = getBattery()>20;
 		if(batteryOk)result+="Low battery ";
-		if(isAlarmState() != Alarm.ACTIVATED){
+		if(getAlarmState() != Alarm.ACTIVATED){
 			result+="Alarm ";
 		}
 
-		boolean booleanResult = batteryOk && (isAlarmState() == Alarm.DEACTIVATED);
+		boolean booleanResult = batteryOk && (getAlarmState() == Alarm.DEACTIVATED);
 		if(booleanResult)result+="Ok, ";
 		new Event(-1,(booleanResult ? EventType.SUCCESSFULTEST : EventType.FAILEDTEST),LAC.getTime(),this);
 		System.out.println(result);
@@ -288,7 +294,22 @@ public class Sensor extends IDElement{
 	}
 
 	public void activateAlarm(){
-		setAlarmState(Alarm.ACTIVATED);
+		setAlarmState(Alarm.UNCONFIRMED,true);
+	}
+	
+	class CountdownTimer extends Timer implements ActionListener{
+		public CountdownTimer(int delay) {
+			super(delay,null);
+			this.addActionListener(this);
+			this.setRepeats(false);
+			this.start();
+		}
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(alarmState==Alarm.UNCONFIRMED);
+					setAlarmState(Alarm.ACTIVATED, true);
+			}
 	}
 }
 

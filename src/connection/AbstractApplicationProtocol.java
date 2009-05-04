@@ -11,6 +11,7 @@ import model.Event;
 import model.Model;
 import model.Room;
 import model.Sensor;
+import model.Sensor.Alarm;
 import no.ntnu.fp.net.co.Connection;
 
 public abstract class AbstractApplicationProtocol {
@@ -117,7 +118,7 @@ public abstract class AbstractApplicationProtocol {
 			}else{
 				Sensor sensor = model.getSensor(Integer.parseInt(updateInfo[1]));
 				if(updateInfo[0].equals(ELEMENT_SENSOR_ALARMSTATE)){
-					sensor.setAlarmState(Boolean.parseBoolean(updateInfo[3]));
+					sensor.setAlarmState(Alarm.valueOf(updateInfo[3]),false);
 				}else if(updateInfo[0].equals(ELEMENT_SENSOR_BATTERY)){
 					sensor.setBattery(Integer.parseInt(updateInfo[3]));
 				}else if(updateInfo[0].equals(ELEMENT_SENSOR_INSTALLATIONDATE)){
@@ -129,7 +130,7 @@ public abstract class AbstractApplicationProtocol {
 				if(this instanceof MACProtocol){
 					MACProtocol macProtocol = (MACProtocol) this;
 					try {
-						macProtocol.getDatabase().updateSensor(sensor.getID(), sensor.isAlarmState(), sensor.getBattery(), sensor.getInstallationDate());
+						macProtocol.getDatabase().updateSensor(sensor.getID(), sensor.getAlarmState(), sensor.getBattery(), sensor.getInstallationDate());
 					} catch (SQLException e) {
 						e.printStackTrace();
 					}

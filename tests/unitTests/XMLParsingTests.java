@@ -19,6 +19,7 @@ import model.Model;
 import model.Room;
 import model.Sensor;
 import model.Event.EventType;
+import model.Sensor.Alarm;
 
 /**
  * 
@@ -31,12 +32,14 @@ import model.Event.EventType;
 public class XMLParsingTests extends TestCase{
 	
 	public void testParse(){
-		ModelEditController controller = new DefaultModelEditController();
+		ModelEditController controller = AlarmHelp.getDefaultModelController();
 		Model model = AlarmHelp.getDefaultModel(controller);
 		
-		Room r = new Room(3,51,"sdfgdfgh","asdfasdf",model);
-		Sensor s = new Sensor(0,false,90,LAC.getTime(),r,false);
-		Event e = new Event(5,EventType.ALARM,new Timestamp(42367),s);
+		Room r = new Room(-1,51,"sdfgdfgh","asdfasdf",model);
+		Room sensorLess = new Room(-1,51,"sdfgdfgh","asdfasdf",model);
+		Sensor s = new Sensor(-1,Alarm.DEACTIVATED,90,LAC.getTime(),r);
+		Sensor eventLess = new Sensor(-1,Alarm.DEACTIVATED,90,LAC.getTime(),r);
+		Event e = new Event(-1,EventType.ALARM,new Timestamp(42367),s);
 		
 		
 		// COMPLETE MODEL TRANSFER
@@ -58,33 +61,18 @@ public class XMLParsingTests extends TestCase{
 		Event e2 = XmlSerializer.toEvent(eventString, model);
 		assertEquals(e.toString(), e2.toString());
 
-		String sensorString = XmlSerializer.toSensorString(s);
+		String sensorString = XmlSerializer.toSensorString(eventLess);
 		Sensor s2 = XmlSerializer.toSensor(sensorString, model);
-		assertEquals(s.toString(), s2.toString());
+		assertEquals(eventLess.toString(), s2.toString());
 
 		
-		String roomString = XmlSerializer.toRoomString(r);
+		String roomString = XmlSerializer.toRoomString(sensorLess);
 		Room r2 = XmlSerializer.toRoom(roomString, model);
-		assertEquals(r.toString(), r2.toString());
+		assertEquals(sensorLess.toString(), r2.toString());
 		
 		
 	}
 
-	public class DefaultModelEditController extends ModelEditController{
 
-		
-		
-		@Override
-		public void close() {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void deleteAllEvents(Sensor sensor) {
-			// TODO Auto-generated method stub
-			
-		}
-		
-	}
 }
+

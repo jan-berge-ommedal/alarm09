@@ -20,6 +20,7 @@ import model.IDElement;
 import model.Model;
 import model.Room;
 import model.Sensor;
+import model.Sensor.Alarm;
 
 
 
@@ -77,7 +78,7 @@ public abstract class ModelEditController extends AbstractPropertyChangeSupport 
 	 */ 
 	public boolean hasAlarm() {
 		for (Sensor s : model.getSensors()) {
-			if(s.isAlarmState())return true;
+			if(s.getAlarmState() == Alarm.ACTIVATED)return true;
 		}	
 		return false;
 	}
@@ -140,7 +141,7 @@ public abstract class ModelEditController extends AbstractPropertyChangeSupport 
 						e1.printStackTrace();
 					}
 				}else if(propteryName.equals(Sensor.PC_ALARMSTATE)){
-					Boolean newState = (Boolean) e.getNewValue();
+					Alarm newState = (Alarm) e.getNewValue();
 					if(newState!=null){
 						try {
 							if(connected)protocol.updateSensor(getConnection(), sensor.getID(), AbstractApplicationProtocol.ELEMENT_SENSOR_ALARMSTATE, e.getOldValue().toString(), e.getNewValue().toString());
@@ -170,7 +171,7 @@ public abstract class ModelEditController extends AbstractPropertyChangeSupport 
 				if(change && protocol instanceof MACProtocol){
 					MACProtocol macProtocol = (MACProtocol) protocol;
 					try {
-						macProtocol.getDatabase().updateSensor(sensor.getID(),sensor.isAlarmState(),sensor.getBattery());
+						macProtocol.getDatabase().updateSensor(sensor.getID(),sensor.getAlarmState(),sensor.getBattery(),sensor.getInstallationDate());
 					} catch (SQLException e1) {
 						e1.printStackTrace();
 					}
@@ -206,7 +207,7 @@ public abstract class ModelEditController extends AbstractPropertyChangeSupport 
 					}
 					if(protocol instanceof MACProtocol){
 						MACProtocol macProtocol = (MACProtocol) protocol;
-						sensor.setID(macProtocol.getDatabase().insertSensor(sensor.getRoom().getID(), sensor.isAlarmState(), sensor.getBattery()));
+						sensor.setID(macProtocol.getDatabase().insertSensor(sensor.getRoom().getID(), sensor.getAlarmState(), sensor.getBattery()));
 					}
 
 				}else{

@@ -111,7 +111,7 @@ public class SensorViewPanel implements Values {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				sensor.setAlarmState(Alarm.DEACTIVATED);
+				sensor.setAlarmState(Alarm.DEACTIVATED,true);
 				
 				//sensor.addEvent(new Event(2, EventType.ALARM, new Timestamp(0), sensor));
 				JOptionPane.showMessageDialog(frame,
@@ -131,7 +131,7 @@ public class SensorViewPanel implements Values {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				sensor.setAlarmState(Alarm.ACTIVATED);
+				sensor.setAlarmState(Alarm.ACTIVATED,true);
 				
 				//sensor.addEvent(new Event(2, EventType.ALARM, new Timestamp(0), sensor));
 				JOptionPane.showMessageDialog(frame,
@@ -153,7 +153,7 @@ public class SensorViewPanel implements Values {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				sensor.setAlarmState(Alarm.DEACTIVATED);
+				sensor.setAlarmState(Alarm.DEACTIVATED, true);
 				
 				//sensor.addEvent(new Event(2, EventType.ALARM, new Timestamp(0), sensor));
 				JOptionPane.showMessageDialog(frame,
@@ -189,12 +189,12 @@ public class SensorViewPanel implements Values {
 		checkSensor.setVisible(true);
 		
 		if(sensor != null) {
-			if(sensor.isAlarmState() == Alarm.UNCONFIRMED) {
+			if(sensor.getAlarmState() == Alarm.UNCONFIRMED) {
 				checkSensor.setVisible(false);
 				confirmAlarm.setVisible(true);
 				discardAlarm.setVisible(true);
 			}
-			else if(sensor.isAlarmState() == Alarm.ACTIVATED) {
+			else if(sensor.getAlarmState() == Alarm.ACTIVATED) {
 				stopAlarm.setVisible(true);
 			}
 		}

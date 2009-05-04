@@ -18,6 +18,7 @@ import model.Model;
 import model.Room;
 import model.Sensor;
 import model.Event.EventType;
+import model.Sensor.Alarm;
 import nu.xom.Builder;
 import nu.xom.Document;
 import nu.xom.Element;
@@ -85,7 +86,7 @@ public class XmlSerializer {
 		Element id = new Element("id");
 		id.appendChild(Integer.toString(s.getID()));
 		Element alarmState = new Element("alarmState");
-		alarmState.appendChild((s.isAlarmState() ? "true" : "false"));
+		alarmState.appendChild(s.getAlarmState().toString());
 		Element timeStamp = new Element ("timeStamp");
 		timeStamp.appendChild(s.getInstallationDate().toString());
 		Element battery = new Element("battery");
@@ -156,7 +157,7 @@ public class XmlSerializer {
 		String tre = "";
 		String fire = ""; 
 		Timestamp fem = new Timestamp(0);
-		boolean seks = false; 
+		String seks = ""; 
 		EventType sju = EventType.ALARM;
 		Room r;
 		Sensor s = null;
@@ -182,11 +183,11 @@ public class XmlSerializer {
 			}
 			// Gets the right sensorattributes
 			if(sensorteller == 1){en = Integer.parseInt(xmls[i].substring(3));}
-			else if(sensorteller == 3){seks = (true ? xmls[i].substring(11).equals("true"): false);}
+			else if(sensorteller == 3){seks = xmls[i].substring(11);}
 			else if(sensorteller == 5){fem = makeTimestamp(xmls[i].substring(10));}
 			else if(sensorteller == 7){to = Integer.parseInt(xmls[i].substring(8));}
 			else if(sensorteller == 9){
-				s = new Sensor(en, seks, to,fem, aModel.getRooms().get(aModel.getRooms().size()-1));
+				s = new Sensor(en, Sensor.Alarm.valueOf(seks), to,fem, aModel.getRooms().get(aModel.getRooms().size()-1));
 				
 			}
 			// Checks for events
@@ -252,7 +253,7 @@ public class XmlSerializer {
 	}
 	public static String toSensorString(Sensor sensor) {
 		String a = Integer.toString(sensor.getID());
-		String b = (sensor.isAlarmState() ? "true" : "false");
+		String b = sensor.getAlarmState().toString();
 		long c = sensor.getInstallationDate().getTime();
 		String d = Integer.toString(sensor.getBattery());
 		String e = Integer.toString(sensor.getRoom().getID());
@@ -262,7 +263,7 @@ public class XmlSerializer {
 	public static Sensor toSensor(String sensorString,Model model) {
 		
 		String s[] = sensorString.split("#");
-		boolean alarm = (s[2].equals("true") ? true : false);
+		Sensor.Alarm alarm = Alarm.valueOf(s[2]);
 		int battery = Integer.parseInt(s[4]);
 		
 		Timestamp time = new Timestamp(Long.parseLong(s[3]));

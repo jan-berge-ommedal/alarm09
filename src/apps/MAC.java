@@ -67,7 +67,6 @@ public class MAC{
 				databaseConnectionWrapper.setConnectionStatus(ConnectionStatus.CONNECTING);
 				database = new Database("mysql.stud.ntnu.no","janberge_admin","1234","janberge_db");
 				databaseConnectionWrapper.setConnectionStatus(ConnectionStatus.CONNECTED);
-				loadAdapters();
 				connectedToDatabase=true;
 			} catch (Exception e) {
 				System.err.println("Could not connect to database");
@@ -80,7 +79,11 @@ public class MAC{
 				
 			}
 		}
+		
+		loadAdapters();
+		
 		macConnection = new TCPConnection(SERVERPORT);
+		//macConnection = new ConnectionImplementation(SERVERPORT);
 		RunThread thread = new RunThread(this);
 		thread.start();
 	}
