@@ -1,7 +1,6 @@
 package gui;
 
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,7 +25,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
-import connection.LACProtocol;
 import connection.ModelEditController;
 
 /**
@@ -96,6 +94,18 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		this.initialize();
 	}
 	*/
+	
+	/**
+	 * metode som kalles dersom endringer skjer i GUIet slik at komponentene
+	 * skal oppdateres
+	 */
+	public void update() {
+		//skulle lagt inn mulighet for å endre ConnectionStatusPanel
+		this.adresse.setText(this.adress);
+		this.sensorList.setModel(new ModelListAdapter(this.model));
+		this.id.setText("" + this.model.getID());
+		this.frame.repaint();
+	}
 	
 	/**
 	 * Denne metoden oppfï¿½rer seg som en hjelpemetode til konstruktï¿½ren som genererer GUIet. Dersom

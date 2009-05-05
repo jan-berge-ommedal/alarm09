@@ -14,6 +14,10 @@ import connection.ConnectionStatusWrapper;
 import connection.ConnectionStatusWrapper.ConnectionStatus;
 
 public class ConnectionStatusPanel extends JLabel implements ConnectionStatusListener{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private ImageIcon ikon;
 	
 	
