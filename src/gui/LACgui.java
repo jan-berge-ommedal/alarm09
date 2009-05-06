@@ -36,6 +36,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	
 	//frame
 	private JFrame frame;
+	private JPanel pane;
 	
 	//knapper
 	private JButton installSensor;
@@ -100,11 +101,13 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	 * skal oppdateres
 	 */
 	public void update() {
+		if(model==null)System.out.println("model er null");
 		//skulle lagt inn mulighet for å endre ConnectionStatusPanel
-		this.adresse.setText(this.adress);
-		this.sensorList.setModel(new ModelListAdapter(this.model));
-		this.id.setText("" + this.model.getID());
-		this.frame.repaint();
+		this.adresse.setText(this.model.getAdresse());
+		//this.sensorList.setModel(new ModelListAdapter(this.model));
+		this.sensorList.repaint();
+		this.id.setText("ID: " + this.model.getID());
+		this.pane.repaint();
 	}
 	
 	/**
@@ -118,10 +121,10 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 			model=true;
 		}
 		Insets asdf = new Insets(0,0,0,0);
-		JPanel pane = new JPanel();
+		pane = new JPanel();
 		frame = new JFrame("LAC");
 		frame.setSize(700, 700);
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		frame.setContentPane(pane);
 		frame.setVisible(true);
 		frame.addWindowListener(new WindowAdapter()
@@ -785,7 +788,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		else if (evt.getSource() == editAdresse) { //adressen skal endres
 			String lol = "";
 			try {
-				lol = JOptionPane.showInputDialog("Please enter the new HORSELOL");
+				lol = JOptionPane.showInputDialog("Please enter the new Adress");
 			}
 			catch (NullPointerException npe) {
 				JOptionPane.showMessageDialog(null, "you did not enter a new adress, old adress will not be changed");
@@ -794,7 +797,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 				this.model.setAdresse(lol);
 			}
 			catch (NullPointerException npe) {
-				System.err.println("nullpointerex ved model.setAdresse, adressefeltet vil heller ikke endres da det ikke fyres propertyLOLOLOL");
+				System.err.println("nullpointerex ved model.setAdresse, adressefeltet vil heller ikke endres da det ikke fyres propertychange");
 			}
 		}
 	}
@@ -841,11 +844,13 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	public void propertyChange(PropertyChangeEvent evt) {
 		System.out.println("Gui received change");
 		if(evt.getSource() instanceof ModelEditController){
-			model = mec.getModel();			
+			model = mec.getModel();
+			sensorList.setModel(new ModelListAdapter(this.model));
+			//sensorList.setModel(new model);
 			// Burde muligens gjï¿½res annerledes
+			//initialize();
 		}
-		this.frame.dispose();
-		initialize();
+		update();
 	}
 }
 

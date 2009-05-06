@@ -82,8 +82,8 @@ public class MAC{
 		
 		loadAdapters();
 		
-		//macConnection = new TCPConnection(SERVERPORT);
-		macConnection = new ConnectionImplementation(SERVERPORT);
+		macConnection = new TCPConnection(SERVERPORT);
+		//macConnection = new ConnectionImplementation(SERVERPORT);
 		RunThread thread = new RunThread(this);
 		thread.start();
 	}
