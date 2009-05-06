@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.EOFException;
 import java.io.IOException;
 import java.net.BindException;
 import java.net.ConnectException;
@@ -54,8 +55,9 @@ public class MAC{
 	private boolean running = true;
 	
 	public static final int SERVERPORT = 2000;
-	public static final String MACIP = "129.241.214.136";
+	public static final String MACIP = "localhost";
 	
+	public static final boolean USE_CONNECTIONIMPLEMENTATION = false;
 	
 	
 	
@@ -82,8 +84,7 @@ public class MAC{
 		
 		loadAdapters();
 		
-		macConnection = new TCPConnection(SERVERPORT);
-		//macConnection = new ConnectionImplementation(SERVERPORT);
+		macConnection = (USE_CONNECTIONIMPLEMENTATION ? new ConnectionImplementation(SERVERPORT) : new TCPConnection(SERVERPORT));
 		RunThread thread = new RunThread(this);
 		thread.start();
 	}
@@ -154,13 +155,6 @@ public class MAC{
 		 * 
 		 */
 		public void stopAdapter(){
-			thread.stop();
-			try {
-				thread.closeConnection();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			adapters.remove(this);
 			
 		}
@@ -196,11 +190,6 @@ public class MAC{
 			start();
 		}
 	
-		private void closeConnection() throws IOException {
-			adapter.getConnectionStatusWrapper().setConnectionStatus(ConnectionStatus.DISCONNECTED);
-			connection.close();
-		}
-
 		/**
 		 * The tread will wait for an incomming connection. When the adapter is connected to a LAC, it will first open a new adapter and then begin listening to the Connection until stopped by the stop()-method  
 		 * 
@@ -211,14 +200,17 @@ public class MAC{
 					String msg = connection.receive();
 					this.adapter.getProtocol().handleMSG(msg,this.adapter,this.connection);
 				}
-			} catch (SocketTimeoutException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
+			} catch(EOFException e){
 				try {
-					this.closeConnection();
+					this.adapter.getConnectionStatusWrapper().setConnectionStatus(ConnectionStatus.DISCONNECTED);
+					connection.close();
+					this.adapter.stopAdapter();
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
+			} catch (IOException e) {
+				e.printStackTrace();
+				
 			}
 		}
 		

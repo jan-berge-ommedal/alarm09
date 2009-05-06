@@ -70,8 +70,6 @@ public class LAC extends ModelEditController{
 	public LAC(boolean useGUI) {
 		super(new LACProtocol());
 		if(useGUI)gui = new LACgui(this);
-		//connection = new ConnectionImplementation(STARTPORT);
-		connection = new TCPConnection(STARTPORT);
 		connectWithRetry();
 		
 		try {
@@ -149,7 +147,7 @@ public class LAC extends ModelEditController{
 	}
 
 	private void connect(int i) throws IOException {
-		if(connection==null)connection = new TCPConnection(STARTPORT);	
+		if(connection==null)connection = connection = (MAC.USE_CONNECTIONIMPLEMENTATION ? new ConnectionImplementation(STARTPORT) : new TCPConnection(STARTPORT));
 		//if(connection==null)connection = new ConnectionImplementation(STARTPORT);	
 		connectionWrapper.setConnectionStatus(ConnectionStatus.CONNECTING);
 		while(i>0){
@@ -249,8 +247,6 @@ public class LAC extends ModelEditController{
 			new Event(-1,EventType.SHUTDOWN,this.getTime(),s);
 		}
 		try {
-			
-			getProtocol().close(connection);
 			connection.close();
 		} catch (IOException e) {
 			e.printStackTrace();

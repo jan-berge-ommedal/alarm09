@@ -341,11 +341,6 @@ public abstract class AbstractApplicationProtocol {
 		System.out.println("End Sensor-Update");
 	}
 	
-	public synchronized void close(Connection connection) throws ConnectException, IOException {
-		connection.send(CLOSE);
-		receiveACK(connection);
-	}
-
 	
 	
 }
