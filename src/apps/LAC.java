@@ -207,6 +207,7 @@ public class LAC extends ModelEditController{
 		}
 		
 		public void run(){
+			/*
 			while(true){
 				try {
 					String receivedMSG = connection.receive();
@@ -220,6 +221,7 @@ public class LAC extends ModelEditController{
 					e.printStackTrace();
 				}
 			}
+			*/
 		}
 
 		@Override
