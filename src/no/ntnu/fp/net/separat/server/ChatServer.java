@@ -36,7 +36,7 @@ public class ChatServer extends JFrame {
 
 	private Connection server;
 
-	private String addressServer = this.getIPv4Address();
+	private String addressServer = "129.241.214.136";
 
 	private ArrayList users;
 
