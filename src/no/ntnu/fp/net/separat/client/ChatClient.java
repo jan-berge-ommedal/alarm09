@@ -33,7 +33,7 @@ public class ChatClient {
 
     private int port_to_server = 4444;
 
-    private String addressServer = "129.241.214.136";
+    private static String addressServer = "129.241.214.136";
 
     private int thisPort = 5560;
 
@@ -147,7 +147,7 @@ public class ChatClient {
         int port;
         Log.setLogName("Klienten");
         Settings settings = new Settings();
-        address = getIPv4Address();
+        address = addressServer;
         port = 4444;
         SIMPLE_CONNECTION = settings.useSimpleConnection();
         
