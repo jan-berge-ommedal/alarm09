@@ -103,7 +103,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 	public void update() {
 		if(model==null)System.out.println("model er null");
 		//skulle lagt inn mulighet for å endre ConnectionStatusPanel
-		this.adresse.setText(this.model.getAdresse());
+		this.adresse.setText(this.mec.getModel().getAdresse());
 		//this.sensorList.setModel(new ModelListAdapter(this.model));
 		this.sensorList.repaint();
 		this.id.setText("ID: " + this.model.getID());
@@ -124,7 +124,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 		pane = new JPanel();
 		frame = new JFrame("LAC");
 		frame.setSize(700, 700);
-		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setContentPane(pane);
 		frame.setVisible(true);
 		frame.addWindowListener(new WindowAdapter()
@@ -179,8 +179,7 @@ public class LACgui extends JPanel implements Values, ActionListener, PropertyCh
 			this.adress = this.model.getAdresse();
 			adresse.setText(adress);
 		} catch (NullPointerException npe) {
-			System.err.println("nullpointerex ved getAdresse");
-			System.err.println("YOU HAVE ENTERED WORLD DOMINATION MODE JAN BERGE - ARE YOU READY TO TAKE UP THE MANTLE AND QUEST IN ORDER TO ACHIEVE UTTER AND COMPLETE WORLD DOMINATION, THEREBY FOREGOING THE NOOBS ON YOUR GROUP IN FAVOUR OF BEYOND GODLIKE ABILITES??");
+			//System.err.println("nullpointerex ved getAdresse");
 		}
 		
 		Font f = new Font("Dialog", Font.PLAIN, 20);
